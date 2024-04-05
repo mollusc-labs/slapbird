@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+podman exec -it slapbird-postgres psql -Uslapbird

@@ -1,0 +1,11 @@
+<html>
+    %= include '_dashboard_header'
+    <body>
+        %= include '_dashboard_nav'
+        <main style="min-height: 100vh" class="container">
+            %= include '_flash'
+            <%= content %>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

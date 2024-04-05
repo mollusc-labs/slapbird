@@ -1,0 +1,153 @@
+.slapbird-button {
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    margin: 0;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    position: relative;
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: auto;
+}
+
+.slapbird-link {
+    color: #ee0000 !important;
+}
+
+.slapbird-link:hover {
+    color: #d40000;
+}
+
+.slapbird-is-secondary {
+    color: #ee0000
+}
+
+.slapbird-is-primary {
+    color: inherit
+}
+
+.slapbird-button.slapbird-is-secondary {
+    color: #fff;
+    background-color: #ee0000;
+}
+
+.slapbird-button.slapbird-is-secondary.slapbird-disabled {
+    color: #fff;
+    background-color: hsl(0, 98%, 33%);
+}
+
+.slapbird-button.slapbird-is-secondary.slapbird-disabled:hover {
+    color: #fff;
+    background-color: hsl(0, 98%, 33%) !important;
+    cursor: default;
+}
+
+.slapbird-button.slapbird-is-secondary:hover {
+    color: #fff;
+    background-color: #d40000;
+}
+
+.slapbird-button.slapbird-is-secondary:hover svg path {
+    fill: #fff;
+}
+
+.slapbird-button.slapbird-is-secondary svg path {
+    fill: #fff;
+}
+
+.slapbird-button.slapbird-is-primary {
+    color: hsl(var(--bulma-navbar-h), var(--bulma-navbar-s), var(--bulma-navbar-item-color-l));
+    background-color: #fff;
+}
+
+.slapbird-button.slapbird-is-primary:hover {
+    color: #fff;
+    background-color: #151515;
+}
+
+.slapbird-button.slapbird-is-primary svg path {
+    fill: #555;
+}
+
+.slapbird-button.slapbird-is-primary:hover svg path {
+    fill: #fff !important;
+}
+
+footer {
+    background-color: #eee;
+}
+
+.box {
+    box-shadow: none !important;
+    outline: solid 1px #eee;
+}
+
+.slapbird-dashboard-row {
+    color: #555;
+}
+
+.slapbird-dashboard-row:hover {
+    cursor: pointer;
+    transition: 100ms background-color;
+    background-color: #eee;
+    border-radius: var(--bulma-box-radius);
+}
+
+.slapbird-dashboard-row {
+    border-radius: var(--bulma-box-radius);
+}
+
+@media (prefers-color-scheme: dark) {
+    .svg path {
+        fill: hsl(var(--bulma-navbar-h), var(--bulma-navbar-s), var(--bulma-navbar-item-color-l));
+    }
+
+    .slapbird-button.slapbird-is-primary {
+        color: inherit;
+        background-color: #222222;
+    }
+
+    .slapbird-button.slapbird-is-primary:hover {
+        color: #222222;
+        background-color: #eee;
+    }
+
+    .slapbird-button.slapbird-is-primary:hover svg path {
+        fill: #222;
+    }
+
+    footer {
+        background-color: #222222;
+    }
+
+    .slapbird-dashboard-row:hover {
+        cursor: pointer;
+        transition: 120ms background-color;
+        background-color: #222;
+        border-radius: var(--bulma-box-radius);
+    }
+
+    .slapbird-dashboard-row {
+        color: #eee;
+        border-radius: var(--bulma-box-radius);
+    }
+
+    .box {
+        outline: solid 1px #333;
+    }
+}

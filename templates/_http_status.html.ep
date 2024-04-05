@@ -1,0 +1,21 @@
+% if ($response_code < 300) {
+    <span class="button is-dark is-success" style="pointer-events: none;">
+      <%= $response_code %>
+    </span>
+% } elsif ($response_code < 400) {
+    <span class="button is-dark is-info" style="pointer-events: none;">
+      <%= $response_code %>
+    </span>
+% } elsif ($response_code < 500) {
+    <span class="button is-dark is-warning" style="pointer-events: none;">
+      <%= $response_code %>
+    </span>
+% } elsif ($response_code < 600) {
+  <span class="button is-dark is-danger" style="pointer-events: none;">
+    <%= $response_code %>
+  </span>
+% } else {
+  <span class="button is-info is-light" style="pointer-events: none;">
+    <%= $response_code %>
+  </span>
+% }

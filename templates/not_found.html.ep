@@ -1,0 +1,13 @@
+<html>
+    %= include '_header', title => '404 Not Found', description => 'SlapbirdAPM Perl APM Not Found'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <div class="mt-6 container">
+                <h1 class="is-1 title">404 Not Found</h1>
+                <p>The requested resource was not found, click <a href="/">here</a> to return home.</p>
+            </div>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

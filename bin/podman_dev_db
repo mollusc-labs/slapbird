@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+podman pull docker.io/library/postgres:15-alpine
+podman run --replace \
+ --name slapbird-postgres \
+  -e POSTGRES_USER=slapbird \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=slapbird \
+  -p 5432:5432 \
+  -d \
+  postgres:15-alpine

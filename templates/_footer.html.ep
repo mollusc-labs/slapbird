@@ -1,0 +1,16 @@
+<footer class="has-text-centered is-flex-align-items-flex-end mt-auto pt-4 pb-6">
+    <div class="content has-text-centered">
+        <p>
+            <strong>Slapbird</strong> by <a class="slapbird-link" href="https://mollusc-labs.ca">Mollusc Labs</a>.
+            The source code for the Slapbird application is licensed under the
+        <a class="slapbird-link" href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPL v3.0</a> license.
+            The Slapbird user-agent software is licensed under the <a class="slapbird-link" href="https://opensource.org/license/mit">MIT</a> license.
+        </p>
+        <p>
+            <a class="slapbird-link" href="https://github.com/mollusc-labs/slapbird">View the source code</a>
+        </p>
+        <p>
+            Copyright <strong>&copy;</strong> 2024, Mollusc Labs & contributors.
+        </p>
+    </div>
+</footer>

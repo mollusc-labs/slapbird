@@ -1,0 +1,6 @@
+#!/usr/bin/env perl
+
+my $file = './cpanfile';
+system('cpanm --notest --quiet --installdeps . --cpanfile ' . $file);
+
+exit 0;

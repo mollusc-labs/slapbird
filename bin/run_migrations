@@ -1,0 +1,37 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Mojo::File qw(curfile);
+use Mojo::Pg;
+use Carp ();
+use Dotenv -load => curfile->dirname() . '/../.env';
+use lib curfile->dirname() . '/../lib';
+
+my $verb = $ARGV[0];
+
+Carp::croak('No verb provided, try "up" or "down"')
+  if !$verb;
+
+Carp::croak('Invalid verb, try "up" or "down"')
+  if $verb ne 'up' &&
+     $verb ne 'down';
+
+my $database_uri = $ENV{DATABASE_URI};
+
+Carp::croak('No database URI set, ') unless $database_uri;
+
+my $pg = Mojo::Pg->new($database_uri);
+my $path = curfile->dirname() . '/../mig/';
+
+if ($verb eq 'up') {
+  for ( @{ Mojo::File->new($path)->list } ) {
+    $pg->migrations->name($_)->from_file($_)->migrate();
+  }
+}
+else {
+  for (@{Mojo::File->new($path)->list}) {
+    $pg->migrations->name($_)->from_file($_)->migrate();
+  }
+}

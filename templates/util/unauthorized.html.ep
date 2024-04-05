@@ -1,0 +1,13 @@
+<html>
+    %= include '_header', title => '401 Unauthorized', description => 'SlapbirdAPM Perl APM Unauthorized'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <div class="mt-6 container">
+                <h1 class="is-1 title">401 Unauthorized</h1>
+                <p>You are not allowed to view this resource, click <a href="/">here</a> to return home.</p>
+            </div>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

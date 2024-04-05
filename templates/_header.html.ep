@@ -1,0 +1,19 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    % if ($description) {
+    <meta name="description" content="<%= $description %>">
+    % }
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+    >
+    <link
+      rel="stylesheet"
+      href="/css/app.css"
+    >
+    <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+    <title><%= $title %></title>
+</head>

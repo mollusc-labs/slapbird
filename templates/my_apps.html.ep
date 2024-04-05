@@ -1,0 +1,15 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - My Apps', description => 'Slapbird APM applications manager';
+
+<main class="box mt-6">
+    % for my $application (@$applications) {
+        <div class="columns">
+            <%= $application->name %>
+            % for my $api_key ($application->api_keys) {
+                <%= $api_key->application_api_key %>
+            % }
+            <a class="slapbird-button slapbird-is-secondary" href="/dashboard/manage/<%= $application->application_id %>">
+                Manage
+            </a>
+        </div>
+    % }
+</main>

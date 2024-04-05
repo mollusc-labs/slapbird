@@ -1,0 +1,10 @@
+#!/bin/bash
+
+podman pull docker.io/library/ubuntu/memcached:1.6-22.04_beta
+podman run --replace \
+       --name slapbird-memcached \
+       -e TZ=UTC \
+       -e MEMCACHED_PASSWORD=password \
+       -p 11211:11211 \
+       -d \
+       ubuntu/memcached:1.6-22.04_beta

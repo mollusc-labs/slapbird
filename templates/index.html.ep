@@ -1,0 +1,70 @@
+<html>
+    %= include '_header', title => 'Slapbird APM - the Perl web-service APM', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services. Providing insights into application performance, and request times.'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <section class="hero is-large">
+                <div class="hero-body">
+                    <div class="container columns is-vcentered">
+                        <div class="column is-half">
+                            <h1 class="title mb-2">The Mojolicious & Dancer2 APM</h1>
+                            <ul class="subtitle">
+                                <li>Endpoint performance insights</li>
+                                <li>User agent tracking</li>
+                                <li>Service dependency visualization</li>
+                                <li>and More</li>
+                            </ul>
+                            <a href="/login" class="slapbird-button slapbird-is-secondary">Start for free</a>
+                            <a href="/getting-started" class="slapbird-button slapbird-is-primary">Learn More</a>
+                        </div>
+                        <div class="column is-half" style="border-radius: 0.75rem; box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+                            <picture class="image is-16by9">
+                                <source srcset="/images/hero.png" media="(prefers-color-scheme: light)"/>
+                                <source srcset="/images/hero_dark.png"  media="(prefers-color-scheme: dark)"/>
+                                <img src="/images/hero.png"/>
+                            </picture>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr>
+            <section class="container">
+                <div class="has-text-centered">
+                    <h2 class="is-2 title mb-1">Application Performance Monitoring</h2>
+                    <h2 class="is-2 title">for Mojolicious and Dancer2 apps</h2>
+                </div>
+                <div class="container columns mt-6 mb-6">
+                    <div class="column is-one-third has-text-centered">
+                        <h3 class="is-4 title">Supports</h3>
+                        <ul>
+                            <li>Mojolicious</li>
+                            <li>Dancer2</li>
+                            <li>Plack (Coming Soon)</li>
+                            <li>DBI (Coming Soon)</li>
+                        </ul>
+                    </div>
+                    <div class="column is-one-third has-text-centered">
+                        <h3 class="is-4 title">Monitoring</h3>
+                        <ul>
+                            <li>Application end-points</li>
+                            <li>Performance</li>
+                            <li>Uptime</li>
+                            <li>Mojo::UserAgent communications</li>
+                            <li>Distributed system topology</li>
+                        </ul>
+                    </div>
+                    <div class="column is-one-third has-text-centered">
+                        <h3 class="is-4 title">Easy set up</h3>
+                        <ul>
+                            <li>Install the Slapbird user-agent from the CPAN</li>
+                            <li>Create your app on <a href="/" class="slapbird-link">slapbirdapm.com</a></li>
+                            <li>1 line of code, 1 environment variable</li>
+                            <li>Deploy</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

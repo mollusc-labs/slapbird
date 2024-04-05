@@ -1,0 +1,8 @@
+<!-- TODO: (RF) We're going to need a instruction table to hold the various "quick-start" instructions. -->
+<ol class="ml-6">
+    <li>Copy your API key</li>
+    <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>
+    <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM'</code></li>
+    <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+    <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
+</ol>

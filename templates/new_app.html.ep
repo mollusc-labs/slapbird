@@ -1,0 +1,99 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - New App', description => 'Slapbird APM new application';
+
+<div>
+    <h1 class="title is-2 mt-6">New Application</h1>
+    <form @submit.prevent="submitForm">
+        <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+                <input
+                    :disabled="disabled"
+                    v-model="applicationName"
+                    class="input"
+                    :class="{disabled: disabled}"
+                    type="text"
+                    name="name"
+                    placeholder="Application name"
+                    required>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Description (optional)</label>
+            <div class="control">
+                <textarea
+                    :disabled="disabled"
+                    v-model="applicationDesc"
+                    class="textarea"
+                    :class="{disabled: disabled}"
+                    name="description"
+                    placeholder="Application description"></textarea>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Application type</label>
+            <div class="control">
+                <div class="select">
+                    <select name="type" v-model="applicationType" :disabled="disabled" required>
+                        <option value="mojo" selected>Mojolicious</option>
+                        <!-- <option value="dancer">Dancer2</option>
+                             <option value="plack">Plack</option>
+                             <option value="other">Other</option> -->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div v-if="errors.length" class="notification is-danger is-light">
+            <ul>
+                <li v-for="error in errors">{{error}}</li>
+            </ul>
+        </div>
+        <hr>
+        <div v-if="!submitting && !disabled">
+            <button
+                :disabled="disabled"
+                id="createAppButton"
+                type="submit"
+                class="slapbird-button slapbird-is-secondary"
+                :class="{disabled: disabled}">
+                Create App
+            </button>
+            <a v-if="!disabled" href="/dashboard" class="slapbird-button slapbird-is-primary">
+                Cancel
+            </a>
+        </div>
+        <div v-if="submitting">
+            <progress class="progress is-danger" max="100">30%</progress>
+        </div>
+        <div v-if="disabled">
+            <h2 class="is-4 title">You did it!</h2>
+            <p>
+                Your application was created!
+            </p>
+            <div class="mb-6">
+                <label>
+                    <strong>API Key</strong>:
+                </label>
+                <div class="is-flex">
+                    <div class="control mr-2 py-2" style="max-width: 400px">
+                        <input readonly class="input" :value="createdApiKey">
+                    </div>
+                    <a href="#" @click="copyToClipboard" class="ml-3 slapbird-button slapbird-is-primary px-2">
+                        <span class="svg">
+                            <%= include "svg/_copy_svg" %>
+                        </span>
+                    </a>
+                </div>
+                <span v-if="copied" class="ml-3 has-text-grey">Copied!</span>
+            </div>
+            <h3 class="is-5 title">Quick start</h3>
+            <div v-if="instructions" v-html="instructions">
+            </div>
+            <a href="/dashboard" class="mt-6 slapbird-button slapbird-is-secondary">
+                Goto Dashboard
+            </a>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+<script type="module" src="/js/createApp.js">
+</script>

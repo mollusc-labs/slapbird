@@ -1,0 +1,53 @@
+% use MIME::Base64;
+
+% if (scalar @$summaries) {
+  <div class="columns mb-0 pb-0">
+    <div class="column">
+      Method
+    </div>
+    <div class="column">
+      Status
+    </div>
+    <div class="column is-one-third">
+      End point
+    </div>
+    <div class="column">
+      Avg time
+    </div>
+    <div class="column">
+      Handler
+    </div>
+    <div class="column has-text-right">
+      #
+    </div>
+  </div>
+  <hr class="mt-0">
+  % for my $summary (@$summaries) {
+    <a
+    href="/dashboard/transaction-summary/<%= encode_base64($summary->{end_point}) %>?to=<%= param('to') %>&from=<%= param('from') %>&code=<%= $summary->{response_code} %>"
+    class="transaction columns slapbird-dashboard-row has-text-inherit"
+    style="align-items: center;">
+      <div class="column is-vcentered"><%= $summary->{method} %></div>
+      <div class="column is-vcentered">
+        %= include '_http_status', response_code => $summary->{response_code}
+      </div>
+      <div class="column is-vcentered is-one-third"><%= $summary->{end_point} %></div>
+      <div class="column is-vcentered"><%= sprintf('%.2f', $summary->{avg_time}) %>/ms</div>
+      <div class="column is-vcentered"><%= $summary->{handler} %></div>
+      <div class="column is-vcentered has-text-right"><%= $summary->{count} %></div>
+    </a>
+    <div id="transaction-details-<%= $summary->{end_point} %>"></div>
+  % }
+% } else {
+  % if ($has_transactions) {
+    <h3 class="title is-4">No summaries available for this time period.</h3>
+    <p>
+      Try adjusting the time filters.
+    </p>
+  % } else {
+      <h3 class="title is-4">No summaries available.</h3>
+    <p>
+      <a class="slapbird-link underline" href="/docs/app-setup">Is your application configured properly?</a>
+    </p>
+  % }
+% }

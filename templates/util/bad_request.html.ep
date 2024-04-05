@@ -1,0 +1,13 @@
+<html>
+    %= include '_header', title => '400 Bad Request', description => 'SlapbirdAPM Perl APM Bad Request'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <div class="mt-6 container">
+                <h1 class="is-1 title">400 Bad Request</h1>
+                <p>The input you provided was invalid, click <a href="/">here</a> to return home.</p>
+            </div>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

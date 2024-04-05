@@ -1,0 +1,22 @@
+% for my $price (@$prices) {
+<div class="box column is-one-forth mx-2 mt-6" style="width: 250px; height: 300px">
+  <header class="card-header has-text-centered">
+    <h3 class="title is-3 mb-2 mt-2">
+      <%= $price->name %>
+    </h3>
+  </header>
+  <div class="card-content">
+    <div class="content">
+      <h4 class="is-5">
+        $<%= $price->price_pretty %> USD/month
+      </h4>
+      <%== $price->description %>
+    </div>
+  </div>
+  <div class="mt-auto" style="background-color: transparent;">
+    <a href="/login?plan=<%= $price->pricing_plan_id %>" class="slapbird-link card-footer-item mt-auto">
+      Start for free
+    </a>
+  </div>
+</div>
+% }

@@ -1,0 +1,107 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Dashboard Transaction Summary', description => 'Slapbird APM dashboard, manage your services and view your applications performance metrics.';
+
+<div class="is-flex is-justify-content-space-between  mb-3 mt-6">
+  <div>
+    <h1 class="title is-5">Requests for &quot;<%= $end_point %>&quot;</h1>
+  </div>
+  <div>
+    Showing <%= $pager->entries_on_this_page %> of <%= $pager->total_entries %>
+  </div>
+</div>
+<div class="box mb-6">
+  <div class="columns mb-0 pb-0">
+    <div class="column">
+      Method
+    </div>
+    <div class="column ml-2">
+      Status
+    </div>
+    <div class="column">
+      Time
+    </div>
+    <div class="column">
+      Handler
+    </div>
+    <div class="column">
+      Request Identifier
+    </div>
+    <div class="column is-one-fifth">
+      Timestamp
+    </div>
+  </div>
+  <hr class="my-2">
+  % for my $transaction (@$transactions) {
+    <a class="transaction columns slapbird-dashboard-row has-text-inherit mt-2 mb-0"  style="align-items: center" href="/dashboard/transaction/<%= $transaction->http_transaction_id %>?return_href=<%= $return_href %>">
+      <div class="column">
+        <%= $transaction->method %>
+      </div>
+      <div class="column">
+        %= include '_http_status', response_code => $transaction->response_code
+      </div>
+      <div class="column">
+        <%= $transaction->total_time %>/ms
+      </div>
+      <div class="column">
+        <%= $transaction->handler %>
+      </div>
+      <div class="column">
+        % if ($transaction->request_id) {
+          <%= $transaction->request_id %>
+        % } else {
+          <%= $transaction->http_transaction_id %>
+        % }
+      </div>
+      <div class="column is-one-fifth">
+        <span class="epoch-date"><%= $transaction->start_time %></span>
+      </div>
+    </a>
+  % }
+  <nav class="pagination" role="navigation" aria-label="pagination">
+    % if ($pager->previous_page) {
+      <a href="<%= $appendable_href %>&page=<%= $pager->previous_page %>" class="pagination-previous slapbird-button slapbird-is-primary">Previous</a>
+    % }
+    % if ($pager->next_page) {
+      <a href="<%= $appendable_href %>&page=<%= $pager->next_page %>" class="pagination-next slapbird-button slapbird-is-primary ml-2">Next page</a>
+    % }
+    <ul class="pagination-list">
+      % unless ($pager->current_page == $pager->first_page) {
+        % unless ($pager->current_page - 1 == $pager->first_page) {
+          <li>
+            <a href="<%= $appendable_href %>&page=<%= $pager->first_page %>" class="pagination-link" aria-label="<%= $pager->first_page %>"><%= $pager->first_page %></a>
+          </li>
+          <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+          </li>
+        % }
+        <li>
+          <a href="<%= $appendable_href %>&page=<%= $pager->current_page - 1 %>" class="pagination-link" aria-label="Goto page <%= $pager->current_page - 1 %>"><%= $pager->current_page - 1 %></a>
+        </li>
+      % }
+      % unless ($pager->last_page == $pager->first_page) {
+        <li>
+          <a
+            class="pagination-link is-current"
+            aria-label="Page <%= $pager->current_page %>"
+            aria-current="page"
+            ><%= $pager->current_page %></a
+          >
+        </li>
+      % }
+      % unless ($pager->current_page == $pager->last_page) {
+        <li>
+          <a href="<%= $appendable_href %>&page=<%= $pager->current_page + 1 %>" class="pagination-link" aria-label="Goto page <%= $pager->current_page + 1 %>"><%= $pager->current_page + 1 %></a>
+        </li>
+        % unless ($pager->current_page == $pager->last_page - 1) {
+          <li>
+            <span class="pagination-ellipsis">&hellip;</span>
+          </li>
+          <li>
+            <a href="<%= $appendable_href %>&page=<%= $pager->last_page %>" class="pagination-link" aria-label="Goto page <%= $pager->last_page %>"><%= $pager->last_page %></a>
+          </li>
+        % }
+      % }
+    </ul>
+  </nav>
+</div>
+<a href="/dashboard" class="slapbird-button slapbird-is-primary">Return to dashboard</a>
+<script src="/js/epochDate.js"></script>

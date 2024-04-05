@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+
+use Mojolicious::Lite -signatures;
+use Carp ();
+
+# run me with $ENV{SLAPBIRD_API_KEY} set.
+
+get '/' => sub {
+    my ($c) = @_;
+    $c->render(text => 'Hello World!');
+};
+
+get '/error' => sub {
+    Carp::croak('Error!');
+};
+
+app->start;

@@ -1,0 +1,34 @@
+<html>
+    %= include '_header', title => 'Slapbird APM - Login', description => 'Login to Slapbird APM, a Perl application performance monitor'
+    <body>
+        <div class="has-text-centered mt-4">
+            <figure class="is-centered image is-128x128 is-inline-block" align="center">
+                <img src="/images/logo.png">
+            </figure>
+            <div>
+                <h1 class="title is-2">Login or Sign-up with one of our providers</h1>
+            </div>
+        </div>
+        <div class="columns is-centered">
+            <div class="column is-one-third card p-6 mt-6">
+                %= include '_flash'
+                <div class="has-text-centered mb-2">
+                    <a href="/login/github" class="slapbird-button slapbird-is-primary">
+                        <span class="mr-2">
+                            <%= include 'svg/_github_svg' %>
+                        </span>
+                        Connect with Github
+                    </a>
+                </div>
+                <p class="has-text-centered">
+                    Or, <a href="/">go home</a>.
+                </p>
+                <hr>
+                <p class="has-text-centered">
+                    By logging in, or signing up, you agree to Slapbird's 
+                    <a href="/tos">Terms of Service</a>, and <a href="/privacy">Privacy policy</a>.
+                </p>
+            </div>   
+        </div>
+    </body>
+</html>

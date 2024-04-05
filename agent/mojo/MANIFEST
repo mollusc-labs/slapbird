@@ -1,0 +1,9 @@
+cpanfile
+lib/Mojolicious/Plugin/SlapbirdAPM.pm
+lib/SlapbirdAPM/Agent/Mojo.pm
+lib/SlapbirdAPM/Trace.pm
+LICENSE
+Makefile.PL
+MANIFEST			This list of files
+README.md
+SlapbirdAPM-Agent-Mojo-0.001.tar.gz

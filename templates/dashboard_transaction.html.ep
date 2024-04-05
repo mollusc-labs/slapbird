@@ -1,0 +1,42 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Dashboard Transaction Information', description => 'Slapbird APM dashboard, manage your services and view your applications performance metrics.';
+
+<div class="mt-6 mb-3">
+  <a href="<%= $return_href %>">&lt;&lt; Back</a>
+</div>
+<div class="box mb-6">
+  <div class="is-flex is-vcentered is-justify-content-space-between">
+    <div class="is-flex" style="align-items: center">
+      <span class="mr-3">
+        <%= $transaction->method %>
+      </span> 
+      %= include '_http_status', response_code => $transaction->response_code
+      <span class="ml-3">
+        <%= $transaction->end_point %>
+      </span>
+    </div>
+    <div class="is-flex" style="align-items: center">
+      <span class="ml-3 epoch-date">
+        <%= $transaction->start_time %>
+      </span>
+    </div>
+  </div>
+  % if ($transaction->error) {
+    <div class="is-size-5">
+      Error:
+    </div>
+    <div class="box my-2">
+      <%== $transaction->error %>
+    </div>
+  % }
+  <div class="is-size-5">
+    Trace:
+  </div>
+  <div class="box my-2">
+    % if ($transaction->stack) {
+      <%== $transaction->stack %>
+    % } else {
+      No trace available for this request.
+    % }
+  </div>
+</div>
+<script src="/js/epochDate.js"></script>

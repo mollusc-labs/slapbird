@@ -1,0 +1,61 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Dashboard Manage App', description => 'Slapbird APM dashboard, manage your services and view your applications performance metrics.';
+
+<h1 class="title mt-6 is-3">
+    <%= $can_edit ? 'Manage' : 'Settings for' %> <%= $application->name %>
+</h1>
+<div class="box mt-3 mb-6">
+    <h2 class="title is-5">Api Keys</h2>
+    % for my $api_key ($application->api_keys->all) {
+        <div class="columns is-vcentered">
+            <div class="column my-auto  is-one-fifth">
+                <strong><%= $api_key->name %></strong>
+            </div>
+            <div class="column is-one-fifth">
+                <span class="api-key" value="<%= $api_key->api_key_id %>"><%= $api_key->application_api_key %></span>
+            </div>
+            <div class="column is-one-fifth has-text-centered is-centered">
+                <button class="slapbird-button slapbird-is-primary" onclick="toggleApiKey('<%= $api_key->api_key_id %>', this)">Show</button>
+            </div>
+            <div class="column is-one-fifth has-text-centered">
+                <strong>Created By</strong>: <%= $api_key->user->name %>
+            </div>
+            <div class="column" style="text-align: right;">
+                % if ($can_edit) {
+                    <form class="ml-6" action="/dashboard/delete-api-key/<%= $api_key->api_key_id %>" method="POST">
+                        <button class="slapbird-button slapbird-is-secondary">
+                            <span class="svg">
+                                <%= include 'svg/_trash_svg' %>
+                            </span>
+                        </button>
+                    </form>
+                % }
+            </div>
+        </div>
+    % }
+    <script src="/js/hideApiKeys.js"></script>
+    % if ($can_edit) {
+        <form id="createApiKeyForm" class="mb-3" method="POST" action="/dashboard/new-api-key">
+            <%= include '_flash' %>
+            <div class="is-flex">
+                <div class="control mr-2">
+                    <input onkeydown="setDisabled(this)" id="createApiKeyName" type="text" name="name" class="input" placeholder="API Key Name" maxlength="100" />
+                </div>
+                <div class="my-auto">
+                    <button id="createApiKeySubmit" class="button is-success" disabled>New API Key</button>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <h2 class="title is-5 mt-3">Danger Zone</h2>
+        <div class="is-flex">
+            <div class="mr-2">
+                <a href="/dashboard/confirm-delete-application" class="slapbird-button slapbird-is-secondary is-outlined">Delete <%= $application->name %></a>
+            </div>
+            <div>
+                <a href="/dasboard/confirm-transfer-ownership" class="slapbird-button slapbird-is-primary is-outlined">Transfer Ownership</a>
+            </div>
+        </div>
+        <script src="/js/newApiKey.js"></script>
+    % }
+</div>
+<script src="/js/epochDate.js"></script>

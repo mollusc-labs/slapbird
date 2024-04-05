@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=slapbird
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=slapbird
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'

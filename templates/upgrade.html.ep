@@ -1,0 +1,8 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Upgrade', description => 'Slapbird APM dashboard';
+
+<div class="box mt-6">
+    <h1 class="is-2 title">You've maxxed out your SlapbirdAPM plan</h1>
+    <p>
+        After the SlapbirdAPM beta, you will be able to upgrade your plan. Until then you're limited to 1 application.
+    </p>
+</div>

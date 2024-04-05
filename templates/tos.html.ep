@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Slapbird APM Terms of Service. Understand your data rights.">
+    <title>Terms of Service - SlapbirdAPM</title>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Terms of Service for SlapbirdAPM</h1>
+        </div>
+    </header>
+    <div class="container">
+        <div class="content">
+            <p><strong>Effective Date:</strong> August 8, 2024</p>
+            <p>Welcome to SlapbirdAPM. These Terms of Service ("Terms") govern your use of our application performance monitoring web application ("SlapbirdAPM"). By accessing or using SlapbirdAPM, you agree to comply with and be bound by these Terms. If you do not agree with these Terms, please do not use our services.</p>
+
+            <h2>1. Use of Our Services</h2>
+            <p>SlapbirdAPM provides tools and services for monitoring the performance of your applications. You agree to use our services only for lawful purposes and in accordance with these Terms. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.</p>
+
+            <h2>2. Account Registration</h2>
+            <p>To use SlapbirdAPM, you must create an account. You agree to provide accurate, current, and complete information during the registration process and to update your information to keep it accurate, current, and complete. You are responsible for safeguarding your password and other login credentials and for all activities that occur under your account.</p>
+
+            <h2>3. Payment and Billing</h2>
+            <p>Some features of SlapbirdAPM may require payment. By subscribing to a paid plan, you agree to pay all applicable fees and charges. Payments are processed through our third-party payment processors, and you agree to their terms and conditions. All fees are non-refundable except as required by law.</p>
+
+            <h2>4. Licensing and Intellectual Property</h2>
+            <p>SlapbirdAPM is licensed under the GNU Affero General Public License (AGPL) v3. This means that you are free to use, modify, and distribute the software, provided that any modifications or derivative works are also licensed under the AGPL v3. For more details on the AGPL v3 license, please refer to the <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">GNU AGPL v3 License</a>.</p>
+            <p>All trademarks, service marks, and logos used in connection with SlapbirdAPM are the property of SlapbirdAPM or its licensors. Use of these trademarks is governed by the license terms and conditions.</p>
+
+            <h2>5. Termination</h2>
+            <p>We reserve the right to terminate or suspend your access to SlapbirdAPM at our sole discretion, without notice, for any reason, including but not limited to violations of these Terms. Upon termination, your right to use SlapbirdAPM will immediately cease, and you must stop all use of the service.</p>
+
+            <h2>6. Limitation of Liability</h2>
+            <p>SlapbirdAPM is provided "as is" and "as available" without any warranties of any kind. To the maximum extent permitted by law, SlapbirdAPM shall not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of SlapbirdAPM, even if we have been advised of the possibility of such damages.</p>
+
+            <h2>7. Indemnification</h2>
+            <p>You agree to indemnify, defend, and hold harmless SlapbirdAPM, its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable attorneys' fees, arising out of or in connection with your use of SlapbirdAPM or your violation of these Terms.</p>
+
+            <h2>8. Changes to These Terms</h2>
+            <p>We may update these Terms from time to time. When we make changes, we will post the updated Terms on our website and notify you of significant changes. Your continued use of SlapbirdAPM after any modifications indicates your acceptance of the updated Terms.</p>
+
+            <h2>9. Governing Law</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws of Canada, without regard to its conflict of law principles. Any disputes arising under or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts located in Saskatchewan, Canada.</p>
+
+            <h2>10. Contact Us</h2>
+            <p>If you have any questions about these Terms or our services, please contact us at:</p>
+            <p><strong>SlapbirdAPM Support Team</strong><br>
+            Email: <a href="mailto:support@slapbirdapm.com">support@slapbirdapm.com</a><br>
+            </p>
+
+            <p>Thank you for using SlapbirdAPM. We look forward to serving you!</p>
+        </div>
+    </div>
+</body>
+</html>

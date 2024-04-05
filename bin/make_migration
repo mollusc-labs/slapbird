@@ -1,0 +1,20 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Carp ();
+use Mojo::File qw(curfile);
+
+my $name = $ARGV[0];
+
+Carp::croak('No name provided for migration...') unless $name;
+
+Carp::carp('Underscore used in migration, name, please think twice about this.')
+  if ($name =~ '_');
+
+my $file_name = $name . '-' . time . '.sql';
+my $path = curfile->dirname() . '/../mig/';
+my $i = scalar(@{Mojo::File->new($path)->list}) + 1;
+
+my $new_file = Mojo::File->new($path . $i . '-' . $file_name);
+$new_file->spew(qq{-- $i up\n-- $i down\n});

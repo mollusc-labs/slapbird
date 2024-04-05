@@ -1,0 +1,7 @@
+% if( my $msg = flash('message') ) {
+    <article class="message is-<%= $msg->{status} // 'success' %> ">
+        <div class="message-body">
+            <%= $msg->{content} %>
+        </div>
+    </article>
+% }

@@ -1,0 +1,17 @@
+<html>
+    %= include '_header', title => 'Slapbird APM - Pricing', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services. Providing insights into application performance, and request times. Slapbird provides a variety of pricing models to help you stay within your budget.'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <div class="has-text-centered mt-6">
+                <h1 class="title is-1">Slapbird APM pricing plans</h1>
+                <p class="subtitle">
+                    Use Slapbird for free, then upgrade to a plan that meets your needs.
+                </p>
+            </div>
+            <content class="container columns" hx-get="/htmx/pricing" hx-trigger="load">
+            </content>
+        </main>
+        %= include '_footer'
+    </body>
+<html>

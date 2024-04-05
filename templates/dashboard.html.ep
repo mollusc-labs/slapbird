@@ -1,0 +1,69 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Dashboard', description => 'Slapbird APM dashboard, manage your services and view your applications performance metrics.';
+
+<div class="box mt-6">
+    % if (application_context) {
+        <div class="is-flex is-justify-content-space-between">
+            <div class="is-flex">
+                <h1 class="title is-2"><%= application_context->name %></h1>
+                <span class="is-size-6 mt-3 ml-2">- <%= $requests_today %> requests today</span>
+            </div>
+            <div>
+                <button
+                    hx-get="/htmx/dashboard-feed?from=<%= param('from') %>&to=<%= param('to') %>"
+                    hx-trigger="click"
+                    hx-target="#dashboardFeed"
+                    onclick="refreshGraph()"
+                    class="slapbird-button slapbird-is-primary p-0 px-2">
+                    <span class="svg">
+                        %= include 'svg/_refresh_svg'
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div
+            style="min-height: 25rem; padding: 0"
+            class="m-2"
+            id="dashboardGraph"
+            value="/api/dashboard/graph?from=<%= param('from') %>&to=<%= param('to') %>&selected=<%= param('selected') %>">
+        </div>
+        <script src="https://cdn.plot.ly/plotly-2.34.0.min.js" charset="utf-8"></script>
+        <form id="filtersWrapper" class="mx-2 mt-4">
+            <div class="columns is-gapless">
+                <a class="column slapbird-button slapbird-is-secondary is-size-7">1 min</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mx-2">5 min</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mr-2">10 min</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mr-2">30 min</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mr-2">1 hour</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mr-2">24 hours</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mr-2">48 hours</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7">1 week</a>
+                <a class="column slapbird-button slapbird-is-secondary is-size-7 mx-2">1 month</a>
+                <a href="/dashboard?from=0" class="column slapbird-button slapbird-is-secondary is-size-7">All</a>
+            </div>
+        </form>
+        <div 
+            class="box mx-2"
+            hx-get="/htmx/dashboard-feed?from=<%= param('from') %>&to=<%= param('to') %>"
+            id="dashboardFeed"
+            hx-trigger="load">
+        </div>
+    % } else {
+        <h1 class="title is-2">No application selected</h1>
+    % }
+</div>
+<script>
+ const SLAPBIRD_TIME_MAP = {
+     '1 min': 60_000,
+     '5 min': 60_000 * 5,
+     '10 min': 60_000 * 10,
+     '30 min': 60_000 * 30,
+     '1 hour': 60_000 * 60,
+     '24 hours': 3_600_000 * 24,
+     '48 hours': 3_600_000 * 48,
+     '1 week': (3_600_000 * 24) * 7,
+     '1 month': (3_600_000 * 24) * 30,
+ };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+<script src="/js/feed.js"></script>
+<script src="/js/graph.js" type="module"></script>
