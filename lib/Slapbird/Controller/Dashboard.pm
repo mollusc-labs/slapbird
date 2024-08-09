@@ -21,12 +21,16 @@ sub dashboard {
     return $c->redirect_to('/dashboard/new-app');
   }
 
+  my $requests_today
+    = $c->application_context
+    ? $c->cache->get($c->application_context->application_id)
+    : 0;
+
   return $c->render(
     template           => 'dashboard',
     pricing_plan       => $pricing_plan,
     user_is_associated => $user_is_associated,
-    requests_today     =>
-      ($c->cache->get($c->application_context->application_id) // 0)
+    requests_today     => $requests_today
   );
 }
 
