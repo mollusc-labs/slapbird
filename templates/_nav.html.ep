@@ -1,31 +1,50 @@
-<nav class="navbar">
-    <div class="container">
-        <div id="navMenu" class="navbar-menu">
-            <div class="navbar-start">
-                <a href="/" class="navbar-item">
-                    <img src="/images/logo.png" alt="slapbird-logo">
-                </a>
-                <a href="/getting-started" class="navbar-item">
-                    Getting started
-                </a>
-                <a href="/docs" class="navbar-item">
-                    Docs
-                </a>
-                <a href="/pricing" class="navbar-item">
-                    Pricing
-                </a>
-            </div>
-            <div class="navbar-end">
-                % if (logged_in) {
+<nav class="container navbar">
+    <div class="navbar-brand">
+        <a href="/" class="navbar-item">
+            <img src="/images/logo.png" alt="slapbird-logo">
+        </a>
+        <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+        </a>
+    </div>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="/getting-started" class="navbar-item">
+                Getting started
+            </a>
+            <a href="/docs" class="navbar-item">
+                Docs
+            </a>
+            <a href="/pricing" class="navbar-item">
+                Pricing
+            </a>
+        </div>
+        <div class="navbar-end">
+            % if (logged_in) {
                 <a class="navbar-item" href="/dashboard">Dashboard</a>
                 <a class="navbar-item" href="/logout">Logout</a>
-                % } else {
+            % } else {
                 <a class="navbar-item" href="/login/github">
                     Login with Github
                     <span class="ml-2 svg"><%= include 'svg/_github_svg' %></span>
                 </a>
-                % }
-            </div>
+            % }
         </div>
     </div>
 </nav>
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+     const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+     $navbarBurgers.forEach( el => {
+         el.addEventListener('click', () => {
+             const target = el.dataset.target;
+             const $target = document.getElementById(target);
+             el.classList.toggle('is-active');
+             $target.classList.toggle('is-active');
+         });
+     });
+ });
+</script>

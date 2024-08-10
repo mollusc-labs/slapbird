@@ -1,19 +1,38 @@
-<nav class="navbar">
-    <div class="container">
-        <div id="navMenu" class="navbar-menu">
-            <div class="navbar-start">
-                <a href="/" class="navbar-item">
-                  <img src="/images/logo.png" alt="slapbird-logo">
-                </a>
-                <a href="/docs" class="navbar-item">
-                  Docs
-                </a>
-                <a href="/dashboard/manage-plan" class="navbar-item">
-                  Manage Plan
-                </a>
-            </div>
-            <div class="navbar-end" hx-get="/htmx/dashboard-nav-context" hx-trigger="load">
-            </div>
+<nav class="navbar container"> 
+    <div class="navbar-brand">
+        <a href="/" class="navbar-item">
+            <img src="/images/logo.png" alt="slapbird-logo">
+        </a>
+        <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+            <span aria-hidden="true" class="slapbird-burger-span"></span>
+        </a>
+    </div>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="/docs" class="navbar-item">
+                Docs
+            </a>
+            <a href="/dashboard/manage-plan" class="navbar-item">
+                Manage Plan
+            </a>
+        </div>
+        <div class="navbar-end" hx-get="/htmx/dashboard-nav-context" hx-trigger="load">
         </div>
     </div>
 </nav>
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+     const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+     $navbarBurgers.forEach( el => {
+         el.addEventListener('click', () => {
+             const target = el.dataset.target;
+             const $target = document.getElementById(target);
+             el.classList.toggle('is-active');
+             $target.classList.toggle('is-active');
+         });
+     });
+ });
+</script>

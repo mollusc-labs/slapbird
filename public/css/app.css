@@ -25,6 +25,10 @@
     width: auto;
 }
 
+.slapbird-burger-span {
+    background-color: #ee0000 !important;
+}
+
 .slapbird-link {
     color: #ee0000 !important;
 }
