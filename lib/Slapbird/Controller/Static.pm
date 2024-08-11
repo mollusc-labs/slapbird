@@ -23,4 +23,9 @@ sub tos {
   return $c->render(template => 'tos');
 }
 
+sub getting_started {
+  my ($c) = @_;
+  return $c->render(template => 'getting_started');
+}
+
 1;

@@ -1,4 +1,4 @@
-<footer class="has-text-centered is-flex-align-items-flex-end mt-auto pt-4 pb-6">
+<footer class="has-text-centered is-flex-align-items-flex-end mt-auto pt-4 pb-6 mt-6 ">
     <div class="content has-text-centered">
         <p>
             <strong>Slapbird</strong> by <a class="slapbird-link" href="https://mollusc-labs.ca">Mollusc Labs</a>.

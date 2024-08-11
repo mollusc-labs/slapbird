@@ -1,7 +1,7 @@
 % for my $price (@$prices) {
-<div class="box column is-one-forth mx-2 mt-6" style="width: 250px; height: 300px">
+<div class="box is-flex is-flex-direction-column mx-2 mt-6" style="width: 249; height: 400px">
   <header class="card-header has-text-centered">
-    <h3 class="title is-3 mb-2 mt-2">
+    <h3 class="title is-4 mb-2 mt-2">
       <%= $price->name %>
     </h3>
   </header>
@@ -13,7 +13,7 @@
       <%== $price->description %>
     </div>
   </div>
-  <div class="mt-auto" style="background-color: transparent;">
+  <div class="mt-auto" style="background-color: transparent; justify-self: end">
     <a href="/login?plan=<%= $price->pricing_plan_id %>" class="slapbird-link card-footer-item mt-auto">
       Start for free
     </a>

@@ -2,7 +2,7 @@
     %= include '_dashboard_header'
     <body>
         %= include '_dashboard_nav'
-        <main style="min-height: 100vh" class="container">
+        <main style="min-height: 100vh" class="container mb-6">
             %= include '_flash'
             <%= content %>
         </main>

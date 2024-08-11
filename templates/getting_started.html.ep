@@ -1,0 +1,28 @@
+<html>
+    %= include '_header', title => 'Slapbird APM - Getting Started', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services. Providing insights into application performance, and request times.'
+    <body>
+        <main class="container" style="min-height: 100vh">
+            %= include '_nav'
+            <h1 class="is-2 title mt-6">Getting Started</h1>
+            <h2 class="is-4 title mt-3">Mojolicious</h2>
+            <ol class="ml-6">
+                <li>Login to SlapbirdAPM via Github</li>
+                <li>Create your application</li>
+                <li>Copy your API key</li>
+                <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>
+                <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM';</code></li>
+                <li>
+                    Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application
+                    <ul>
+                        <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
+                    </ul>
+                </li>
+                <li>Restart your application</li>
+                <li>Navigate to your dashboard, and watch the transaction analytics roll in!</li>
+            </ol>
+            <h2 class="is-4 title mt-6 mb-1">Dancer2</h2>
+            <div class="has-text-grey">Coming Soon!</div>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

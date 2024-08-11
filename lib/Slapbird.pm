@@ -16,7 +16,8 @@ use Slapbird::Client::Github;
 use Slapbird::Schema;
 use Slapbird::Mojolicious::Sessions;
 use Slapbird::Actions;
-use Time::HiRes qw(time);
+use Slapbird::Util qw(slugify);
+use Time::HiRes    qw(time);
 use namespace::clean;
 
 our $VERSION = 0.001;
@@ -268,21 +269,29 @@ sub startup {
     }
   }
 
-  for (qw(index pricing tos privacy)) {
-    $router->any($_ eq 'index' ? '/' : "/$_")->to('static#' . $_)->name($_);
+  # Static routes
+  for (qw(index getting-started pricing tos privacy)) {
+    my $slug = slugify($_);
+    $slug =~ s/\-/_/g;
+    $router->any($_ eq 'index' ? '/' : "/$_")->to('static#' . $slug)
+      ->name($slug);
   }
 
+  # APM routes
+  # (these live in Controllers::API however they DON'T use the /api prefix)
   $router->post('/apm')->requires(apm_authenticated => 1)->to('api-apm#call')
     ->name('apm_post');
   $router->post('/apm/name')->requires(apm_authenticated => 1)
     ->to('api-apm#name')->name('apm_name');
 
+  # Auth routes
   $router->get('/login')->to('auth#login')->name('auth_login');
   $router->get('/login/github')->requires(authenticated => 0)
     ->to('auth#github')->name('auth_github');
   $router->any('/logout')->requires(authenticated => 1)->to('auth#logout')
     ->name('auth_logout');
 
+  # Dashboard routes
   $router->get('/dashboard')->requires(authenticated => 1)
     ->to('dashboard#dashboard')->name('dashboard');
   $router->get('/dashboard/transaction-summary/:endpoint')
@@ -309,6 +318,7 @@ sub startup {
     ->requires(authenticated => 1)->to('dashboard#delete_api_key')
     ->name('dashboard_delete_api_key');
 
+  # HTMX routes
   $router->get('/htmx/pricing')->requires(authenticated => 0)
     ->to(controller => 'htmx-pricing', action => 'htmx_pricing');
   $router->get('/htmx/dashboard-nav-context')->requires(authenticated => 1)
@@ -319,6 +329,7 @@ sub startup {
   $router->get('/htmx/dashboard-feed')->requires(authenticated => 1)
     ->to(controller => 'htmx-dashboard', action => 'htmx_dashboard_feed');
 
+  # API routes (JSON)
   $router->get('/api/dashboard/graph')->requires(authenticated => 1)
     ->to(controller => 'api-dashboard', action => 'json_graph');
 

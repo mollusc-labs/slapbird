@@ -9,8 +9,18 @@
                     Use Slapbird for free, then upgrade to a plan that meets your needs.
                 </p>
             </div>
-            <content class="container columns" hx-get="/htmx/pricing" hx-trigger="load">
+            <content class="container is-flex is-flex-wrap-wrap is-justify-content-center" hx-get="/htmx/pricing" hx-trigger="load">
             </content>
+            <div class="has-text-centered mt-3">
+                <p>
+                    Looking for a custom plan? Contact our sales team at <a class="slapbird-link" href="mailto:sales@slapbirdapm.com">sales@slapbirdapm.com</a>!
+                </p>
+            </div>
+            <div class="has-text-centered mt-3">
+                <p class="has-text-grey">
+                    All plans subject to maximum archival time of 30 days for HTTP transactions, unless stated otherwise.
+                </p>
+            </div>
         </main>
         %= include '_footer'
     </body>
