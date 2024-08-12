@@ -1,0 +1,36 @@
+name: linux
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        perl-version:
+          - '5.36'
+          - '5.38'
+          - 'latest'
+          - 'threaded'
+
+    container:
+      image: perl:${{ matrix.perl-version }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: perl -V
+        run: perl -V
+      - name: Install CPANM
+        run: cpan -I App::cpanminus
+      - name: Install deps
+        run: cpanm --installdeps . --cpanfile cpanfile
+      - name: Run Tests
+        run: prove -l t
