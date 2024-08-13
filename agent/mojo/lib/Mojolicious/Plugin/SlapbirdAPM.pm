@@ -15,10 +15,10 @@ use SlapbirdAPM::Trace;
 use namespace::clean;
 
 const my $SLAPBIRD_APM_URI => $ENV{SLAPBIRD_APM_DEV}
-  ? 'slapbirdapm.com:3000/apm'
+  ? $ENV{SLAPBIRD_APM_URI} . '/apm'
   : 'https://slapbirdapm.com/apm';
 const my $SLAPBIRD_APM_NAME_URI => $ENV{SLAPBIRD_APM_DEV}
-  ? 'slapbirdapm.com:3000/apm/name'
+  ? $ENV{SLAPBIRD_APM_URI} . '/name'
   : 'https://slapbirdapm.com/apm/name';
 const my $UA => Mojo::UserAgent->new();
 
@@ -91,7 +91,7 @@ sub _enable_mojo_ua_tracking {
 sub register {
     my ( $self, $app, $conf ) = @_;
     my $key             = $conf->{key} // $ENV{SLAPBIRDAPM_API_KEY};
-    my $topology        = exists $conf->{topology} ? 1 : $conf->{topology};
+    my $topology        = exists $conf->{topology} ? $conf->{topology} : 1;
     my $ignored_headers = $conf->{ignored_headers};
     my $no_trace        = $conf->{no_trace};
     my $stack           = [];

@@ -28,4 +28,14 @@ sub getting_started {
   return $c->render(template => 'getting_started');
 }
 
+sub upgrade {
+  my ($c) = @_;
+  return $c->render(template => 'upgrade');
+}
+
+sub docs {
+  my ($c) = @_;
+  return $c->render(template => 'documentation');
+}
+
 1;

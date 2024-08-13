@@ -1,0 +1,13 @@
+<html>
+    %= include '_header', title => 'Slapbird APM - Documentation', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services'
+    <body>
+        <main class="container" style="min-height: 100vh">
+            %= include '_nav'
+            <h1 class="is-2 title mt-6">Coming Soon!</h1>
+            <p>
+                For now, please refer to the <a class="slapbird-link" href="/getting-started">quick start guide</a>. Thanks!
+            </p>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

@@ -1,4 +1,4 @@
-% layout '_dashboard_layout', title => 'Slapbird APM - Upgrade', description => 'Slapbird APM dashboard';
+% layout '_dashboard_layout', title => 'Slapbird APM - Upgrade', description => 'Slapbird APM dashboard, upgrade your plan';
 
 <div class="box mt-6">
     <h1 class="is-2 title">You've maxxed out your SlapbirdAPM plan</h1>

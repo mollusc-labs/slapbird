@@ -24,3 +24,5 @@ requires 'Time::HiRes' => '0';
 requires 'Const::Fast' => '0.014';
 requires 'HTML::Escape' => '1.11';
 requires 'String::CamelCase' => '0.04';
+requires 'Mojolicious::Plugin::Cron' => '0.035';
+reqyures 'Net::Stripe' => '0.42';

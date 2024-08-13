@@ -11,6 +11,7 @@ use Mojo::Pg;
 use Mojo::IOLoop;
 use Mojo::File;
 use Cache::Memcached::Fast;
+use Const::Fast;
 use Data::Printer;
 use Slapbird::Client::Github;
 use Slapbird::Schema;
@@ -43,6 +44,26 @@ sub startup {
     'OAuth2' => {
       providers =>
         {github => {key => $ENV{GITHUB_APP_ID}, secret => $ENV{GITHUB_SECRET}}}
+    }
+  );
+  $self->plugin(
+
+    # Every 5 minutes
+    'Cron' => '*/5 * * * *' => sub {
+
+      const my $THIRTY_DAYS_MS => 86_400_000;
+
+      my (undef, $app) = @_;
+
+      $app->log->info('Doing hourly check to clear +30 day http_transactions');
+
+      my $rs = $app->resultset('HTTPTransaction')
+        ->search({start_time => {'<=' => (time * 1_000) - $THIRTY_DAYS_MS}});
+
+      $app->log->info(
+        'Deleting ' . $rs->count . ' HTTP transactions from <= 30 days ago.');
+
+      $rs->delete();
     }
   );
 
@@ -270,7 +291,7 @@ sub startup {
   }
 
   # Static routes
-  for (qw(index getting-started pricing tos privacy)) {
+  for (qw(index getting-started pricing tos privacy upgrade docs)) {
     my $slug = slugify($_);
     $slug =~ s/\-/_/g;
     $router->any($_ eq 'index' ? '/' : "/$_")->to('static#' . $slug)
