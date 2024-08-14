@@ -15,9 +15,11 @@
             <a href="/docs" class="navbar-item">
                 Docs
             </a>
-            <a href="/dashboard/manage-plan" class="navbar-item">
-                Manage Plan
-            </a>
+            % unless (user->is_associated) {
+                <a href="/dashboard/manage-plan" class="navbar-item">
+                    Manage Plan
+                </a>    
+            % }
         </div>
         <div class="navbar-end" hx-get="/htmx/dashboard-nav-context" hx-trigger="load">
         </div>

@@ -25,4 +25,5 @@ requires 'Const::Fast' => '0.014';
 requires 'HTML::Escape' => '1.11';
 requires 'String::CamelCase' => '0.04';
 requires 'Mojolicious::Plugin::Cron' => '0.035';
-reqyures 'Net::Stripe' => '0.42';
+requires 'Net::Stripe::Simple' => '0.005';
+requires 'Crypt::JWT' => '0.035';

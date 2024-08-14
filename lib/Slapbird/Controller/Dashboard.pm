@@ -9,6 +9,7 @@ use MIME::Base64;
 use Try::Tiny;
 use URL::Encode qw(url_decode_utf8);
 use DateTime;
+use Crypt::JWT qw(encode_jwt decode_jwt);
 
 sub dashboard {
   my ($c) = @_;
@@ -280,6 +281,107 @@ sub delete_app {
     application_id => $c->application_context->application_id);
 
   $c->flash_success($app_name . ' was deleted successfully.');
+
+  return $c->redirect_to('/dashboard');
+}
+
+sub manage_plan {
+  my ($c) = @_;
+
+  return $c->redirect_to('/dashboard') if ($c->user->is_associated);
+
+  my $invitation_link = '';
+  my $req             = $c->req;
+
+  $invitation_link .= '/invite/';
+
+  my $user_pricing_plan_id = $c->user->user_pricing_plan->user_pricing_plan_id;
+  my $valid_until          = time + 3_600;
+  my $invitation_code      = encode_jwt(
+    payload =>
+      qq/{"user_pricing_plan_id": "$user_pricing_plan_id", "valid_until": $valid_until}/,
+    alg => 'HS256',
+    key => $c->secure_key
+  );
+  $invitation_link .= encode_base64($invitation_code);
+
+  return $c->render(
+    template          => 'dashboard_manage_plan',
+    user_pricing_plan => $c->user->user_pricing_plan,
+    pricing_plan      => $c->user->user_pricing_plan->pricing_plan,
+    invitation_link   => $invitation_link
+  );
+}
+
+sub confirm_join_plan {
+  my ($c) = @_;
+
+  return $c->redirect_to('/dashboard') unless $c->session('plan_to_join');
+
+  my $user_pricing_plan = $c->resultset('UserPricingPlan')
+    ->find({user_pricing_plan_id => $c->session('plan_to_join')});
+
+  if (!$user_pricing_plan) {
+    $c->session(plan_to_join => undef);
+    return $c->redirect_to('/dashboard');
+  }
+
+  return $c->render(
+    template          => 'dashboard_confirm_join_plan',
+    user_pricing_plan => $user_pricing_plan,
+    pricing_plan      => $user_pricing_plan->pricing_plan
+  );
+}
+
+sub join_plan {
+  my ($c) = @_;
+
+  my $user_pricing_plan_id = $c->session('plan_to_join');
+  return $c->redirect_to('/dashboard') if !$user_pricing_plan_id;
+
+  $c->session(plan_to_join => undef);
+
+  my $guard = $c->dbic->txn_guard;
+
+  my $error;
+  (undef, $error) = do {
+    if ($c->user->is_associated) {
+      $c->actions->delete_associated_user_pricing_plan(
+        associated_user_pricing_plan_id =>
+          $c->user->associated_user_pricing_plan
+          ->associated_user_pricing_plan_id);
+    }
+    else {
+      $c->actions->delete_user_pricing_plan(user_pricing_plan_id =>
+          $c->user->user_pricing_plan->user_pricing_plan_id);
+    }
+  };
+
+  if ($error) {
+    goto ERROR;
+  }
+
+  my $associated_user_pricing_plan;
+  ($associated_user_pricing_plan, $error)
+    = $c->actions->associate_user_with_pricing_plan(
+    user_id              => $c->user->user_id,
+    user_pricing_plan_id => $user_pricing_plan_id
+    );
+
+  if ($error) {
+  ERROR:
+    $c->log->error($error);
+    $c->flash_danger(
+      'Something went wrong joining that plan... Please try again later.');
+    return $c->redirect_to('/dashboard');
+  }
+
+  $guard->commit;
+
+  $c->flash_success("You've successfully joined "
+      . $associated_user_pricing_plan->user_pricing_plan->user->name . "'s "
+      . $associated_user_pricing_plan->user_pricing_plan->pricing_plan->name
+      . ' plan!');
 
   return $c->redirect_to('/dashboard');
 }

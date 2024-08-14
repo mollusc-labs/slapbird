@@ -1,8 +1,10 @@
 % layout '_dashboard_layout', title => 'Slapbird APM - Upgrade', description => 'Slapbird APM dashboard, upgrade your plan';
 
 <div class="box mt-6">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/js/card.js" defer></script>
     <h1 class="is-2 title">You've maxxed out your SlapbirdAPM plan</h1>
     <p>
-        After the SlapbirdAPM beta, you will be able to upgrade your plan. Until then you're limited to 1 application.
+        Please select from one of the plans below to continue
     </p>
 </div>

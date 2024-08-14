@@ -28,6 +28,7 @@ sub login {
   return $c->render(template => 'auth/login');
 }
 
+# TODO: (RF) break this up
 sub github {
   my $c    = shift;
   my $args = {
@@ -82,11 +83,25 @@ sub github {
         oauth_provider => 'GITHUB'
       });
 
-      my ($user_pricing_plan, $error)
-        = $c->actions->add_user_to_free_plan(schema => $c->dbic,
-        user_id => $id);
+      # If the user clicked an invite from another user.
+      if (my $plan_to_join = $c->session('plan_to_join')) {
+        my ($user_pricing_plan, $error)
+          = $c->actions->associate_user_with_pricing_plan(
+          user_id              => $id,
+          user_pricing_plan_id => $plan_to_join
+          );
 
-      Carp::croak($error) if $error;
+        Carp::croak($error) if $error;
+      }
+      else {
+        my ($user_pricing_plan, $error) = $c->actions->add_user_to_free_plan(
+          schema  => $c->dbic,
+          user_id => $id
+        );
+
+        Carp::croak($error) if $error;
+      }
+
 
       $guard->commit;
     }

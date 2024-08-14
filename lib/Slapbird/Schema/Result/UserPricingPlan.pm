@@ -21,15 +21,34 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('user_pricing_plan_id');
 __PACKAGE__->has_many(
-  associated_user_pricing_plans => 'Slapbird::Schema::Result::AssociatedUserPricingPlan',
+  associated_user_pricing_plans =>
+    'Slapbird::Schema::Result::AssociatedUserPricingPlan',
   'user_pricing_plan_id'
 );
-__PACKAGE__->has_many(applications => 'Slapbird::Schema::Result::Application', 'user_pricing_plan_id');
 __PACKAGE__->has_many(
-  associated_user_pricing_plans => 'Slapbird::Schema::Result::AssociatedUserPricingPlan',
+  applications => 'Slapbird::Schema::Result::Application',
   'user_pricing_plan_id'
 );
-__PACKAGE__->belongs_to(pricing_plan => 'Slapbird::Schema::Result::PricingPlan', 'pricing_plan_id');
-__PACKAGE__->belongs_to(user         => 'Slapbird::Schema::Result::User',        'user_id');
+__PACKAGE__->has_many(
+  associated_user_pricing_plans =>
+    'Slapbird::Schema::Result::AssociatedUserPricingPlan',
+  'user_pricing_plan_id'
+);
+__PACKAGE__->belongs_to(
+  pricing_plan => 'Slapbird::Schema::Result::PricingPlan',
+  'pricing_plan_id'
+);
+__PACKAGE__->belongs_to(user => 'Slapbird::Schema::Result::User', 'user_id');
+
+sub users {
+  my ($self) = @_;
+  my @users = ($self->user,);
+
+  for ($self->associated_user_pricing_plans) {
+    push @users, $_->user;
+  }
+
+  return wantarray ? @users : \@users;
+}
 
 1;

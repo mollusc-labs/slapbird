@@ -19,6 +19,7 @@ use Slapbird::Mojolicious::Sessions;
 use Slapbird::Actions;
 use Slapbird::Util qw(slugify);
 use Time::HiRes    qw(time);
+use Net::Stripe::Simple;
 use namespace::clean;
 
 our $VERSION = 0.001;
@@ -28,7 +29,9 @@ Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 sub startup {
   my ($self) = @_;
 
-  $self->sessions(Slapbird::Mojolicious::Sessions->new());
+  $self->sessions(
+    Slapbird::Mojolicious::Sessions->new((
+      $ENV{SLAPBIRD_PRODUCTION} ? (secure => 1) : (secure => 0))));
 
   my $database_uri = $ENV{DATABASE_URI};
 
@@ -225,6 +228,34 @@ sub startup {
     }
   );
   $self->helper(actions => Slapbird::Actions->helper($self));
+  $self->helper(
+    stripe => sub {
+      return state $stripe
+        = Net::Stripe::Simple->new(api_key => $ENV{STRIPE_API_KEY});
+    }
+  );
+  $self->helper(
+    customer => sub {
+      my ($c) = @_;
+      Carp::croak('NEVER call app->customer where a user can be logged in!')
+        unless $c->logged_in;
+
+      # Users on the free plan have no stripe_id
+      return $c->stripe->customers(retrieve => $c->user->stripe_id)
+        if $c->user->stripe_id;
+
+      return undef;
+    }
+  );
+  $self->helper(
+    secure_key => sub {
+      if ($ENV{SLAPBIRD_PRODUCTION}) {
+        return $ENV{SLAPBIRD_SECURE_KEY};
+      }
+
+      return 'secure key';
+    }
+  );
 
   my $router = $self->routes;
 
@@ -338,6 +369,15 @@ sub startup {
   $router->post('/dashboard/delete-api-key/:api_key_id')
     ->requires(authenticated => 1)->to('dashboard#delete_api_key')
     ->name('dashboard_delete_api_key');
+  $router->get('/dashboard/manage-plan')->requires(authenticated => 1)
+    ->to('dashboard#manage_plan')->name('dashboard_manage_plan');
+  $router->get('/dashboard/confirm-join-plan')->requires(authenticated => 1)
+    ->to('dashboard#confirm_join_plan')->name('dashboard_confirm_join_plan');
+  $router->post('/dashboard/confirm-join-plan')->requires(authenticated => 1)
+    ->to('dashboard#join_plan')->name('dashboard_join_plan');
+
+  $router->get('/invite/:invite_code')->to('invite#invite')
+    ->name('invite_invite');
 
   # HTMX routes
   $router->get('/htmx/pricing')->requires(authenticated => 0)
