@@ -11,10 +11,18 @@ sub execute {
   my ($self) = @_;
 
   try {
-    $self->schema->resultset('AssociatedUserPricingPlan')
+    my $associated_user_pricing_plan
+      = $self->schema->resultset('AssociatedUserPricingPlan')
       ->find(
-      {associated_user_pricing_plan_id => $self->associated_user_pricing_id})
-      ->delete();
+      {associated_user_pricing_plan_id => $self->associated_user_pricing_id});
+
+    for ($associated_user_pricing_plan->applications) {
+      $_->{user_id} = $associated_user_pricing_plan->user_pricing_plan->user_id;
+      $_->save();
+    }
+
+    $associated_user_pricing_plan->delete();
+
     return (1, undef);
   }
   catch {

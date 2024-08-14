@@ -11,6 +11,8 @@ sub execute {
   my ($self) = @_;
 
   try {
+    $self->schema->resultset('Application')
+      ->search({user_pricing_plan_id => $self->user_pricing_plan_id})->delete();
     $self->schema->resultset('UserPricingPlan')
       ->find({user_pricing_plan_id => $self->user_pricing_plan_id})->delete();
     return (1, undef);

@@ -91,6 +91,8 @@ sub github {
           user_pricing_plan_id => $plan_to_join
           );
 
+        $c->flash_success("You successfully joined an existing plan.");
+
         Carp::croak($error) if $error;
       }
       else {

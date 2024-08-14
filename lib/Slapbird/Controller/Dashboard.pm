@@ -341,7 +341,7 @@ sub join_plan {
 
   $c->session(plan_to_join => undef);
 
-  my $guard = $c->dbic->txn_guard;
+  my $guard = $c->dbic->txn_scope_guard;
 
   my $error;
   (undef, $error) = do {
@@ -387,4 +387,3 @@ sub join_plan {
 }
 
 1;
-

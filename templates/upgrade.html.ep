@@ -4,7 +4,13 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="/js/card.js" defer></script>
     <h1 class="is-2 title">You've maxxed out your SlapbirdAPM plan</h1>
-    <p>
-        Please select from one of the plans below to continue
-    </p>
+    % if ($user_is_associated) {
+        <p class="has-text-grey">
+            Ask the manager of your SlapbirdAPM plan to upgrade.
+        </p>
+    % } else {
+        <p class="has-text-grey">
+            Please select from one of the plans below to continue
+        </p> 
+    % } 
 </div>

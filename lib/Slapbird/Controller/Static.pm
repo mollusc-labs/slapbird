@@ -30,7 +30,10 @@ sub getting_started {
 
 sub upgrade {
   my ($c) = @_;
-  return $c->render(template => 'upgrade');
+  return $c->render(
+    template           => 'upgrade',
+    user_is_associated => $c->user->is_associated
+  );
 }
 
 sub docs {
