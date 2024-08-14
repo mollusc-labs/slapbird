@@ -21,14 +21,13 @@ sub invite {
 
   $c->session(plan_to_join => $data->{user_pricing_plan_id});
 
-  if ($c->user->user_pricing_plan->user_pricing_plan_id eq
-    $data->{user_pricing_plan_id})
-  {
-    $c->flash_danger("You're already in that plan!");
-    return $c->redirect_to('/dashboard');
-  }
-
   if ($c->logged_in) {
+    if ($c->user->user_pricing_plan->user_pricing_plan_id eq
+      $data->{user_pricing_plan_id})
+    {
+      $c->flash_danger("You're already in that plan!");
+      return $c->redirect_to('/dashboard');
+    }
     return $c->redirect_to('/dashboard/confirm-join-plan');
   }
 

@@ -126,7 +126,8 @@ sub startup {
       return $api_key->application;
     }
   );
-  $self->helper(debug => sub { Data::Printer::p(@_); });
+  $self->helper(
+    debug => sub { Data::Printer::p(@_) unless $ENV{SLAPBIRD_PRODUCTION}; });
   $self->helper(
     is_uuid => sub {
       my ($c, $uuid) = @_;
