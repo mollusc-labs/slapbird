@@ -5,7 +5,7 @@
             %= include '_nav'
             <div class="mt-6 container">
                 <h1 class="is-1 title">404 Not Found</h1>
-                <p>The requested resource was not found, click <a href="/">here</a> to return home.</p>
+                <p>The requested resource was not found, click <a class="slapbird-link" href="/">here</a> to return home.</p>
             </div>
         </main>
         %= include '_footer'

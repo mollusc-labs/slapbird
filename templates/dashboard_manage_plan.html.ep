@@ -1,44 +1,62 @@
 % layout '_dashboard_layout', title => 'Slapbird APM - Dashboard Manage Plan', description => 'Slapbird APM dashboard, manage your plan';
 
-<h1 class="title mt-6 is-3">
-    Manage your Plan
-</h1>
-<div class="box mt-3 mb-6">
-    <h2 class="title is-3">Managing your <%= $pricing_plan->name %> plan</h2>
-    <h3 class="title is-5">Users:</h3>
-    <content>
+<div class="box mt-6 mb-6">
+    % if ($user_is_associated) {
+        <h2 class="title is-3">Viewing your <%= $pricing_plan->name %> plan</h2>
         <div class="columns is-vcentered has-text-grey">
             <div class="column">Name</div>
             <div class="column">Role</div>
-            <div class="column">Last Login</div>
             <div class="column"></div>
         </div>
         % for my $user ($user_pricing_plan->users) {
             <div class="columns is-vcentered">
-                <div class="column"><%= $user->name %></div>
+                <div class="column"><%= $user->name %> <%= $user_id eq $user->user_id ? '(you)' : '' %></div>
                 <div class="column"><%= $user->role %></div>
-                <div class="column"><span class="localized-date"><%= $user->last_login %></span></div>
-                % if ($user->user_id ne user->user_id) {
-                    <div class="column has-text-right">
-                        <a class="slapbird-button slapbird-is-secondary" href="/dashboard/manage-plan/confirm-remove-user/<%= $user->user_id %>">
-                            <%= include 'svg/_trash_svg' %>
-                        </a>
-                    </div>
-                % } else {
-                    <div class="column"></div>
-                % }
+                <div class="column"></div>
             </div>
         % }
-    </content>
-    <hr>
-    <div class="mt-3">
-        <a class="slapbird-button slapbird-is-primary" onclick="showCopied(this)" value="<%= $invitation_link %>">Copy invitation link</a>
-        <a class="slapbird-button slapbird-is-secondary" href="/upgrade">Upgrade your plan</a>
-        % if ($pricing_plan->price > 0) {
-            <a class="slapbird-button" href="/confirm-cancel">Cancel subscription</a>
-        % }
-    </div>
-    <p id="linkCopied" class="is-invisible has-text-grey mt-2">Link copied!</p>
+        <hr>
+        <div class="mt-3">
+            <a class="slapbird-button slapbird-is-secondary" href="/dashboard/confirm-leave-plan">Leave Plan</a>
+        </div>
+    % } else {
+        <h2 class="title is-3">Managing your <%= $pricing_plan->name %> plan</h2>
+        <h3 class="title is-5">Users:</h3>
+        <content>
+            <div class="columns is-vcentered has-text-grey">
+                <div class="column">Name</div>
+                <div class="column">Role</div>
+                <div class="column">Last Login</div>
+                <div class="column"></div>
+            </div>
+            % for my $user ($user_pricing_plan->users) {
+                <div class="columns is-vcentered">
+                    <div class="column"><%= $user->name %> <%= $user_id eq $user->user_id ? '(you)' : '' %></div>
+                    <div class="column"><%= $user->role %></div>
+                    <div class="column"><span class="localized-date"><%= $user->last_login %></span></div>
+                    % if ($user->user_id ne user->user_id) {
+                        <div class="column has-text-right">
+                            <a class="slapbird-button slapbird-is-secondary" href="/dashboard/manage-plan/confirm-remove-user/<%= $user->user_id %>">
+                                Remove
+                            </a>
+                        </div>
+                    % } else {
+                        <div class="column"></div>
+                    % }
+                </div>
+            % }
+        </content>
+        <hr>
+        <div class="mt-3">
+            <a class="slapbird-button slapbird-is-primary" onclick="showCopied(this)" value="<%= $invitation_link %>">Copy invitation link</a>
+            <a class="slapbird-button slapbird-is-secondary" href="/upgrade">Upgrade your plan</a>
+            % if ($pricing_plan->price > 0) {
+                <a class="slapbird-button" href="/confirm-cancel">Cancel subscription</a>
+            % }
+        </div>
+        <p id="linkCopied" class="is-invisible has-text-grey mt-2">Link copied!</p>
+        
+    % }
 </div>
 <script>
  const showCopied = (a) => {

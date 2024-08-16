@@ -12,13 +12,18 @@ sub execute {
 
   try {
     my $associated_user_pricing_plan
-      = $self->schema->resultset('AssociatedUserPricingPlan')
-      ->find(
-      {associated_user_pricing_plan_id => $self->associated_user_pricing_id});
+      = $self->schema->resultset('AssociatedUserPricingPlan')->find({
+      associated_user_pricing_plan_id => $self->associated_user_pricing_plan_id
+      });
 
-    for ($associated_user_pricing_plan->applications) {
+    my @applications = $self->schema->resultset('UserPricingPlan')->find({
+      user_pricing_plan_id =>
+        $associated_user_pricing_plan->user_pricing_plan_id
+    })->applications;
+
+    for (@applications) {
       $_->{user_id} = $associated_user_pricing_plan->user_pricing_plan->user_id;
-      $_->save();
+      $_->update();
     }
 
     $associated_user_pricing_plan->delete();

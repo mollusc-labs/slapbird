@@ -48,6 +48,16 @@ sub user_pricing_plan {
   return $self->_associated_user_pricing_plan->user_pricing_plan;
 }
 
+sub associated_user_pricing_plan {
+  my ($self) = @_;
+
+  if (!$self->is_associated) {
+    return undef;
+  }
+
+  return $self->_associated_user_pricing_plan;
+}
+
 sub is_associated {
   my ($self) = @_;
   return $self->user_pricing_plan->user_id ne $self->user_id;

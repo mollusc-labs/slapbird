@@ -279,8 +279,7 @@ sub startup {
 
       if (!$c->application_context->user_is_allowed($c->user->user_id)) {
         $c->cookie('application-context' => '', {expires => 1});
-        $c->redirect_to(
-          '/dashboard/permission/' . $c->application_context->application_id);
+        $c->redirect_to('/dashboard');
         return undef;
       }
 
@@ -376,6 +375,16 @@ sub startup {
     ->to('dashboard#confirm_join_plan')->name('dashboard_confirm_join_plan');
   $router->post('/dashboard/confirm-join-plan')->requires(authenticated => 1)
     ->to('dashboard#join_plan')->name('dashboard_join_plan');
+  $router->get('/dashboard/confirm-leave-plan')->requires(authenticated => 1)
+    ->to('dashboard#confirm_leave_plan')->name('dashboard_confirm_leave_plan');
+  $router->post('/dashboard/confirm-leave-plan')->requires(authenticated => 1)
+    ->to('dashboard#leave_plan')->name('dashboard_leave_plan');
+  $router->get('/dashboard/manage-plan/confirm-remove-user/:user_id')
+    ->requires(authenticated => 1)->to('dashboard#confirm_remove_user')
+    ->name('dashboard_confirm_remove_user');
+  $router->post('/dashboard/manage-plan/confirm-remove-user/:user_id')
+    ->requires(authenticated => 1)->to('dashboard#remove_user')
+    ->name('dashboard_remove_user');
 
   $router->get('/invite/:invite_code')->to('invite#invite')
     ->name('invite_invite');

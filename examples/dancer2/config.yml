@@ -1,0 +1,10 @@
+appname: "SlapbirdAPM Example"
+charset: "UTF-8"
+auto_page: 1
+session: "YAML"
+serializer: "JSON"
+ 
+plugins:
+  SlapbirdAPM:
+    default:
+      key: 'My API KEY'

@@ -1,6 +1,7 @@
 package Slapbird::Controller::Dashboard;
 
 use Mojo::Base 'Mojolicious::Controller';
+use Mojo::Cookie::Response;
 use Slapbird::Sanitizer::Application;
 use Slapbird::Advice::ErrorAdvice;
 use Data::ULID  qw(ulid);
@@ -288,8 +289,6 @@ sub delete_app {
 sub manage_plan {
   my ($c) = @_;
 
-  return $c->redirect_to('/dashboard') if ($c->user->is_associated);
-
   my $invitation_link = '';
   my $req             = $c->req;
 
@@ -305,11 +304,15 @@ sub manage_plan {
   );
   $invitation_link .= encode_base64($invitation_code);
 
+  my $user = $c->user;
+
   return $c->render(
-    template          => 'dashboard_manage_plan',
-    user_pricing_plan => $c->user->user_pricing_plan,
-    pricing_plan      => $c->user->user_pricing_plan->pricing_plan,
-    invitation_link   => $invitation_link
+    template           => 'dashboard_manage_plan',
+    user_id            => $user->user_id,
+    user_pricing_plan  => $user->user_pricing_plan,
+    pricing_plan       => $user->user_pricing_plan->pricing_plan,
+    invitation_link    => $invitation_link,
+    user_is_associated => $user->is_associated
   );
 }
 
@@ -357,9 +360,7 @@ sub join_plan {
     }
   };
 
-  if ($error) {
-    goto ERROR;
-  }
+  goto ERROR if $error;
 
   my $associated_user_pricing_plan;
   ($associated_user_pricing_plan, $error)
@@ -368,8 +369,8 @@ sub join_plan {
     user_pricing_plan_id => $user_pricing_plan_id
     );
 
+ERROR:
   if ($error) {
-  ERROR:
     $c->log->error($error);
     $c->flash_danger(
       'Something went wrong joining that plan... Please try again later.');
@@ -384,6 +385,145 @@ sub join_plan {
       . ' plan!');
 
   return $c->redirect_to('/dashboard');
+}
+
+sub confirm_leave_plan {
+  my ($c) = @_;
+
+  if (!$c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+
+  $c->render(
+    template          => 'dashboard_confirm_leave_plan',
+    user_pricing_plan => $c->user->user_pricing_plan,
+    pricing_plan      => $c->user->user_pricing_plan->pricing_plan
+  );
+}
+
+sub leave_plan {
+  my ($c) = @_;
+
+  if (!$c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+
+  my $scope_guard = $c->dbic->txn_scope_guard;
+
+  my (undef, $error)
+    = $c->actions->delete_associated_user_pricing_plan(
+    associated_user_pricing_plan_id =>
+      $c->user->associated_user_pricing_plan->associated_user_pricing_plan_id);
+
+  goto ERROR if $error;
+
+  my $user_pricing_plan;
+  ($user_pricing_plan, $error)
+    = $c->actions->add_user_to_free_plan(user_id => $c->user->user_id);
+
+ERROR:
+  if ($error) {
+    $c->log->error($error);
+    $c->flash_danger(
+      'Something went wrong leaving your plan... Please try again later.');
+    return $c->redirect_to('/dashboard');
+  }
+
+  $scope_guard->commit();
+
+  $c->cookie(application_context => '', {expires => 1});
+
+  return $c->redirect_to('/dashboard/new-app');
+}
+
+sub confirm_remove_user {
+  my ($c) = @_;
+
+  if ($c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+
+  my $user_id = $c->param('user_id');
+  my $user_to_remove;
+  for ($c->user->user_pricing_plan->associated_user_pricing_plans) {
+    if ($_->user_id eq $user_id) {
+      $user_to_remove = $_->user;
+    }
+  }
+
+  my $error;
+  if (!$user_to_remove) {
+    $error = 'User does not exist on plan.';
+  }
+
+  if ($error) {
+    $c->log->error($error);
+    $c->flash_danger(
+      'Something went wrong removing a user from your plan... Please try again later.'
+    );
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+
+  return $c->render(
+    template       => 'dashboard_confirm_remove_user',
+    user_to_remove => $user_to_remove
+  );
+}
+
+sub remove_user {
+  my ($c) = @_;
+
+  if ($c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+
+  my $scope_guard = $c->dbic->txn_scope_guard;
+
+  my $user_id = $c->param('user_id');
+  my $user_to_remove;
+  for ($c->user->user_pricing_plan->associated_user_pricing_plans) {
+    if ($_->user_id eq $user_id) {
+      $user_to_remove = $_->user;
+    }
+  }
+
+  my $error;
+  if (!$user_to_remove) {
+    $error = 'User does not exist on plan.';
+  }
+
+  (undef, $error) = $c->actions->transfer_applications_from_user_to_user(
+    from_user_id => $user_to_remove->user_id,
+    to_user_id   => $c->user->user_pricing_plan->user_id
+  );
+
+  goto ERROR if $error;
+
+  (undef, $error)
+    = $c->actions->delete_associated_user_pricing_plan(
+    associated_user_pricing_plan_id =>
+      $user_to_remove->associated_user_pricing_plan
+      ->associated_user_pricing_plan_id);
+
+  goto ERROR if $error;
+
+  my $user_pricing_plan;
+  ($user_pricing_plan, $error)
+    = $c->actions->add_user_to_free_plan(user_id => $user_to_remove->user_id);
+
+ERROR:
+  if ($error) {
+    $c->log->error($error);
+    $c->flash_danger(
+      'Something went wrong removing a user from your plan... Please try again later.'
+    );
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+  $scope_guard->commit();
+
+  return $c->redirect_to('/dashboard/manage-plan');
 }
 
 1;

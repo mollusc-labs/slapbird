@@ -15,10 +15,14 @@
             <a href="/docs" class="navbar-item">
                 Docs
             </a>
-            % unless (user->is_associated) {
+            % if (!user->is_associated) {
                 <a href="/dashboard/manage-plan" class="navbar-item">
                     Manage Plan
                 </a>    
+            % } else {
+                <a href="/dashboard/manage-plan" class="navbar-item">
+                    View Plan
+                </a>
             % }
         </div>
         <div class="navbar-end" hx-get="/htmx/dashboard-nav-context" hx-trigger="load">

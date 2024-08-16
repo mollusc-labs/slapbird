@@ -14,6 +14,8 @@ use IPC::Open2;
 use SlapbirdAPM::Trace;
 use namespace::clean;
 
+$Carp::Internal{__PACKAGE__} = 1;
+
 const my $SLAPBIRD_APM_URI => $ENV{SLAPBIRD_APM_DEV}
   ? $ENV{SLAPBIRD_APM_URI} . '/apm'
   : 'https://slapbirdapm.com/apm';
