@@ -5,10 +5,10 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-  NAME     => 'SlapbirdAPM::Agent::Dancer2',
+  NAME     => 'SlapbirdAPM::Agent::Plack',
   ABSTRACT =>
-    'A Dacner 2 agent software for the Perl application performance monitor, Slapbird. slapbirdapm.com',
-  VERSION_FROM => 'lib/SlapbirdAPM/Agent/Dancer2.pm',
+    'A Plack agent software for the Perl application performance monitor, Slapbird. slapbirdapm.com',
+  VERSION_FROM => 'lib/SlapbirdAPM/Agent/Plack.pm',
   PREREQ_PM    => {'ExtUtils::MakeMaker' => '7.12'},
   AUTHOR       => 'Rawley Fowler, Mollusc Labs',
   LICENSE      => 'mit',
@@ -28,7 +28,6 @@ WriteMakefile(
     'Carp'           => '0',
     'Try::Tiny'      => '0',
     'Plack'          => '0',
-    'Dancer2'        => '0',
     'JSON::MaybeXS'  => '0',
     'AnyEvent'       => '0',
     'AnyEvent::HTTP' => '0'

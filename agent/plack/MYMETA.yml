@@ -1,5 +1,5 @@
 ---
-abstract: 'A Dacner 2 agent software for the Perl application performance monitor, Slapbird. slapbirdapm.com'
+abstract: 'A Plack agent software for the Perl application performance monitor, Slapbird. slapbirdapm.com'
 author:
   - 'Rawley Fowler, Mollusc Labs'
 build_requires:
@@ -12,7 +12,7 @@ license: mit
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
-name: SlapbirdAPM-Agent-Dancer2
+name: SlapbirdAPM-Agent-Plack
 no_index:
   directory:
     - t
@@ -23,7 +23,6 @@ requires:
   AnyEvent: '0'
   AnyEvent::HTTP: '0'
   Carp: '0'
-  Dancer2: '0'
   JSON::MaybeXS: '0'
   Plack: '0'
   Try::Tiny: '0'

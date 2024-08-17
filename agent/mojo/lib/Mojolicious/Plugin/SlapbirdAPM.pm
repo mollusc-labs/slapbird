@@ -12,6 +12,7 @@ use Const::Fast;
 use Carp;
 use IPC::Open2;
 use SlapbirdAPM::Trace;
+use System::Info;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -28,7 +29,7 @@ my $should_request = 1;
 my $next_timestamp;
 
 sub _call_home {
-    my ( $json, $key, $app ) = @_;
+    my ( $json, $key, $app, $quiet ) = @_;
     return $UA->post_p(
         $SLAPBIRD_APM_URI,
         { 'x-slapbird-apm' => $key },
@@ -44,7 +45,7 @@ sub _call_home {
                     $next_timestamp = $t + ( 86400 - $t );
                     $app->log->warn(
 "You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
-                    );
+                    ) unless $quiet;
                     return;
                 }
                 $app->log->warn(
@@ -96,6 +97,7 @@ sub register {
     my $topology        = exists $conf->{topology} ? $conf->{topology} : 1;
     my $ignored_headers = $conf->{ignored_headers};
     my $no_trace        = $conf->{no_trace};
+    my $quiet           = $conf->{quiet};
     my $stack           = [];
     my $in_request      = 0;
 
@@ -162,9 +164,10 @@ sub register {
                     requestor => $c->req->headers->header('x-slapbird-name')
                       // 'UNKNOWN',
                     handler => $controller_name,
-                    stack   => $stack
+                    stack   => $stack,
+                    os      => System::Info->new->os
                 },
-                $key, $app
+                $key, $app, $quiet
             );
 
             $in_request = 0;

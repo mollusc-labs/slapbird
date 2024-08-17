@@ -25,6 +25,7 @@ __PACKAGE__->add_columns(qw(
   error
   requestor
   stack
+  os
 ));
 
 __PACKAGE__->add_columns(

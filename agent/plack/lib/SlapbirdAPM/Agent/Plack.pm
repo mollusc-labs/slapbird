@@ -1,4 +1,4 @@
-package SlapbirdAPM::Agent::Dancer2;
+package SlapbirdAPM::Agent::Plack;
 
 use strict;
 use warnings;

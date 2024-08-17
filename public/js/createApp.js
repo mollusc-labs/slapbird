@@ -7,6 +7,13 @@ const SLAPBIRD_INSTRUCTIONS = {
     <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM'</code></li>
     <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
     <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
+</ol>`,
+    plack: `<ol class="ml-6">
+    <li>Copy your API key</li>
+    <li>Install the SlapbirdAPM Plack middleware ie. <code>cpan -I SlapbirdAPM::Agent::Plack</code></li>
+    <li>Add the middleware to your application, typically this is done using <code>Plack::Builder</code></li>
+    <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+    <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>key => $API_KEY</code> in your <code>Plack::Builder</code> declaration</li>
 </ol>`
 };
 

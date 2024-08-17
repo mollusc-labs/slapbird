@@ -35,6 +35,7 @@
                 <div class="select">
                     <select name="type" v-model="applicationType" :disabled="disabled" required>
                         <option value="mojo" selected>Mojolicious</option>
+                        <option value="plack">Plack</option>
                         <!-- <option value="dancer">Dancer2</option>
                              <option value="plack">Plack</option>
                              <option value="other">Other</option> -->

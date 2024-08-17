@@ -7,3 +7,4 @@ requires 'IO::Handle' => '0';
 requires 'IPC::Open2' => '0';
 requires 'Time::HiRes' => '0';
 requires 'Carp' => '0';
+requires 'System::Info' => '0';

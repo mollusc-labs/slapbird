@@ -51,8 +51,8 @@ sub startup {
   );
   $self->plugin(
 
-    # Every 5 minutes
-    'Cron' => '*/5 * * * *' => sub {
+    # Every hour
+    'Cron' => '0 * * * *' => sub {
 
       const my $THIRTY_DAYS_MS => 2_592_000_000;
 

@@ -31,7 +31,7 @@
             <section class="container">
                 <div class="has-text-centered">
                     <h2 class="is-2 title mb-1">Application Performance Monitoring</h2>
-                    <h2 class="is-2 title">for Mojolicious and Dancer2 apps</h2>
+                    <h2 class="is-2 title">for Mojolicious and Plack apps</h2>
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-one-third has-text-centered">
@@ -39,7 +39,7 @@
                         <ul>
                             <li>Mojolicious</li>
                             <li>Dancer2</li>
-                            <li>Plack (Coming Soon)</li>
+                            <li>Plack</li>
                             <li>DBI (Coming Soon)</li>
                         </ul>
                     </div>

@@ -32,7 +32,8 @@ WriteMakefile(
     'IPC::Open2'       => '0',
     'namespace::clean' => '0.27',
     'Time::Piece'      => '1.3401',
-    'Time::HiRes'      => '1.9764'
+    'Time::HiRes'      => '1.9764',
+    'System::Info'     => '0.064'
   },
   test => {TESTS => 't/*.t t/*/*.t'}
 );

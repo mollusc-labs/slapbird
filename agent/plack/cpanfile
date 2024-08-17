@@ -8,3 +8,4 @@ requires 'JSON::MaybeXS' => '0';
 requires 'namespace::clean' => '0';
 requires 'Time::Piece' => '0';
 requires 'Time::HiRes' => '0';
+requires 'System::Info' => '0.064';

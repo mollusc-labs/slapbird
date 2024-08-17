@@ -4,6 +4,12 @@
         <main class="container" style="min-height: 100vh">
             %= include '_nav'
             <h1 class="is-2 title mt-6">Getting Started</h1>
+            <div>
+                <p>Please check out our <a class="slapbird-link" href="https://github.com/mollusc-labs/slapbird/tree/main/examples">examples</a> on Github!</p>
+                <p class="has-text-grey">
+                    Before you see analytics you will have to restart your application.
+                </p>
+            </div>
             <h2 class="is-4 title mt-3">Mojolicious</h2>
             <ol class="ml-6">
                 <li>Login to SlapbirdAPM via Github</li>
@@ -17,11 +23,15 @@
                         <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
                     </ul>
                 </li>
-                <li>Restart your application</li>
-                <li>Navigate to your dashboard, and watch the transaction analytics roll in!</li>
             </ol>
-            <h2 class="is-4 title mt-6 mb-1">Dancer2</h2>
-            <div class="has-text-grey">Coming Soon!</div>
+            <h2 class="is-4 title mt-3 mb-1">Plack</h2>
+            <ol class="ml-6">
+                <li>Copy your API key</li>
+                <li>Install the SlapbirdAPM Plack middleware ie. <code>cpan -I SlapbirdAPM::Agent::Plack</code></li>
+                <li>Add the middleware to your application, typically this is done using <code>Plack::Builder</code></li>
+                <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>key => $API_KEY</code> in your <code>Plack::Builder</code> declaration</li>
+            </ol>
         </main>
         %= include '_footer'
     </body>

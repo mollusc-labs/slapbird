@@ -1,6 +1,7 @@
 package Slapbird::Validator::HTTPTransaction;
 
 use Moo;
+use feature 'state';
 
 sub validate {
   my ($class, $object) = @_;
@@ -23,9 +24,9 @@ sub validate {
       response_code    => {type => 'integer'},
       response_size    => {type => ['integer', 'null']},
       request_size     => {type => ['integer', 'null']},
-      handler          => {type => 'string'},
-      error            => {type => ['string', 'null']},
-      requestor        => {type => ['string', 'null']},
+      handler          => {type => ['string',  'null']},
+      error            => {type => ['string',  'null']},
+      requestor        => {type => ['string',  'null']},
       request_headers  => {type => 'object'},
       response_headers => {type => 'object'},
       stack            => {
@@ -39,7 +40,8 @@ sub validate {
           },
           required => ['start_time', 'end_time', 'name']
         }
-      }
+      },
+      os => {type => ['string', 'null']}
     }
   });
 
@@ -49,24 +51,51 @@ sub validate {
 
   # TODO: (RF) as more things like Dancer2, Plack are added to the agent
   # This will need to dispatch on the type.
-  return $class->_validate_mojo($object);
+  return $class->_validate_mojo($object) if $object->{type} eq 'mojo';
+
+  return ();
 }
 
-sub _validate_mojo {
-  my ($self, $object) = @_;
+sub _validator_plack {
+  my ($class) = @_;
 
-  my $jv = JSON::Validator->new();
+  state $jv;
+
+  return $jv if $jv;
+
+  $jv->schema(
+    {
+
+    }
+  );
+
+  return $jv;
+}
+
+sub _validate_plack {
+  my ($class, $object) = @_;
+  return $class->_validator_plack->validate($object);
+}
+
+sub _validator_mojo {
+  my ($class) = @_;
+
+  state $jv;
+
+  return $jv if $jv;
 
   $jv->schema({
     type       => 'object',
-    required   => ['request_id', 'response_size'],
-    properties => {
-      request_id    => {type => 'string'},
-      response_size => {type => ['integer', 'null']}
-    }
+    required   => ['request_id'],
+    properties => {request_id => {type => 'string'},}
   });
 
-  return $jv->validate($object);
+  return $jv;
+}
+
+sub _validate_mojo {
+  my ($class, $object) = @_;
+  return $class->_validator_mojo->validate($object);
 }
 
 1;
