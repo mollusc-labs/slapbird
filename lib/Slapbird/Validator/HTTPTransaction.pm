@@ -56,33 +56,14 @@ sub validate {
   return ();
 }
 
-sub _validator_plack {
-  my ($class) = @_;
-
-  state $jv;
-
-  return $jv if $jv;
-
-  $jv->schema(
-    {
-
-    }
-  );
-
-  return $jv;
-}
-
-sub _validate_plack {
-  my ($class, $object) = @_;
-  return $class->_validator_plack->validate($object);
-}
-
 sub _validator_mojo {
   my ($class) = @_;
 
   state $jv;
 
   return $jv if $jv;
+
+  $jv = JSON::Validator->new();
 
   $jv->schema({
     type       => 'object',

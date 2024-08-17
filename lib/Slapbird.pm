@@ -333,7 +333,7 @@ sub startup {
   # (these live in Controllers::API however they DON'T use the /api prefix)
   $router->post('/apm')->requires(apm_authenticated => 1)->to('api-apm#call')
     ->name('apm_post');
-  $router->post('/apm/name')->requires(apm_authenticated => 1)
+  $router->get('/apm/name')->requires(apm_authenticated => 1)
     ->to('api-apm#name')->name('apm_name');
 
   # Auth routes

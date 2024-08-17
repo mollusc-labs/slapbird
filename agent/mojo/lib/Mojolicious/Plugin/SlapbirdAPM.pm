@@ -21,7 +21,7 @@ const my $SLAPBIRD_APM_URI => $ENV{SLAPBIRD_APM_DEV}
   ? $ENV{SLAPBIRD_APM_URI} . '/apm'
   : 'https://slapbirdapm.com/apm';
 const my $SLAPBIRD_APM_NAME_URI => $ENV{SLAPBIRD_APM_DEV}
-  ? $ENV{SLAPBIRD_APM_URI} . '/name'
+  ? $ENV{SLAPBIRD_APM_URI} . '/apm/name'
   : 'https://slapbirdapm.com/apm/name';
 const my $UA => Mojo::UserAgent->new();
 
@@ -181,8 +181,9 @@ sub register {
     my $name;
     try {
         $name =
-          _ua()->get( $SLAPBIRD_APM_NAME_URI => { 'x-slapbird-apm' => $key } )
-          ->result()->json()->{name};
+          Mojo::UserAgent->new->get(
+            $SLAPBIRD_APM_NAME_URI => { 'x-slapbird-apm' => $key } )->result()
+          ->json()->{name};
         _enable_mojo_ua_tracking($name) if $topology;
     }
     catch {

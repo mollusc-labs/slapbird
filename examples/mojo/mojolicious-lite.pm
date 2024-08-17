@@ -5,7 +5,7 @@ use warnings;
 
 use Mojolicious::Lite -signatures;
 
-plugin 'SlapbirdAPM', key => '';
+plugin 'SlapbirdAPM', key => '01J5H5BGE14WCZ3QKQA1AQ704Jabcv';
 
 get '/' => sub {
   my ($c) = @_;
