@@ -1,6 +1,10 @@
 .env
 agent/mojo/MYMETA*
 *.tgz
+*.tar.gz
+MANIFEST
+MANIFEST.bak
 pm_to_blib
 Makefile
+Makefile.*
 blib/
