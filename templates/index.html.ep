@@ -7,12 +7,12 @@
                 <div class="hero-body">
                     <div class="container columns is-vcentered">
                         <div class="column is-half">
-                            <h1 class="title mb-2">The Open-Source Perl 5 web-app APM</h1>
+                            <h1 class="title mb-2">The Perl 5 web application performance monitor</h1>
                             <ul class="subtitle">
                                 <li>Endpoint performance insights</li>
                                 <li>User agent tracking</li>
                                 <li>Service dependency visualization</li>
-                                <li>and More</li>
+                                <li>and more!</li>
                             </ul>
                             <a href="/login" class="slapbird-button slapbird-is-secondary">Start for free</a>
                             <a href="/getting-started" class="slapbird-button slapbird-is-primary">Learn More</a>
@@ -48,9 +48,9 @@
                         <ul>
                             <li>Application end-points</li>
                             <li>Performance</li>
-                            <li>Uptime</li>
+                            <li>Application errors</li>
                             <li>Mojo::UserAgent communications</li>
-                            <li>Distributed system topology</li>
+                            <li>Distributed systems topology</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">
