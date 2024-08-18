@@ -14,4 +14,4 @@ The [SlapbirdAPM](https://www.slapbirdapm.com) user-agent for Mojolicious applic
 
 SlapbirdAPM::Agent::Mojo like all SlapbirdAPM user-agents is licensed under the MIT license.
 
-SlapbirdAPM (the website) however, is licensed under the GNU GPL version 3.0.
+SlapbirdAPM (the server side software) however, is licensed under the GNU AGPL version 3.0.

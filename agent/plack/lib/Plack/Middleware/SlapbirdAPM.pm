@@ -94,11 +94,11 @@ sub _call_home {
 sub call {
     my ( $self, $env ) = @_;
 
-    $self->{key} //= $ENV{SLAPBIRD_APM_KEY};
+    $self->{key} //= $ENV{SLAPBIRDAPM_API_KEY};
 
     if ( !$self->key ) {
         Carp::carp(
-'SlapbirdAPM key not set, cannot communicate with SlapbirdAPM. Pass key => "MY KEY", or set the SLAPBIRD_APM_KEY environment variable.'
+'SlapbirdAPM key not set, cannot communicate with SlapbirdAPM. Pass key => "MY KEY", or set the SLAPBIRDAPM_API_KEY environment variable.'
         );
         return $self->app->($env);
     }
