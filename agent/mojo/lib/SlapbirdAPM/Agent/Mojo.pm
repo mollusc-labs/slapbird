@@ -11,27 +11,63 @@ our $VERSION = 0.003;
 
 =encoding utf8
 
-=head1 SlapbirdAPM::Agent::Mojo
+=head1 NAME
 
-The L<SlapbirdAPM|https://www.slapbirdapm.com> user-agent for Mojolicious applications.
+SlapbirdAPM::Agent::Mojo
 
-=head2 Quick start
+The L<SlapbirdAPM|https://www.slapbirdapm.com> user-agent for L<Mojolicious> applications.
+
+=head1 SYNOPSIS
 
 =over 2
 
-=item Create an application on L<SlapbirdAPM|https://www.slapbirdapm.com>
+=item *
 
-=item Install this ie C<cpanm SlapbirdAPM::Agent::Mojo>, C<cpan -I SlapbirdAPM::Agent::Mojo>
+Create an application on L<SlapbirdAPM|https://www.slapbirdapm.com>
 
-=item Add C<plugin 'SlapbirdAPM';> to your project
+=item *
 
-=item Add your API key to your environment: C<SLAPBIRDAPM_API_KEY="MY API KEY">
+Install this ie C<cpanm SlapbirdAPM::Agent::Mojo>, C<cpan -I SlapbirdAPM::Agent::Mojo>
 
-=item Restart your application
+=item *
+
+Add C<plugin 'SlapbirdAPM';> to your L<Mojolicious> application
+
+=item *
+
+Add your API key to your environment: C<SLAPBIRDAPM_API_KEY="$api_key">
+
+=item *
+
+Restart your application
 
 =back
 
-=head2 Licensing
+=head1 EXAMPLE
+
+  use strict;
+  use warnings;
+  
+  use Mojolicious::Lite -signatures;
+  
+  plugin 'SlapbirdAPM', key => '01J5H5BGE14WCZ3QKQA1AQ704Jabcv';
+  
+  get '/' => sub {
+    my ($c) = @_;
+    return $c->render(text => 'Hello World!');
+  };
+  
+  app->start;
+
+=head1 SEE ALSO
+
+L<SlapbirdAPM::Agent::Plack>
+
+=head1 AUTHOR
+
+Mollusc Labs, C<https://github.com/mollusc-labs>
+
+=head1 LICENSE
 
 SlapbirdAPM::Agent::Mojo like all SlapbirdAPM user-agents is licensed under the MIT license.
 

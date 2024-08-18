@@ -1,0 +1,35 @@
+---
+abstract: 'A Plack agent software for the Perl application performance monitor, Slapbird. slapbirdapm.com'
+author:
+  - 'Rawley Fowler, Mollusc Labs'
+build_requires:
+  ExtUtils::MakeMaker: '0'
+configure_requires:
+  ExtUtils::MakeMaker: '0'
+dynamic_config: 0
+generated_by: 'ExtUtils::MakeMaker version 7.70, CPAN::Meta::Converter version 2.150010'
+license: mit
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: SlapbirdAPM-Agent-Plack
+no_index:
+  directory:
+    - t
+    - inc
+    - examples
+    - t
+requires:
+  AnyEvent: '0'
+  AnyEvent::HTTP: '0'
+  Carp: '0'
+  JSON::MaybeXS: '0'
+  Plack: '0'
+  Try::Tiny: '0'
+  perl: '5.024'
+resources:
+  bugtracker: https://github.com/mollusc-labs/Slapbird/issues
+  license: http://www.opensource.org/licenses/mit
+  repository: https://github.com/mollusc-labs/Slapbird
+version: '0.001'
+x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
