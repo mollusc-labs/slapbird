@@ -18,6 +18,7 @@ __PACKAGE__->add_columns(qw(
   max_users
   max_applications
   active
+  stripe_id
 ));
 
 __PACKAGE__->add_columns(
@@ -26,6 +27,9 @@ __PACKAGE__->add_columns(
 );
 
 __PACKAGE__->set_primary_key('pricing_plan_id');
-__PACKAGE__->has_many(user_pricing_plans => 'Slapbird::Schema::Result::UserPricingPlan', 'pricing_plan_id');
+__PACKAGE__->has_many(
+  user_pricing_plans => 'Slapbird::Schema::Result::UserPricingPlan',
+  'pricing_plan_id'
+);
 
 1;

@@ -294,17 +294,14 @@ sub manage_plan {
     secure_key           => $c->secure_key
   );
 
-  my $card = $c->user->user_pricing_plan->card;
   my $user = $c->user;
-
   return $c->render(
     template           => 'dashboard_manage_plan',
     user_id            => $user->user_id,
     user_pricing_plan  => $user->user_pricing_plan,
     pricing_plan       => $user->user_pricing_plan->pricing_plan,
     invitation_link    => $invitation_link,
-    user_is_associated => $user->is_associated,
-    card               => $card
+    user_is_associated => $user->is_associated
   );
 }
 

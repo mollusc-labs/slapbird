@@ -3,7 +3,7 @@
     <span class="svg"><%= include 'svg/_plus_svg' %></span>
   </a>
 % } else {
-  <a class="navbar-item" href="/upgrade?referrer=/dashboard">
+  <a class="navbar-item" href="/dashboard/manage-plan/upgrade?referrer=/dashboard">
     <span class="svg"><%= include 'svg/_plus_svg' %></span>
   </a>
 % }

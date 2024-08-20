@@ -20,6 +20,7 @@ use Slapbird::Mojolicious::Sessions;
 use Slapbird::Actions;
 use Slapbird::Util qw(slugify);
 use Time::HiRes    qw(time);
+use Try::Tiny;
 use Net::Stripe::Simple;
 use namespace::clean;
 
@@ -55,22 +56,64 @@ sub startup {
   $self->plugin(
 
     # Every hour
-    'Cron' => '0 * * * *' => sub {
+    'Cron' => (
+      thirty_day_clear => {
+        base    => 'utc',
+        crontab => '0 * * * *',
+        code    => sub {
+          const my $THIRTY_DAYS_MS => 2_592_000_000;
 
-      const my $THIRTY_DAYS_MS => 2_592_000_000;
+          my (undef, $app) = @_;
 
-      my (undef, $app) = @_;
+          $app->log->info(
+            'Doing hourly check to clear +30 day http_transactions');
 
-      $app->log->info('Doing hourly check to clear +30 day http_transactions');
+          my $rs
+            = $app->resultset('HTTPTransaction')
+            ->search(
+            {start_time => {'<=' => (time * 1_000) - $THIRTY_DAYS_MS}});
 
-      my $rs = $app->resultset('HTTPTransaction')
-        ->search({start_time => {'<=' => (time * 1_000) - $THIRTY_DAYS_MS}});
+          $app->log->info('Deleting '
+              . $rs->count
+              . ' HTTP transactions from <= 30 days ago.');
 
-      $app->log->info(
-        'Deleting ' . $rs->count . ' HTTP transactions from <= 30 days ago.');
+          $rs->delete();
+        }
+      },
+      set_plans_on_hold => {
+        base    => 'utc',
+        crontab => '0 * * * *',
+        code    => sub {
+          my (undef, $app) = @_;
 
-      $rs->delete();
-    }
+          $app->log->info('Doing hourly subscription check');
+          my @user_pricing_plans;
+          my @stripe_subscriptions;
+
+          try {
+            @user_pricing_plans = $app->resultset('UserPricingPlan')
+              ->search({stripe_id => +{-not => undef}})->all;
+            @stripe_subscriptions = $app->stripe->subscriptions('list')->data;
+          }
+          catch {
+            $app->log->error("Error when checking plans to set on hold: $_");
+            return;
+          };
+
+          my %stripe_subscription_lookup
+            = map { $_->id => $_ } @stripe_subscriptions;
+
+          for my $user_pricing_plan (@user_pricing_plans) {
+            my $stripe_subscription
+              = $stripe_subscription_lookup{$user_pricing_plan->stripe_id};
+
+            if ($stripe_subscription->status eq 'ended') {
+              $user_pricing_plan->update({on_hold => 1});
+            }
+          }
+        }
+      }
+    )
   );
 
   $self->helper(
@@ -130,7 +173,11 @@ sub startup {
     }
   );
   $self->helper(
-    debug => sub { Data::Printer::p(@_) unless $ENV{SLAPBIRD_PRODUCTION}; });
+    debug => sub {
+      shift;    # Remove controller from every debug log.
+      Data::Printer::p(@_) unless $ENV{SLAPBIRD_PRODUCTION};
+    }
+  );
   $self->helper(
     is_uuid => sub {
       my ($c, $uuid) = @_;
@@ -347,8 +394,29 @@ sub startup {
     }
   }
 
+  try {
+    my @pricing_plans = $self->resultset('PricingPlan')->all;
+    my %update_lookup = map { lc($_->name) => $_ }
+      grep { !defined($_->stripe_id) } @pricing_plans;
+
+    if (%update_lookup) {
+      for my $stripe_plan (@{$self->stripe->plans('list')->data}) {
+        chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
+        if (my $plan = $update_lookup{$cut}) {
+          $plan->update({stripe_id => $stripe_plan->id});
+        }
+      }
+    }
+
+  }
+  catch {
+    $self->app->log->warn(
+      'Unable to check Stripe/pricing plan associations: ' . $_);
+  };
+
+
   # Static routes
-  for (qw(index getting-started pricing tos privacy upgrade docs)) {
+  for (qw(index getting-started pricing tos privacy docs)) {
     my $slug = slugify($_);
     $slug =~ s/\-/_/g;
     $router->any($_ eq 'index' ? '/' : "/$_")->to('static#' . $slug)
@@ -411,9 +479,20 @@ sub startup {
   $router->post('/dashboard/manage-plan/confirm-remove-user/:user_id')
     ->requires(authenticated => 1)->to('dashboard#remove_user')
     ->name('dashboard_remove_user');
-  $router->post('/dashboard/manage-plan/cards')->requires(authenticated => 1)
-    ->to('card#add_or_update_card')->name('dashboard_add_or_update_card');
+  $router->get('/dashboard/manage-plan/upgrade')->requires(authenticated => 1)
+    ->to('static#upgrade')->name('dashboard_manage_plan_upgrade');
 
+  # Stripe
+  $router->post('/dashboard/manage-plan/stripe/upgrade')
+    ->requires(authenticated => 1)->to('stripe#checkout_session')
+    ->name('stripe_checkout_session');
+  $router->get('/dashboard/manage-plan/stripe/portal')
+    ->requires(authenticated => 1)->to('stripe#portal')->name('stripe_portal');
+  $router->get('/dashboard/manage-plan/stripe/upgrade/success')
+    ->requires(authenticated => 1)->to('stripe#checkout_session_success')
+    ->name('stripe_checkout_session_success');
+
+  # Invite
   $router->get('/invite/:invite_code')->to('invite#invite')
     ->name('invite_invite');
 

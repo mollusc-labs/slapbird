@@ -30,9 +30,15 @@ sub getting_started {
 
 sub upgrade {
   my ($c) = @_;
+
+  my @pricing_plans
+    = $c->resultset('PricingPlan')->search({stripe_id => {-not => undef}})->all;
+
   return $c->render(
     template           => 'upgrade',
-    user_is_associated => $c->user->is_associated
+    user_is_associated => $c->user->is_associated,
+    user_pricing_plan  => $c->user->user_pricing_plan,
+    pricing_plans      => [reverse @pricing_plans]
   );
 }
 

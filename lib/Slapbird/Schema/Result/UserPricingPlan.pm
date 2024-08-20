@@ -13,6 +13,7 @@ __PACKAGE__->load_components(qw(InflateColumn::DateTime TimeStamp));
 __PACKAGE__->add_columns(qw(
   pricing_plan_id
   user_id
+  stripe_id
   on_hold
 ));
 

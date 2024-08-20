@@ -29,7 +29,7 @@ sub execute {
 
     $user->update({stripe_id => $customer->id});
 
-    return (1, undef);
+    return ($customer->id, undef);
   }
   catch {
     return (undef, $_);
