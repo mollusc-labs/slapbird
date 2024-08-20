@@ -48,6 +48,11 @@ sub helper {
         if (defined $meta->find_attribute_by_name('schema')) {
           $args{schema} //= $c->dbic;
         }
+
+        if (defined $meta->find_attribute_by_name('stripe')) {
+          $args{stripe} //= $c->stripe;
+        }
+
         return $actions{$k}->new(%args)->execute();
       }
     );

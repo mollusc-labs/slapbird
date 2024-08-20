@@ -1,0 +1,13 @@
+<html>
+    %= include '_header', title => '500 Internal Server Error', description => 'SlapbirdAPM Internal Server Error'
+    <body>
+        <main style="min-height: 100vh">
+            %= include '_nav'
+            <div class="mt-6 container">
+                <h1 class="is-1 title">500 Internal Server Error</h1>
+                <p>Something went very wrong, please try again later. Click <a href="/">here</a> to return home.</p>
+            </div>
+        </main>
+        %= include '_footer'
+    </body>
+</html>

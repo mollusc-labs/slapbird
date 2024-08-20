@@ -11,22 +11,26 @@ use lib curfile->dirname() . '/../lib';
 
 my $verb = $ARGV[0];
 
-Carp::croak('No verb provided, try "up" or "down"')
-  if !$verb;
+Carp::croak('No verb provided, try "up" or "down"') if !$verb;
 
 Carp::croak('Invalid verb, try "up" or "down"')
-  if $verb ne 'up' &&
-     $verb ne 'down';
+  if $verb ne 'up' && $verb ne 'down';
 
 my $database_uri = $ENV{DATABASE_URI};
 
 Carp::croak('No database URI set, ') unless $database_uri;
 
-my $pg = Mojo::Pg->new($database_uri);
+my $pg   = Mojo::Pg->new($database_uri);
 my $path = curfile->dirname() . '/../mig/';
 
 if ($verb eq 'up') {
-  for ( @{ Mojo::File->new($path)->list } ) {
+  my @files = sort {
+    my $av = ($a =~ /([0-9]+)/si)[0];
+    my $bv = ($b =~ /([0-9]+)/si)[0];
+    $av <=> $bv;
+  } @{Mojo::File->new('mig')->list};
+  for (@files) {
+    CORE::say $_;
     $pg->migrations->name($_)->from_file($_)->migrate();
   }
 }

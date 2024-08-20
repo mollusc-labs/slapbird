@@ -51,10 +51,70 @@
             <a class="slapbird-button slapbird-is-primary" onclick="showCopied(this)" value="<%= $invitation_link %>">Copy invitation link</a>
             <a class="slapbird-button slapbird-is-secondary" href="/upgrade">Upgrade your plan</a>
             % if ($pricing_plan->price > 0) {
-                <a class="slapbird-button" href="/confirm-cancel">Cancel subscription</a>
+                <a class="slapbird-button" href="/manage-plan/confirm-cancel">Cancel subscription</a>
             % }
         </div>
         <p id="linkCopied" class="is-invisible has-text-grey mt-2">Link copied!</p>
+        % if ($card) {
+            <div class="columns">
+               <div><%= $card->type %></div>
+               <div>ending in<%= $card->ends_with %></div>
+               <div>
+                   <form action="/dashboard/manage-plan">
+                       <button class="slapbird-button slapbird-is-secondary"><%= include 'svg/_trash' %></button>
+                   </form>
+               </div>
+           </div> 
+        % } 
+        <h4 class="title is-4 mt-2">Add/Update Credit Card Information</h4>
+        <form action="/dashboard/manage-plan/cards" method="POST">
+            <div class="columns">
+                <div class="column is-one-quarter field">
+                    <label class="label">Card Number</label>
+                    <div class="control">
+                        <input name="number" class="input" type="text" placeholder="1234 5678 9123 4567" maxlength="16">
+                    </div>
+                </div>
+                <div class="column is-one-quarter field">
+                    <label class="label">Cardholder Name</label>
+                    <div class="control">
+                        <input name="name" class="input" type="text" placeholder="John Doe">
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-one-fifth field">
+                    <label class="label">Expiration Date</label>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="control">
+                                <input name="month" class="input" type="text" placeholder="MM" maxlength="2">
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="control">
+                                <input name="year" class="input" type="text" placeholder="YY" maxlength="2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column" style="max-width: 76px">
+                    <div class="field">
+                        <label class="label">CVV</label>
+                        <div class="control">
+                            <input name="cvv" class="input" type="text" placeholder="123" maxlength="4">
+                        </div>
+                    </div>    
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="slapbird-button slapbird-is-primary"><%= $card ? 'Update Card' : 'Add Card' %></button>
+                </div>
+            </div>
+            <p class="mt-4 mb-0 pb-0 has-text-grey">
+                SlapbirdAPM uses <a class="slapbird-link" href="https://stripe.com">Stripe</a> for payment. We do not store any credit card information, other than the last 4 digits and the card type.</p>
+        </form>
         
     % }
 </div>

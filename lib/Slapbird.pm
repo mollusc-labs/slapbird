@@ -11,6 +11,7 @@ use Mojo::Pg;
 use Mojo::IOLoop;
 use Mojo::File;
 use Cache::Memcached::Fast;
+use Carp ();
 use Const::Fast;
 use Data::Printer;
 use Slapbird::Client::Github;
@@ -23,6 +24,8 @@ use Net::Stripe::Simple;
 use namespace::clean;
 
 our $VERSION = 0.001;
+
+$Carp::Verbose = 1;
 
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
@@ -231,8 +234,7 @@ sub startup {
   $self->helper(actions => Slapbird::Actions->helper($self));
   $self->helper(
     stripe => sub {
-      return state $stripe
-        = Net::Stripe::Simple->new(api_key => $ENV{STRIPE_API_KEY});
+      return state $stripe = Net::Stripe::Simple->new($ENV{STRIPE_API_KEY});
     }
   );
   $self->helper(
@@ -313,9 +315,33 @@ sub startup {
     }
   );
 
+  $self->hook(
+    around_action => sub {
+      my ($next, $c) = @_;
+
+      $next->() && return 1
+        unless ($c->logged_in && $c->user->user_pricing_plan);
+
+      if ($c->user->user_pricing_plan->on_hold) {
+        $c->redirect_to('/dashboard/on-hold');
+        return undef;
+      }
+
+      $next->();
+
+      return 1;
+    }
+  );
+
   if ($ENV{SLAPBIRD_PRODUCTION}) {
-    my $pg = Mojo::Pg->new($database_uri);
-    for (@{Mojo::File->new('mig')->list}) {
+    my $pg    = Mojo::Pg->new($database_uri);
+    my @files = sort {
+      my $av = ($a =~ /([0-9]+)/si)[0];
+      my $bv = ($b =~ /([0-9]+)/si)[0];
+      $av <=> $bv;
+    } @{Mojo::File->new('mig')->list};
+
+    for (@files) {
       $self->app->log->info('Running migration: ' . $_);
       $pg->migrations->name($_)->from_file($_)->migrate();
     }
@@ -385,6 +411,8 @@ sub startup {
   $router->post('/dashboard/manage-plan/confirm-remove-user/:user_id')
     ->requires(authenticated => 1)->to('dashboard#remove_user')
     ->name('dashboard_remove_user');
+  $router->post('/dashboard/manage-plan/cards')->requires(authenticated => 1)
+    ->to('card#add_or_update_card')->name('dashboard_add_or_update_card');
 
   $router->get('/invite/:invite_code')->to('invite#invite')
     ->name('invite_invite');

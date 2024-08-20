@@ -4,6 +4,8 @@ use base 'DBIx::Class::Core';
 use strict;
 use warnings;
 
+use Time::HiRes qw(time);
+
 __PACKAGE__->table('user_pricing_plans');
 
 __PACKAGE__->load_components(qw(InflateColumn::DateTime TimeStamp));
@@ -11,7 +13,7 @@ __PACKAGE__->load_components(qw(InflateColumn::DateTime TimeStamp));
 __PACKAGE__->add_columns(qw(
   pricing_plan_id
   user_id
-  is_active
+  on_hold
 ));
 
 __PACKAGE__->add_columns(
@@ -34,6 +36,10 @@ __PACKAGE__->has_many(
     'Slapbird::Schema::Result::AssociatedUserPricingPlan',
   'user_pricing_plan_id'
 );
+__PACKAGE__->has_one(
+  card => 'Slapbird::Schema::Result::Card',
+  'user_pricing_plan_id'
+);
 __PACKAGE__->belongs_to(
   pricing_plan => 'Slapbird::Schema::Result::PricingPlan',
   'pricing_plan_id'
@@ -49,6 +55,16 @@ sub users {
   }
 
   return wantarray ? @users : \@users;
+}
+
+sub is_refundable {
+  my ($self) = @_;
+
+  unless ($self->pricing_plan->price > 0) {
+    return 0;
+  }
+
+  return $self->joined_at - (time * 1_000);
 }
 
 1;

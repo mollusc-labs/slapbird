@@ -289,21 +289,12 @@ sub delete_app {
 sub manage_plan {
   my ($c) = @_;
 
-  my $invitation_link = '';
-  my $req             = $c->req;
-
-  $invitation_link .= '/invite/';
-
-  my $user_pricing_plan_id = $c->user->user_pricing_plan->user_pricing_plan_id;
-  my $valid_until          = time + 3_600;
-  my $invitation_code      = encode_jwt(
-    payload =>
-      qq/{"user_pricing_plan_id": "$user_pricing_plan_id", "valid_until": $valid_until}/,
-    alg => 'HS256',
-    key => $c->secure_key
+  my $invitation_link = $c->actions->create_invitation_link(
+    user_pricing_plan_id => $c->user->user_pricing_plan->user_pricing_plan_id,
+    secure_key           => $c->secure_key
   );
-  $invitation_link .= encode_base64($invitation_code);
 
+  my $card = $c->user->user_pricing_plan->card;
   my $user = $c->user;
 
   return $c->render(
@@ -312,7 +303,8 @@ sub manage_plan {
     user_pricing_plan  => $user->user_pricing_plan,
     pricing_plan       => $user->user_pricing_plan->pricing_plan,
     invitation_link    => $invitation_link,
-    user_is_associated => $user->is_associated
+    user_is_associated => $user->is_associated,
+    card               => $card
   );
 }
 
