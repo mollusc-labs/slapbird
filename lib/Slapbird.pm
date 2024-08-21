@@ -86,31 +86,43 @@ sub startup {
         code    => sub {
           my (undef, $app) = @_;
 
+          use Slapbird::Client::Stripe;
+          my $stripe_client = Slapbird::Client::Stripe->new();
+
           $app->log->info('Doing hourly subscription check');
-          my @user_pricing_plans;
-          my @stripe_subscriptions;
 
           try {
-            @user_pricing_plans = $app->resultset('UserPricingPlan')
+            my @user_pricing_plans = $app->resultset('UserPricingPlan')
               ->search({stripe_id => +{-not => undef}})->all;
-            @stripe_subscriptions = $app->stripe->subscriptions('list')->data;
+
+            for my $user_pricing_plan (@user_pricing_plans) {
+              my $subscription_response = $stripe_client->list_subscriptions({
+                customer => $user_pricing_plan->user->stripe_id,
+                status   => 'ended'
+              })->result;
+
+              if (!$subscription_response->is_success) {
+                Carp::croak('Got a bad response from Stripe '
+                    . $subscription_response->body);
+              }
+
+              my @stripe_subscriptions
+                = @{$subscription_response->json->{data}};
+              my %stripe_subscription_lookup
+                = map { $_->{id} => $_ } @stripe_subscriptions;
+
+              my $stripe_subscription
+                = $stripe_subscription_lookup{$user_pricing_plan->stripe_id};
+
+              next unless $stripe_subscription;
+
+              $user_pricing_plan->update({on_hold => 1});
+            }
           }
           catch {
             $app->log->error("Error when checking plans to set on hold: $_");
             return;
           };
-
-          my %stripe_subscription_lookup
-            = map { $_->id => $_ } @stripe_subscriptions;
-
-          for my $user_pricing_plan (@user_pricing_plans) {
-            my $stripe_subscription
-              = $stripe_subscription_lookup{$user_pricing_plan->stripe_id};
-
-            if ($stripe_subscription->status eq 'ended') {
-              $user_pricing_plan->update({on_hold => 1});
-            }
-          }
         }
       }
     )

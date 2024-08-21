@@ -68,6 +68,18 @@ sub create_billing_session {
   );
 }
 
+sub list_subscriptions {
+  my ($self, $payload) = @_;
+  return $self->_ua->get(
+    $STRIPE_API_URI . '/subscriptions',
+    {
+      Authorization => $self->_authorization_header,
+      Accepts       => 'application/json'
+    },
+    form => $payload
+  );
+}
+
 sub _authorization_header {
   Carp::croak(
     q{Can't create authorization header without STRIPE_API_KEY env variable.})
