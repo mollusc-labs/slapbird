@@ -22,5 +22,5 @@ COPY apache.conf /usr/local/apache2/conf/extra/apache.conf
 # Include the custom configuration in the main Apache config
 RUN echo 'Include conf/extra/apache.conf' >> /usr/local/apache2/conf/httpd.conf
 
-# Expose port 80
-EXPOSE 80
+# Update Apache to listen on port 5555
+# RUN sed -i 's/Listen 80/Listen 5555/' /usr/local/apache2/conf/httpd.conf

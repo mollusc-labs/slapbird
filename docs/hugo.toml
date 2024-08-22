@@ -1,4 +1,4 @@
 baseURL = 'https://docs.slapbirdapm.com'
 languageCode = 'en-us'
 title = 'SlapbirdAPM Docs'
-theme = 'hugo-dead-simple'
+theme = 'hugo-book'
