@@ -96,6 +96,8 @@ sub startup {
               ->search({stripe_id => +{-not => undef}})->all;
 
             for my $user_pricing_plan (@user_pricing_plans) {
+              next if $user_pricing_plan->on_hold;
+
               my $subscription_response = $stripe_client->list_subscriptions({
                 customer => $user_pricing_plan->user->stripe_id,
                 status   => 'ended'

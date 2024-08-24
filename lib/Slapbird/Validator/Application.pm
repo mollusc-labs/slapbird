@@ -1,10 +1,17 @@
-package Slapbird::Sanitizer::Application;
+package Slapbird::Validator::Application;
 
 use strict;
 use warnings;
+use feature 'state';
+use JSON::Validator;
+use Slapbird::Enum::ApplicationTypes;
 
 sub _validator {
-  my $jv = JSON::Validator->new();
+  state $jv;
+
+  return $jv if ($jv);
+
+  $jv = JSON::Validator->new();
 
   $jv->schema({
     type       => 'object',
@@ -12,14 +19,15 @@ sub _validator {
     properties => {
       name        => {type => 'string', maxLength => 100},
       description => {type => 'string', maxLength => 400},
-      type => {type => 'string', enum => ['mojo', 'plack', 'dancer', 'other']}
+      type        =>
+        {type => 'string', enum => [Slapbird::Enum::ApplicationTypes->all]}
     }
   });
 
   return $jv;
 }
 
-sub sanitize {
+sub validate {
   my ($class, $json) = @_;
 
   my @basic_errors = $class->_validator->validate($json);

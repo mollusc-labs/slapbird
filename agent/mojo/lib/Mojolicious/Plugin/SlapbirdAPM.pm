@@ -27,6 +27,8 @@ const my $UA => Mojo::UserAgent->new();
 
 my $should_request = 1;
 my $next_timestamp;
+my $stack      = [];
+my $in_request = 0;
 
 sub _call_home {
     my ( $json, $key, $app, $quiet ) = @_;
@@ -91,6 +93,24 @@ sub _enable_mojo_ua_tracking {
     return;
 }
 
+{
+
+    package Mojolicious::Plugin::SlapbirdAPM::Tracer;
+    use Time::HiRes qw(time);
+
+    sub new {
+        my ( $class, %args ) = @_;
+        return bless \%args, $class;
+    }
+
+    sub DESTROY {
+        my ($self) = @_;
+        push @$stack, { %$self, end_time => time * 1_000 };
+    }
+
+    1;
+}
+
 sub register {
     my ( $self, $app, $conf ) = @_;
     my $key             = $conf->{key} // $ENV{SLAPBIRDAPM_API_KEY};
@@ -98,8 +118,6 @@ sub register {
     my $ignored_headers = $conf->{ignored_headers};
     my $no_trace        = $conf->{no_trace};
     my $quiet           = $conf->{quiet};
-    my $stack           = [];
-    my $in_request      = 0;
 
     Carp::croak(
 'Please provide your SlapbirdAPM key via the SLAPBIRD_APM_API_KEY env variable, or as part of the plugin declaration'
@@ -207,24 +225,17 @@ sub register {
                         return $sub->(@$args);
                     }
 
-                    my @ret;
-                    my $start_time = time * 1_000;
+                    my $tracer = Mojolicious::Plugin::SlapbirdAPM::Tracer->new(
+                        name       => $name,
+                        start_time => time * 1_000
+                    );
+
                     try {
-                        @ret = ( $sub->(@$args) );
+                        return $sub->(@$args);
                     }
                     catch {
                         Carp::croak($_);
                     };
-                    my $end_time = time * 1_000;
-
-                    push @$stack,
-                      {
-                        name       => $name,
-                        start_time => $start_time,
-                        end_time   => $end_time
-                      };
-
-                    return wantarray ? @ret : $ret[0];
                 }
             );
 

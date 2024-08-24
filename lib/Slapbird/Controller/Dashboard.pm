@@ -2,7 +2,7 @@ package Slapbird::Controller::Dashboard;
 
 use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Cookie::Response;
-use Slapbird::Sanitizer::Application;
+use Slapbird::Validator::Application;
 use Slapbird::Advice::ErrorAdvice;
 use Data::ULID  qw(ulid);
 use Time::HiRes qw(time);
@@ -123,7 +123,6 @@ sub my_apps {
 
 sub new_app {
   my ($c) = @_;
-
   return $c->render(template => 'new_app');
 }
 
@@ -211,7 +210,7 @@ sub create_new_app {
     if $num_applications == $user_pricing_plan->pricing_plan->max_applications;
 
   my ($json, $errors)
-    = Slapbird::Sanitizer::Application->sanitize(
+    = Slapbird::Validator::Application->validate(
     {name => $name, type => $type});
 
   if ($errors) {

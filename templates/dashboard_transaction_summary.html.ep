@@ -31,7 +31,7 @@
   </div>
   <hr class="my-2">
   % for my $transaction (@$transactions) {
-    <a class="transaction columns slapbird-dashboard-row has-text-inherit mt-2 mb-0"  style="align-items: center" href="/dashboard/transaction/<%= $transaction->http_transaction_id %>?return_href=<%= $return_href %>">
+    <a class="transaction columns slapbird-dashboard-row has-text-inherit mt-2 mb-2"  style="align-items: center" href="/dashboard/transaction/<%= $transaction->http_transaction_id %>?return_href=<%= $return_href %>">
       <div class="column">
         <%= $transaction->method %>
       </div>

@@ -33,4 +33,4 @@ jobs:
       - name: Install deps
         run: cpanm --installdeps . --cpanfile cpanfile
       - name: Run Tests
-        run: prove -l t -Ilib
+        run: prove -Ilib -Iagent/mojo/lib -Iagent/plack/lib -Iagent/dancer2/lib t/ agent/dancer2/t agent/mojo/t agent/plack/t

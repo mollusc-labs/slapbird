@@ -1,16 +1,17 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
 use Dancer2;
-use Plack::Builder;
+use Dancer2::Plugin::SlapbirdAPM;
+
+set port => 3030;
 
 get '/' => sub {
   'Hello World';
 };
 
-builder {
-  enable 'SlapbirdAPM', key => '01J5GY4NF3TDDDNFJZJDDMB8CRmy-plack-app';
-  app;
+get '/foo' => sub {
+  'flarb';
 };
+
+dance;

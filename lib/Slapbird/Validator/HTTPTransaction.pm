@@ -1,7 +1,9 @@
 package Slapbird::Validator::HTTPTransaction;
 
-use Moo;
+use strict;
+use warnings;
 use feature 'state';
+use Slapbird::Enum::ApplicationTypes;
 
 sub validate {
   my ($class, $object) = @_;
@@ -16,7 +18,8 @@ sub validate {
       'requestor', 'handler'
     ],
     properties => {
-      type             => {type => 'string', enum => ['mojo', 'plack']},
+      type =>
+        {type => 'string', enum => [Slapbird::Enum::ApplicationTypes->all]},
       method           => {type => 'string'},
       end_point        => {type => 'string'},
       start_time       => {type => 'number'},
