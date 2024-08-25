@@ -24,6 +24,14 @@
                     </ul>
                 </li>
             </ol>
+            <h2 class="is-4 title mt-3 mb-1">Dancer2</h2>
+            <ol class="ml-6">
+                <li>Copy your API key</li>
+                <li>Install the SlapbirdAPM Dancer2 plugin ie. <code>cpan -I SlapbirdAPM::Agent::Dancer2</code></li>
+                <li>Add the plugin to your Dancer2 application ie <code>use Dancer2::Plugin::SlapbirdAPM</code></li>
+                <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via config <code>key => $API_KEY</code> in your <code>config.yml</code></li>
+            </ol>
             <h2 class="is-4 title mt-3 mb-1">Plack</h2>
             <ol class="ml-6">
                 <li>Copy your API key</li>
