@@ -244,7 +244,8 @@ sub register {
                   Mojolicious Mojolicious::Controller Mojo::UserAgent
                   Mojo::Base Mojo::File Mojo::Exception Mojo::IOLoop
                   Mojo::Pg Mojo::mysql Mojo::SQLite Mojo::JSON
-                  Mojo::Server DBI DBD::Pg DBD::mysql
+                  Mojo::Server DBI DBD::Pg DBD::mysql DBIx::Classs
+                  DBIx::Class::ResultSet DBIx::Class::Result
                 ), @{ $conf->{trace_modules} // [] }
             );
             my @usable_modules = (qw(main));

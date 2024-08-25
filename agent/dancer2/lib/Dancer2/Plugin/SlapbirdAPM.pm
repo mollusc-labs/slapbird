@@ -5,12 +5,15 @@ use Const::Fast        qw(const);
 use SlapbirdAPM::Trace ();
 use Time::HiRes        qw(time);
 use Try::Tiny;
+use JSON::MaybeXS ();
 use Dancer2::Plugin;
 use LWP::UserAgent;
+use System::Info;
+use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
 
-$Carp::Internal{__PACKAGE__} = 1;
+# $Carp::Internal{__PACKAGE__} = 1;
 
 const my $SLAPBIRD_APM_URI => $ENV{SLAPBIRD_APM_DEV}
   ? $ENV{SLAPBIRD_APM_URI} . '/apm'
@@ -36,7 +39,7 @@ has trace => (
     default => sub { 1 }
 );
 
-has ignored_headers(
+has ignored_headers => (
     is      => 'ro',
     default => sub { [] }
 );
@@ -51,8 +54,9 @@ has _ua => (
     default => sub { return LWP::UserAgent->new( timeout => 5 ) }
 );
 
-my $stack      = [];
-my $in_request = 0;
+my $stack          = [];
+my $in_request     = 0;
+my $should_request = 0;
 
 {
 
@@ -76,7 +80,7 @@ my $in_request = 0;
 sub _unfold_headers {
     my ( $self, $headers ) = @_;
     $headers->remove_header( $self->ignored_headers->@* );
-    my %headers = $headers->flatten;
+    my %headers = ( $headers->psgi_flatten->@* );
     return \%headers;
 }
 
@@ -89,7 +93,6 @@ sub _call_home {
     return if $pid;
 
     my %response;
-
     $response{type}          = 'dancer2';
     $response{method}        = $dancer2_request->method;
     $response{end_point}     = $dancer2_request->path;
@@ -103,38 +106,47 @@ sub _call_home {
     $response{request_size}  = $dancer2_request->header('Content-Length');
     $response{request_headers} =
       $self->_unfold_headers( $dancer2_request->headers );
-    $response{error} = $error;
-    $response{os}    = System::Info->new->os,
-      $response{requestor} = $request->header('x-slapbird-name'),
-      $response{handler} = undef;
+    $response{error} = $error->message
+      if ( defined $error );
+    $response{error} //= undef;
+    $response{os}        = System::Info->new->os;
+    $response{requestor} = $dancer2_request->header('x-slapbird-name');
+    $response{handler}   = undef;
+    $response{stack}     = $stack;
 
     my $ua = LWP::UserAgent->new();
     my $slapbird_response;
+
+    use DDP;
+    p %response;
 
     try {
         $slapbird_response = $ua->post(
             $SLAPBIRD_APM_URI,
             'Content-Type'   => 'application/json',
             'x-slapbird-apm' => $self->key,
-            Content          => encode_json( \%response )
+            Content          => JSON::MaybeXS::encode_json( \%response )
         );
     }
     catch {
-        Carp::carp(
+        say STDERR
 'Unable to communicate with Slapbird, this request has not been tracked got error: '
-              . $_ );
+          . $_
+          unless $self->quiet;
         exit 0;
     };
 
     if ( !$slapbird_response->is_success ) {
         if ( $slapbird_response->code eq 429 ) {
-            Carp::carp(
+            say STDERR
 "You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
-            ) unless $self->quiet;
+              unless $self->quiet;
+            exit 0;
         }
-        Carp::carp(
+        say STDERR
 'Unable to communicate with Slapbird, this request has not been tracked got status code '
-              . $slapbird_response->code );
+          . $slapbird_response->code
+          unless $self->quiet;
     }
 
     exit 0;
@@ -143,48 +155,59 @@ sub _call_home {
 sub BUILD {
     my ($self) = @_;
 
-    SlapbirdAPM::Trace->callback(
-        sub {
-            my %args = @_;
+    $should_request = 1 if defined $self->key;
 
-            my $name = $args{name};
-            my $sub  = $args{sub};
-            my $args = $args{args};
-
-            if ( !$in_request ) {
-                return $sub->(@$args);
-            }
-
-            my $tracer = Dancer2::Plugin::SlapbirdAPM::Tracer->new(
-                name       => $name,
-                start_time => time * 1_000
-            );
-
-            try {
-                return $sub->(@$args);
-            }
-            catch {
-                Carp::croak($_);
-            };
-        }
-    );
-
-    my @usable_modules = qw(Dancer2 Dancer2::Core Dancer2::Core::App);
-
-    for ( $self->trace_modules->@* ) {
-        next if $_ eq __PACKAGE__;
-
-        eval("no warnings; use $_");
-
-        if ($@) {
-            next;
-        }
-        else {
-            push @usable_modules, $_;
-        }
+    if ( !$should_request ) {
+        say STDERR
+'No SlapbirdAPM API key set, set the SLAPBIRDAPM_API_KEY environment variable, or set key in the plugin properties';
+        return;
     }
 
-    SlapbirdAPM::Trace->trace_pkgs(@usable_modules);
+    if ( $self->trace ) {
+        SlapbirdAPM::Trace->callback(
+            sub {
+                my %args = @_;
+
+                my $name = $args{name};
+                my $sub  = $args{sub};
+                my $args = $args{args};
+
+                if ( !$in_request ) {
+                    return $sub->(@$args);
+                }
+
+                my $tracer = Dancer2::Plugin::SlapbirdAPM::Tracer->new(
+                    name       => $name,
+                    start_time => time * 1_000
+                );
+
+                try {
+                    return $sub->(@$args);
+                }
+                catch {
+                    Carp::croak($_);
+                };
+            }
+        );
+
+        my @usable_modules = qw(Dancer2 Dancer2::Core Dancer2::Core::App
+          DBI DBIx::Class DBIx::Class::ResultSet DBIx::Class::Result
+          DBD::pg DBD::mysql);
+
+        for ( $self->trace_modules->@* ) {
+            next if $_ eq __PACKAGE__;
+
+            eval("no warnings; use $_");
+
+            if ($@) {
+                next;
+            }
+            else {
+                push @usable_modules, $_;
+            }
+        }
+        SlapbirdAPM::Trace->trace_pkgs(@usable_modules);
+    }
 
     my $request;
     my $start_time;
@@ -218,8 +241,10 @@ sub BUILD {
             code => sub {
                 $end_time = time * 1_000;
                 my ($response) = @_;
-                $self->_call_home( $request, $response, $start_time, $end_time,
-                    $stack, $response->error );
+                $self->_call_home(
+                    $request,  $response, $start_time,
+                    $end_time, $stack,    $error
+                );
                 $in_request = 0;
             }
         )
