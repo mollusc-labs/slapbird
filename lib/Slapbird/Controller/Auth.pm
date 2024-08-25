@@ -30,9 +30,8 @@ sub login {
 
 # TODO: (RF) break this up
 sub github {
-  my $c = shift;
-  my $args
-    = {redirect_uri => $ENV{GITHUB_REDIRECT_URI}, scope => 'user:email user'};
+  my $c    = shift;
+  my $args = {redirect_uri => $ENV{GITHUB_REDIRECT_URI}, scope => 'user:email'};
 
   if ($c->logged_in) {
     return $c->redirect_to('/dashboard');

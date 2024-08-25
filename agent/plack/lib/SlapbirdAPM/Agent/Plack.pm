@@ -3,7 +3,7 @@ package SlapbirdAPM::Agent::Plack;
 use strict;
 use warnings;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
 1;
 

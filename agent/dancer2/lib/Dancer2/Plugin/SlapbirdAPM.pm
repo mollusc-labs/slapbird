@@ -15,38 +15,40 @@ our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
 
 # $Carp::Internal{__PACKAGE__} = 1;
 
+const my $OS => System::Info->new->os;
+
 const my $SLAPBIRD_APM_URI => $ENV{SLAPBIRD_APM_DEV}
   ? $ENV{SLAPBIRD_APM_URI} . '/apm'
   : 'https://slapbirdapm.com/apm';
 
 has key => (
     is      => 'ro',
-    default => sub { $ENV{SLAPBIRDAPM_API_KEY} }
+    default => sub { $_[0]->config->{key} // $ENV{SLAPBIRDAPM_API_KEY} }
 );
 
 has topology => (
     is      => 'ro',
-    default => sub { 1 }
+    default => sub { $_[0]->config->{topology} // 1 }
 );
 
 has quiet => (
     is      => 'ro',
-    default => sub { 0 }
+    default => sub { $_[0]->config->{quiet} // 0 }
 );
 
 has trace => (
     is      => 'ro',
-    default => sub { 1 }
+    default => sub { $_[0]->config->{trace} // 1 }
 );
 
 has ignored_headers => (
     is      => 'ro',
-    default => sub { [] }
+    default => sub { $_[0]->config->{ignored_headers} // [] }
 );
 
 has trace_modules => (
     is      => 'ro',
-    default => sub { [] }
+    default => sub { $_[0]->config->{trace_modules} // [] }
 );
 
 has _ua => (
@@ -109,16 +111,13 @@ sub _call_home {
     $response{error} = $error->message
       if ( defined $error );
     $response{error} //= undef;
-    $response{os}        = System::Info->new->os;
+    $response{os}        = $OS;
     $response{requestor} = $dancer2_request->header('x-slapbird-name');
     $response{handler}   = undef;
     $response{stack}     = $stack;
 
     my $ua = LWP::UserAgent->new();
     my $slapbird_response;
-
-    use DDP;
-    p %response;
 
     try {
         $slapbird_response = $ua->post(
@@ -155,9 +154,7 @@ sub _call_home {
 sub BUILD {
     my ($self) = @_;
 
-    $should_request = 1 if defined $self->key;
-
-    if ( !$should_request ) {
+    if ( not defined $self->key ) {
         say STDERR
 'No SlapbirdAPM API key set, set the SLAPBIRDAPM_API_KEY environment variable, or set key in the plugin properties';
         return;

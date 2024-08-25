@@ -17,6 +17,11 @@
             </span>
         </div>
     </div>
+    % if ($transaction->os) {
+        <div class="mt-4">
+            <strong>Host</strong>: <%= $transaction->os %>
+        </div>    
+    % }
     % if ($transaction->error) {
         <div class="mt-4 is-size-5">
             Error:
@@ -36,8 +41,8 @@
         % }
     </div>
 </div>
-    <div class="mt-6 mb-6">
-        <a class="slapbird-button slapbird-is-primary" href="<%= $return_href %>">Go Back</a>
-    </div>
+<div class="mt-6 mb-6">
+    <a class="slapbird-button slapbird-is-primary" href="<%= $return_href %>">Go Back</a>
+</div>
 
 <script src="/js/epochDate.js"></script>

@@ -20,16 +20,18 @@ no_index:
     - examples
     - t
 requires:
-  AnyEvent: '0'
-  AnyEvent::HTTP: '0'
   Carp: '0'
+  Const::Fast: '0'
   JSON::MaybeXS: '0'
+  LWP::UserAgent: '0'
   Plack: '0'
+  System::Info: '0.064'
   Try::Tiny: '0'
+  namespace::clean: '0'
   perl: '5.024'
 resources:
   bugtracker: https://github.com/mollusc-labs/Slapbird/issues
   license: http://www.opensource.org/licenses/mit
   repository: https://github.com/mollusc-labs/Slapbird
-version: '0.002'
+version: '0.003'
 x_serialization_backend: 'CPAN::Meta::YAML version 0.018'

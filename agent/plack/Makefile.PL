@@ -25,12 +25,14 @@ WriteMakefile(
     },
   },
   PREREQ_PM => {
-    'Carp'           => '0',
-    'Try::Tiny'      => '0',
-    'Plack'          => '0',
-    'JSON::MaybeXS'  => '0',
-    'AnyEvent'       => '0',
-    'AnyEvent::HTTP' => '0'
+    'Carp'             => '0',
+    'Try::Tiny'        => '0',
+    'Plack'            => '0',
+    'namespace::clean' => '0',
+    'JSON::MaybeXS'    => '0',
+    'LWP::UserAgent'   => '0',
+    'System::Info'     => '0.064',
+    'Const::Fast'      => '0'
   },
   test => {TESTS => 't/*.t t/*/*.t'}
 );

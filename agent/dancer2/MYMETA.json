@@ -41,6 +41,7 @@
             "JSON::MaybeXS" : "1.004008",
             "LWP::Protocol::https" : "6.14",
             "LWP::UserAgent" : "6.77",
+            "System::Info" : "0",
             "Time::HiRes" : "0",
             "Try::Tiny" : "0.31",
             "Type::Tiny" : "0",

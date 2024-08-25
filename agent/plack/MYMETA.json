@@ -34,12 +34,14 @@
       },
       "runtime" : {
          "requires" : {
-            "AnyEvent" : "0",
-            "AnyEvent::HTTP" : "0",
             "Carp" : "0",
+            "Const::Fast" : "0",
             "JSON::MaybeXS" : "0",
+            "LWP::UserAgent" : "0",
             "Plack" : "0",
+            "System::Info" : "0.064",
             "Try::Tiny" : "0",
+            "namespace::clean" : "0",
             "perl" : "5.024"
          }
       }
@@ -57,6 +59,6 @@
          "url" : "https://github.com/mollusc-labs/Slapbird"
       }
    },
-   "version" : "0.002",
+   "version" : "0.003",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }
