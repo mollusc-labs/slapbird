@@ -323,6 +323,23 @@ sub startup {
 
   my $router = $self->routes;
 
+  # Simple condition to ensure valid application_context
+  $router->add_condition(
+    has_application_context => sub {
+      my ($r, $c, $captures, $required) = @_;
+
+      return 1 if not $required;
+
+      if (not $c->application_context) {
+        $c->flash_danger('You need an application to view this page.');
+        $c->redirect_to('/dashboard');
+        return undef;
+      }
+
+      return 1;
+    }
+  );
+
   # Simple condition to see if someone is logged in.
   $router->add_condition(
     authenticated => sub {
@@ -462,7 +479,8 @@ sub startup {
     ->name('dashboard_transaction');
   $router->get('/dashboard/new-app')->requires(authenticated => 1)
     ->to('dashboard#new_app')->name('dashboard_new_app');
-  $router->get('/dashboard/manage-application')->requires(authenticated => 1)
+  $router->get('/dashboard/manage-application')
+    ->requires([authenticated => 1, has_application_context => 1])
     ->to('dashboard#manage_application')->name('dahsboard_manage_application');
   $router->post('/dashboard/new-app')->requires(authenticated => 1)
     ->to('dashboard#create_new_app')->name('dashboard_create_new_app');
