@@ -5,5 +5,5 @@ draft = false
 weight = 10
 +++
 
-## Please check out our examples on [Github](https://github.com/mollusc-labs/slapbird/tree/main/examples)!
+## Please check out our [Examples](https://github.com/mollusc-labs/slapbird/tree/main/examples) on Github!
 
