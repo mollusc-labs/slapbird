@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+
+# Hugo build output
+public/
+resources/
+
+# Hugo build lock file
+.hugo_build.lock

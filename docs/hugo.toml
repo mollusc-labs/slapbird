@@ -1,0 +1,7 @@
+baseURL = 'https://docs.slapbirdapm.com'
+languageCode = 'en-us'
+title = 'SlapbirdAPM Docs'
+theme = ['hugo-book']
+
+[params]
+BookSection = '*'
