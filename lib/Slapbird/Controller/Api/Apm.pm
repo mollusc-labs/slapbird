@@ -17,7 +17,7 @@ sub call {
     )->to_hashref()
   );
 
-  my $count = $c->cache->get($api_key->application_id);
+  my $count = $c->cache->get($api_key->application_id . '-monthly');
   if (defined $count) {
     if ($count
       > $api_key->application->user_pricing_plan->pricing_plan->max_requests)
@@ -29,6 +29,13 @@ sub call {
     }
   }
   else {
+    # Store for one month
+    $c->cache->set($api_key->application_id . '-monthly', 0);
+  }
+
+  my $daily_count = $c->cache->get($api_key->application_id);
+  if (not defined $daily_count) {
+
     # Store for one day
     $c->cache->set($api_key->application_id, 0, 86_400);
   }
@@ -49,7 +56,8 @@ sub call {
 
   $transaction->{application_id} = $api_key->application_id;
 
-  $c->cache->incr($api_key->application_id, 1);
+  $c->cache->incr($api_key->application_id,              1);
+  $c->cache->incr($api_key->application_id . '-monthly', 1);
 
 # TODO: (RF) This should use Minion, so we dont make user applications wait
 # for us to complete the sanitization/validation process. There is a Minion plugin
