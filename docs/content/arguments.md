@@ -17,7 +17,7 @@ Pass the headers to be exluded as part of the plugin setup.
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
-    ignored_headers => ['Example-Header'];
+    ignored_headers => ['Header'];
     
 # Set up your endpoints
 
@@ -28,11 +28,10 @@ app->start;
 {{< tab "Dancer2" >}}
 Set the ignored_headers in your config.yaml.
 ```
-set plugins => {
-    SlapbirdAPM => {
-        ignored_headers => ['Example-Header']
-    }
-};
+plugins:
+    SlapbirdAPM:
+        ignore_headers:
+            - 'Header'
 ```
 {{< /tab >}}
 
@@ -44,7 +43,7 @@ use Plack::Builder;
 # Set up your endpoints
 
 builder {
-    enable 'SlapbirdAPM', ignored_headers => ['Example-Header'];
+    enable 'SlapbirdAPM', ignored_headers => ['Header'];
     $app;
 };
 ```
@@ -74,11 +73,9 @@ app->start;
 {{< tab "Dancer2" >}}
 Set the API key in your config.yaml.
 ```
-set plugins => {
-    SlapbirdAPM => {
-        key => 'your_slapbirdapm_api_key'
-    }
-}
+plugins:
+    SlapbirdAPM:
+        key: 'your_slapbirdapm_api_key'
 ```
 {{< /tab >}}
 
@@ -117,11 +114,9 @@ app->start;
 {{< tab "Dancer2" >}}
 Enable or disable quiet mode in your config.yaml.
 ```
-set plugins => {
-    SlapbirdAPM => {
-        quiet => 1
-    }
-}
+plugins:
+    SlapbirdAPM:
+        quiet: 1 
 ```
 {{< /tab >}}
 
@@ -162,11 +157,9 @@ app->start;
 Enable or disable topology in your config.yaml.
 ```
 # disable topology
-set plugins => {
-    SlapbirdAPM => {
-        topology => 0
-    }
-}
+plugins:
+    SlapbirdAPM:
+        topology: 0
 ```
 {{< /tab >}}
 
@@ -208,12 +201,10 @@ app->start;
 {{< tab "Dancer2" >}}
 Enable or disable stacktraces in your config.yaml.
 ```
-# disbale stacktraces
-set plugins => {
-    SlapbirdAPM => {
-        trace => 0
-    }
-}
+# disable stacktraces
+plugins:
+    SlapbirdAPM:
+        trace: 0
 ```
 {{< /tab >}}
 
@@ -242,7 +233,7 @@ Pass the modules to be traced as part of the plugin setup.
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
-    trace_modules => ['Example_Module'];
+    trace_modules => ['My::Module'];
     
 # Set up your endpoints
 
@@ -253,11 +244,10 @@ app->start;
 {{< tab "Dancer2" >}}
 Set the modules to be traced in your config.yaml.
 ```
-set plugins => {
-    SlapbirdAPM => {
-        trace_modules => ['Example_Module']
-    }
-}
+plugins:
+    SlapbirdAPM:
+        trace_modules:
+            - 'My::Module'
 ```
 {{< /tab >}}
 
@@ -269,7 +259,7 @@ use Plack::Builder;
 # Set up your endpoints
 
 builder {
-    enable 'SlapbirdAPM', trace_modules => ['Example_Module'];
+    enable 'SlapbirdAPM', trace_modules => ['My::Module'];
     $app;
 };
 ```
