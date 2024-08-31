@@ -4,6 +4,9 @@ FROM hugomods/hugo:latest AS hugo-builder
 # Set the working directory
 WORKDIR /src
 
+# Copy hugo-book theme
+RUN git clone http://github.com/alex-shpak/hugo-book.git ./themes/hugo-book
+
 # Copy the Hugo site source files
 COPY . .
 

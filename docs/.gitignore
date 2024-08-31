@@ -5,6 +5,7 @@ tmp/
 
 
 # Hugo build output
+themes/hugo-build/
 public/
 resources/
 
