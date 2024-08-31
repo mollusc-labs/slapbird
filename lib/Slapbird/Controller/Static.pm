@@ -44,7 +44,7 @@ sub upgrade {
 
 sub docs {
   my ($c) = @_;
-  return $c->render(template => 'documentation');
+  return $c->redirect_to('https://docs.slapbirdapm.com');
 }
 
 1;
