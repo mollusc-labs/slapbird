@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+#
 # This file is apart of SlapbirdAPM, a Free and Open-Source
 # web application APM for Perl 5 web applications.
 #
@@ -16,38 +18,44 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-package Slapbird::Controller::Api::Dashboard;
-
-use Mojo::Base 'Mojolicious::Controller';
-
 use strict;
 use warnings;
-use Slapbird::Advice::ErrorAdvice;
 
-sub json_graph {
-  my ($c) = @_;
+use Carp ();
 
-  my ($from_time, $to_time) = $c->get_from_to_time();
+my $header = do {
+  local $/;
+  open my $f, '<', 'header.LICENSE'
+    or Carp::croak('Failed to open "header.LICENSE" file.');
+  my $s = <$f>;
+  close $f;
+  $s;
+};
 
-  my @transactions = $c->resultset('HTTPTransaction')->search(
-    {
-      application_id => $c->application_context->application_id,
-      start_time     => {-between => [$from_time, $to_time]}
-    },
-    {order_by => {-asc => 'start_time'}}
-  )->all;
+my $file_stdout     = qx(find . -type f -name "*.pm");
+my $bin_file_stdout = qx(find bin/ -type -f);
 
-  if (scalar(@transactions) == 0) {
-    return $c->render(
-      status => 409,
-      json   => {message => 'No transactions for this time period'}
-    );
-  }
+my @files = grep { /^(?:\.\/lib).*/sag; } map { chomp; $_ } split "\n",
+  $file_stdout;
 
-  @transactions = map { $_->to_graph_dto() } @transactions;
+for my $file (@files) {
+  local $/;
+  my $f;
+  open($f, '<', $file)
+    or (warn "Something went wrong with file $file, skipping." && next);
+  my $t = <$f>;
+  close $f;
 
-  return $c->render(json => \@transactions);
+  next if (index($t, $header) != -1);
+
+  CORE::say "Working on $file...";
+
+  open($f, '>', $file)
+    or (warn "Something went wrong with file $file, skipping." && next);
+  print $f ($header . $t);
+  close $f;
 }
 
-1;
+CORE::say 'DONE!';
+
+exit 0;
