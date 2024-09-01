@@ -108,8 +108,7 @@ sub _call_home {
     $response{request_size}  = $dancer2_request->header('Content-Length');
     $response{request_headers} =
       $self->_unfold_headers( $dancer2_request->headers );
-    $response{error} = $error->message
-      if ( defined $error );
+    $response{error} = $error;
     $response{error} //= undef;
     $response{os}        = $OS;
     $response{requestor} = $dancer2_request->header('x-slapbird-name');
@@ -225,9 +224,34 @@ sub BUILD {
 
     $self->app->add_hook(
         Dancer2::Core::Hook->new(
+            name => 'on_route_exception',
+            code => sub {
+                ( undef, $error ) = @_;
+            }
+        )
+    );
+
+    $self->app->add_hook(
+        Dancer2::Core::Hook->new(
+            name => 'before_error',
+            code => sub {
+                $error = shift->message;
+            }
+        )
+    );
+
+    $self->app->add_hook(
+        Dancer2::Core::Hook->new(
             name => 'after_error',
             code => sub {
-                $error = shift;
+                return unless $in_request;
+                $end_time = time * 1_000;
+                my ($response) = @_;
+                $self->_call_home(
+                    $request,  $response, $start_time,
+                    $end_time, $stack,    $error
+                );
+                $in_request = 0;
             }
         )
     );
@@ -236,12 +260,11 @@ sub BUILD {
         Dancer2::Core::Hook->new(
             name => 'after',
             code => sub {
+                return unless $in_request;
                 $end_time = time * 1_000;
                 my ($response) = @_;
-                $self->_call_home(
-                    $request,  $response, $start_time,
-                    $end_time, $stack,    $error
-                );
+                $self->_call_home( $request, $response, $start_time,
+                    $end_time, $stack, undef );
                 $in_request = 0;
             }
         )

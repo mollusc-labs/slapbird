@@ -62,6 +62,6 @@
          "url" : "https://github.com/mollusc-labs/slapbird"
       }
    },
-   "version" : "0.002",
+   "version" : "0.003",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }
