@@ -62,8 +62,8 @@ sub sanitize {
 
   if ($json->{error}) {
     $json->{error}
-      = map { '<div class="slapbird-error-row">' . escape_html($_) . '</div>' }
-      split(/\n/, $json->{error});
+      = [map { '<div class="slapbird-error-row">' . escape_html($_) . '</div>' }
+        split("\n", $json->{error})];
   }
 
   $json->{request_headers} = join("\n",
