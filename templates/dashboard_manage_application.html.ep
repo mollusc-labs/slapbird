@@ -51,9 +51,6 @@
             <div class="mr-2">
                 <a href="/dashboard/confirm-delete-application" class="slapbird-button slapbird-is-secondary is-outlined">Delete <%= $application->name %></a>
             </div>
-            <div>
-                <a href="/dasboard/confirm-transfer-ownership" class="slapbird-button slapbird-is-primary is-outlined">Transfer Ownership</a>
-            </div>
         </div>
         <script src="/js/newApiKey.js"></script>
     % }
