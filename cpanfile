@@ -20,6 +20,7 @@ requires 'Data::ULID' => '1.3',
 requires 'URL::Encode' => '0.03',
 requires 'DateTime' => '1.65',
 requires 'DateTime::Format::Pg' => '0.16014';
+requires 'Test::DBIx::Class' => '0.52';
 requires 'Time::HiRes' => '0';
 requires 'Const::Fast' => '0.014';
 requires 'HTML::Escape' => '1.11';
