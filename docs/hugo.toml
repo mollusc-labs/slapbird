@@ -3,5 +3,11 @@ languageCode = 'en-us'
 title = 'SlapbirdAPM Docs'
 theme = ['hugo-book']
 
+[menu]
+[[menu.before]]
+  name = "SlapbirdAPM"
+  url = "https://slapbirdapm.com"
+  weight = 0
+
 [params]
 BookSection = '*'
