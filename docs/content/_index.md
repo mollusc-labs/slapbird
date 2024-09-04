@@ -9,7 +9,6 @@ weight = 20
 2. Create your application
 3. Copy your API key
 
-**Note: You will have to restart your application to see analytics.**
 
 ## Mojolicious
 
