@@ -2,7 +2,7 @@
 title = 'Arguments'
 date = 2024-08-26T15:14:41-06:00
 draft = false
-weight = 50
+weight = 30
 +++
 
 # Arguments
@@ -13,7 +13,7 @@ Sets headers to be ignored in the header output.
 {{< tabs "ign_args" >}}
 {{< tab "Mojo" >}}
 Pass the headers to be exluded as part of the plugin setup.
-```
+```perl
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
@@ -27,7 +27,7 @@ app->start;
 
 {{< tab "Dancer2" >}}
 Set the ignored_headers in your config.yaml.
-```
+```yaml
 plugins:
     SlapbirdAPM:
         ignore_headers:
@@ -37,7 +37,7 @@ plugins:
 
 {{< tab "Plack" >}}
 Pass the headers to the SlapbirdAPM plugin as part of the builder declaration.
-```
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
@@ -58,7 +58,7 @@ Add the SLAPBIRDAPM_API_KEY environment variable to your application, or set it 
 {{< tabs "key_args" >}}
 {{< tab "Mojo" >}}
 Pass the API key as part of the plugin setup.
-```
+```perl
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
@@ -72,7 +72,7 @@ app->start;
 
 {{< tab "Dancer2" >}}
 Set the API key in your config.yaml.
-```
+```yaml
 plugins:
     SlapbirdAPM:
         key: 'your_slapbirdapm_api_key'
@@ -81,7 +81,7 @@ plugins:
 
 {{< tab "Plack" >}}
 Pass the API key to the SlapbirdAPM plugin as part of the builder declaration.
-```
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
@@ -99,7 +99,7 @@ builder {
 {{< tabs "quiet_args" >}}
 {{< tab "Mojo" >}}
 Enable or disable quiet mode as part of the plugin setup.
-```
+```perl
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
@@ -113,7 +113,7 @@ app->start;
 
 {{< tab "Dancer2" >}}
 Enable or disable quiet mode in your config.yaml.
-```
+```yaml
 plugins:
     SlapbirdAPM:
         quiet: 1 
@@ -122,7 +122,7 @@ plugins:
 
 {{< tab "Plack" >}}
 Enable or disable quiet mode in the SlapbirdAPM plugin as part of the builder declaration.
-```
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
@@ -140,7 +140,7 @@ Topology allows viewing dependencies of services. Enabled by default.
 {{< tabs "top_args" >}}
 {{< tab "Mojo" >}}
 Enable or disable topology as part of the plugin setup.
-```
+```perl
 use Mojolicious::Lite -signatures;
 
 # disable topology
@@ -155,7 +155,7 @@ app->start;
 
 {{< tab "Dancer2" >}}
 Enable or disable topology in your config.yaml.
-```
+```yaml
 # disable topology
 plugins:
     SlapbirdAPM:
@@ -165,7 +165,7 @@ plugins:
 
 {{< tab "Plack" >}}
 Enable or disable topology in the SlapbirdAPM plugin as part of the builder declaration.
-```
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
@@ -185,7 +185,7 @@ Trace enables or disables stacktraces per request. Enabled by default.\
 {{< tabs "trace_args" >}}
 {{< tab "Mojo" >}}
 Enable or disable stacktraces as part of the plugin setup.
-```
+```perl
 use Mojolicious::Lite -signatures;
 
 # disable stacktrace
@@ -200,7 +200,7 @@ app->start;
 
 {{< tab "Dancer2" >}}
 Enable or disable stacktraces in your config.yaml.
-```
+```yaml
 # disable stacktraces
 plugins:
     SlapbirdAPM:
@@ -210,7 +210,7 @@ plugins:
 
 {{< tab "Plack" >}}
 Enable or disable stacktraces in your SlapbirdAPM plugin as part of the builder declaration.
-```
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
@@ -225,11 +225,11 @@ builder {
 {{< /tabs >}}
 
 ## Trace Modules
-Set modules to be be traced.
+Set modules to trace.
 {{< tabs "traceM_args" >}}
 {{< tab "Mojo" >}}
-Pass the modules to be traced as part of the plugin setup.
-```
+Pass the modules to trace as part of the plugin setup.
+```perl
 use Mojolicious::Lite -signatures;
 
 plugin 'SlapbirdAPM',
@@ -242,8 +242,8 @@ app->start;
 {{< /tab >}}
 
 {{< tab "Dancer2" >}}
-Set the modules to be traced in your config.yaml.
-```
+Set the modules to trace in your config.yaml.
+```yaml
 plugins:
     SlapbirdAPM:
         trace_modules:
@@ -252,8 +252,8 @@ plugins:
 {{< /tab >}}
 
 {{< tab "Plack" >}}
-Pass the modules to be traced to the SlapbirdAPM plugin in your builder declaration.
-```
+Pass the modules to trace to the SlapbirdAPM plugin in your builder declaration.
+```perl
 use Plack::Builder;
 
 # Set up your endpoints
