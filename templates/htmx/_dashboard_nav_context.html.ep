@@ -1,14 +1,14 @@
 % if ($allowed_more_applications) {
-  <a class="navbar-item" href="/dashboard/new-app">
+  <a class="navbar-item" href="/dashboard/new-app" title="New Application">
     <span class="svg"><%= include 'svg/_plus_svg' %></span>
   </a>
 % } else {
-  <a class="navbar-item" href="/dashboard/manage-plan/upgrade?referrer=/dashboard">
+  <a class="navbar-item" href="/dashboard/manage-plan/upgrade?referrer=/dashboard" title="New Application">
     <span class="svg"><%= include 'svg/_plus_svg' %></span>
   </a>
 % }
 <div class="navbar-item select is-danger mt-2 px-2">
-  <select id="applicationContextSelect">
+  <select id="applicationContextSelect" title="Application Context">
     % for my $application (@$applications) {
       <option value="<%= $application->application_id %>">
         <%= $application->name %>
@@ -16,7 +16,7 @@
     % }
   </select>
 </div>
-<a href="/dashboard/manage-application" class="navbar-item">
+<a href="/dashboard/manage-application" class="navbar-item" title="Manage Application">
     <span class="svg">
         <%= include 'svg/_cog_svg' %>
     </span>
