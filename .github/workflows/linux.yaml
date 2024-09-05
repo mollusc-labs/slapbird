@@ -1,12 +1,7 @@
-name: linux
+name: Application-Linux
 
 on:
   push:
-    branches:
-      - '*'
-    tags-ignore:
-      - '*'
-  pull_request:
 
 jobs:
   perl:
@@ -16,21 +11,21 @@ jobs:
     strategy:
       matrix:
         perl-version:
-          - '5.36'
-          - '5.38'
-          - 'latest'
-          - 'threaded'
+          - '5.38' # We only test on LTS, LTS - 1
+          - '5.40'
 
     container:
-      image: perl:${{ matrix.perl-version }}
+      image: docker:27-cli
 
     steps:
       - uses: actions/checkout@v2
-      - name: perl -V
-        run: perl -V
-      - name: Install CPANM
-        run: cpan -I App::cpanminus
-      - name: Install deps
-        run: cpanm --installdeps . --cpanfile cpanfile
-      - name: Run Tests
-        run: prove -Ilib:agent/mojo/lib:agent/plack/lib:agent/dancer2/lib t/ agent/dancer2/t agent/mojo/t agent/plack/t
+      - name: Inject version
+        run: sed -i -e 's/PERL_VERSION/${{matrix.perl-version}}/g' test.Dockerfile
+      - name: Make docker network
+        run: docker network create -d bridge slapbird-test-net
+      - name: Spin test database
+        run: docker run --name slapbird-postgres-test -e POSTGRES_USER=slapbird -e POSTGRES_PASSWORD=password -e POSTGRES_DB=slapbird --expose 5432 --network slapbird-test-net -d postgres:15-alpine
+      - name: Build test container
+        run: docker build -t slapbird-test --progress=plain . -f test.Dockerfile
+      - name: Test application
+        run: docker run --network slapbird-test-net slapbird-test 
