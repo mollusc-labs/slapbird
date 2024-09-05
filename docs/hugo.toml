@@ -5,7 +5,11 @@ theme = ['hugo-book']
 
 [menu]
 [[menu.before]]
-  name = "SlapbirdAPM"
+  name = "Getting Started"
+  url = "https://docs.slapbirdapm.com"
+  weight = 0
+[[menu.after]]
+  name = "Return to SlapbirdAPM"
   url = "https://slapbirdapm.com"
   weight = 0
 
