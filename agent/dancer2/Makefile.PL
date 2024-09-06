@@ -34,7 +34,8 @@ WriteMakefile(
     'LWP::Protocol::https' => '6.14',
     'System::Info'         => '0',
     'JSON::MaybeXS'        => '1.004008',
-    'Time::HiRes'          => '0'
+    'Time::HiRes'          => '0',
+    'DBI'                  => '0'
   },
   test => {TESTS => 't/*.t t/*/*.t'}
 );

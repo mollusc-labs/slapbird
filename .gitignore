@@ -1,5 +1,4 @@
 .env
-agent/mojo/MYMETA*
 *.tgz
 *.tar.gz
 MANIFEST
@@ -9,3 +8,4 @@ Makefile
 Makefile.old
 blib/
 *.db
+MYMETA.*
