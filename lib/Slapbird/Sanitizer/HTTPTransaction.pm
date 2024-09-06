@@ -53,7 +53,7 @@ sub sanitize {
         split("\n", $json->{error}));
   }
 
-  if (@{$json->{queries}}) {
+  if (ref($json->{queries}) eq 'ARRAY') {
     $json->{queries} = [reverse @{$json->{queries}}];
   }
 
