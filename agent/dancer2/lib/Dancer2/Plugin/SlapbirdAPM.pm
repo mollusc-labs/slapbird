@@ -57,6 +57,7 @@ has _ua => (
 );
 
 my $stack          = [];
+my $queries        = [];
 my $in_request     = 0;
 my $should_request = 0;
 
@@ -186,23 +187,19 @@ sub BUILD {
             }
         );
 
-        my @usable_modules = qw(Dancer2 Dancer2::Core Dancer2::Core::App
-          DBI DBIx::Class DBIx::Class::ResultSet DBIx::Class::Result
-          DBD::pg DBD::mysql);
-
-        for ( $self->trace_modules->@* ) {
-            next if $_ eq __PACKAGE__;
-
-            eval("no warnings; use $_");
-
-            if ($@) {
-                next;
+        my @modules = (
+            qw(Dancer2 Dancer2::Core Dancer2::Core::App
+              DBI DBIx::Class DBIx::Class::ResultSet DBIx::Class::Result
+              DBD::pg DBD::mysql), @{ $self->trace_modules }
+        );
+        SlapbirdAPM::Trace->trace_pkgs(@modules);
+        DBIx::Tracer->new(
+            sub {
+                my %args = @_;
+                push @$queries,
+                  { sql => $args{sql}, total_time => $args{time} };
             }
-            else {
-                push @usable_modules, $_;
-            }
-        }
-        SlapbirdAPM::Trace->trace_pkgs(@usable_modules);
+        );
     }
 
     my $request;
