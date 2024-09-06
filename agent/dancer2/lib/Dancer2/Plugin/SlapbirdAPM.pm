@@ -1,5 +1,8 @@
 package Dancer2::Plugin::SlapbirdAPM;
 
+use strict;
+use warnings;
+
 use LWP::UserAgent     ();
 use Const::Fast        qw(const);
 use SlapbirdAPM::Trace ();
@@ -9,11 +12,12 @@ use JSON::MaybeXS ();
 use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
+use DBIx::Tracer;
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
 
-# $Carp::Internal{__PACKAGE__} = 1;
+$Carp::Internal{__PACKAGE__} = 1;
 
 const my $OS => System::Info->new->os;
 
@@ -60,6 +64,15 @@ my $stack          = [];
 my $queries        = [];
 my $in_request     = 0;
 my $should_request = 0;
+
+DBIx::Tracer->new(
+    sub {
+        my %args = @_;
+        if ($in_request) {
+            push @$queries, { sql => $args{sql}, total_time => $args{time} };
+        }
+    }
+);
 
 {
 
@@ -190,18 +203,11 @@ sub BUILD {
         );
 
         my @modules = (
-            qw(Dancer2 Dancer2::Core Dancer2::Core::App
-              DBI DBIx::Class DBIx::Class::ResultSet DBIx::Class::Result
-              DBD::pg DBD::mysql), @{ $self->trace_modules }
+            qw(Dancer2 Dancer2::Core Dancer2::Core::App),
+            @{ $self->trace_modules }
         );
+
         SlapbirdAPM::Trace->trace_pkgs(@modules);
-        DBIx::Tracer->new(
-            sub {
-                my %args = @_;
-                push @$queries,
-                  { sql => $args{sql}, total_time => $args{time} };
-            }
-        );
     }
 
     my $request;
