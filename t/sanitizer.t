@@ -29,6 +29,11 @@ my $stack_text
 
 is $stack_html, $stack_text, 'is stack properly formatted?';
 
+my @queries = (
+  {sql => 'select * from users', total_time => 1},
+  {sql => 'select * from users', total_time => 2}
+);
+
 my $http_transaction = {
   stack            => \@stack,
   requestor        => 'other_app',
@@ -36,7 +41,8 @@ my $http_transaction = {
   end_time         => 1725631339761,
   error            => "error\nother_error\nanother_error",
   request_headers  => {foo => 'bar'},
-  response_headers => {bar => 'baz'}
+  response_headers => {bar => 'baz'},
+  queries          => \@queries
 };
 
 my $sanitized_transaction
@@ -53,5 +59,7 @@ is $sanitized_transaction->{request_headers}, 'foo: bar',
   'is request_headers correct?';
 is $sanitized_transaction->{response_headers}, 'bar: baz',
   'is request_headers correct?';
+is $sanitized_transaction->{queries}->[0]->{total_time}, 2,
+  'are queries properly ordered?';
 
 done_testing;
