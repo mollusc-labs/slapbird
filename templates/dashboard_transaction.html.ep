@@ -1,5 +1,6 @@
 % layout '_dashboard_layout', title => 'Slapbird APM - Dashboard Transaction Information', description => 'Slapbird APM dashboard, manage your services and view your applications performance metrics.';
-
+<link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/default.min.css">
+<script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
 <div class="box mt-6">
     <div class="is-flex is-vcentered is-justify-content-space-between">
         <div class="is-flex" style="align-items: center">
@@ -22,27 +23,44 @@
             <strong>Host</strong>: <%= $transaction->os %>
         </div>    
     % }
+
+    % if (@{$transaction->queries}) {
+        <h5 class="mt-4 title is-5">Queries</h5>
+        % for my $query (@{$transaction->queries}) {
+            <div class="box my-2">
+                <p>
+                    <strong>Execution Time</strong>: <%= $query->{total_time} %>/ms
+                </p>
+                <div class="p-0 m-0">
+                    <pre class="p-0 m-0"><code class="language-sql"><%= $query->{sql} %></code></pre>
+                </div>
+            </div>
+        % }
+    % } 
+
     % if ($transaction->error) {
-        <div class="mt-4 is-size-5">
-            Error:
-        </div>
+        <h5 class="mt-4 title is-5">
+            Error
+        </ht>
         <div class="box my-2">
             <%== $transaction->error %>
         </div>
     % }
-    <div class="mt-4 is-size-5">
-        Trace:
-    </div>
-    <div class="box my-2">
-        % if ($transaction->stack) {
-            <%== $transaction->stack %>
-        % } else {
-            No trace available for this request.
-        % }
-    </div>
+    % if ($transaction->stack) {
+        <h5 class="mt-4 title is-5">
+            Trace:
+        </h5>
+        <div class="box my-2">
+            % if ($transaction->stack) {
+                <%== $transaction->stack %>
+            % } else {
+                No trace available for this request.
+            % }
+        </div>    
+    % }
 </div>
 <div class="mt-6 mb-6">
     <a class="slapbird-button slapbird-is-primary" href="<%= $return_href %>">Go Back</a>
 </div>
-
+<script>hljs.highlightAll();</script>
 <script src="/js/epochDate.js"></script>

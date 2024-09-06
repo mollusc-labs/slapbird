@@ -10,8 +10,8 @@
                             <h1 class="title mb-2">The Perl 5 web application performance monitor</h1>
                             <ul class="subtitle">
                                 <li>Endpoint performance insights</li>
-                                <li>User agent tracking</li>
                                 <li>Service dependency visualization</li>
+                                <li>DBI query performance</li>
                                 <li>and more!</li>
                             </ul>
                             <a href="/login" class="slapbird-button slapbird-is-secondary">Start for free</a>
@@ -40,7 +40,7 @@
                             <li>Mojolicious</li>
                             <li>Dancer2</li>
                             <li>Plack</li>
-                            <li>DBI (Coming Soon)</li>
+                            <li>DBI</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">

@@ -20,6 +20,7 @@
 package Slapbird::Schema::Result::HTTPTransaction;
 
 use base 'DBIx::Class::Core';
+use Cpanel::JSON::XS ();
 use strict;
 use warnings;
 
@@ -45,6 +46,8 @@ __PACKAGE__->add_columns(qw(
   requestor
   stack
   os
+  num_queries
+  queries
 ));
 
 __PACKAGE__->add_columns(
@@ -53,6 +56,16 @@ __PACKAGE__->add_columns(
 __PACKAGE__->add_columns(http_transaction_id => {is_auto_increment => 1});
 
 __PACKAGE__->set_primary_key('http_transaction_id');
+
+__PACKAGE__->inflate_column(
+  queries => {
+    inflate => sub { return Cpanel::JSON::XS::decode_json(shift) },
+    deflate => sub {
+      my ($json) = @_;
+      return ref $json ? Cpanel::JSON::XS::encode_json($json) : $json;
+    }
+  }
+);
 
 sub to_graph_dto {
   my $self = shift;

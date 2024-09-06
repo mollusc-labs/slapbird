@@ -21,6 +21,7 @@ package Slapbird::Validator::HTTPTransaction;
 
 use strict;
 use warnings;
+
 use feature 'state';
 use Slapbird::Enum::ApplicationTypes;
 
@@ -39,16 +40,27 @@ sub validate {
     properties => {
       type =>
         {type => 'string', enum => [Slapbird::Enum::ApplicationTypes->all]},
-      method           => {type => 'string'},
-      end_point        => {type => 'string'},
-      start_time       => {type => 'number'},
-      end_time         => {type => 'number'},
-      response_code    => {type => 'integer'},
-      response_size    => {type => ['integer', 'null']},
-      request_size     => {type => ['integer', 'null']},
-      handler          => {type => ['string',  'null']},
-      error            => {type => ['string',  'null']},
-      requestor        => {type => ['string',  'null']},
+      method        => {type => 'string'},
+      end_point     => {type => 'string'},
+      start_time    => {type => 'number'},
+      end_time      => {type => 'number'},
+      response_code => {type => 'integer'},
+      response_size => {type => ['integer', 'null']},
+      request_size  => {type => ['integer', 'null']},
+      handler       => {type => ['string',  'null']},
+      error         => {type => ['string',  'null']},
+      requestor     => {type => ['string',  'null']},
+      num_queries   => {type => ['integer', 'null']},
+      queries       => {
+        type  => 'array',
+        items => {
+          additionalProperties => 0,
+          properties           => {
+            total_time => {type => ['number', 'string']},
+            sql        => {type => 'string'}
+          }
+        }
+      },
       request_headers  => {type => 'object'},
       response_headers => {type => 'object'},
       stack            => {
@@ -68,13 +80,8 @@ sub validate {
   });
 
   my @errors = $jv->validate($object);
-
-  return @errors if @errors;
-
-  # TODO: (RF) as more things like Dancer2, Plack are added to the agent
-  # This will need to dispatch on the type.
+  return @errors                         if @errors;
   return $class->_validate_mojo($object) if $object->{type} eq 'mojo';
-
   return ();
 }
 
