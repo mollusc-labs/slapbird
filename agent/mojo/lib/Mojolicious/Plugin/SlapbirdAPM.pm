@@ -32,6 +32,15 @@ my $stack      = [];
 my $queries    = [];
 my $in_request = 0;
 
+DBIx::Tracer->new(
+    sub {
+        my %args = @_;
+        if ($in_request) {
+            push @$queries, { sql => $args{sql}, total_time => $args{time} };
+        }
+    }
+);
+
 sub _call_home {
     my ( $json, $key, $app, $quiet ) = @_;
     return $UA->post_p(
@@ -259,13 +268,6 @@ sub register {
             );
 
             SlapbirdAPM::Trace->trace_pkgs(@modules);
-            DBIx::Tracer->new(
-                sub {
-                    my %args = @_;
-                    push @$queries,
-                      { sql => $args{sql}, total_time => $args{time} };
-                }
-            );
         }
     );
 
