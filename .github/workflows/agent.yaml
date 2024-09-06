@@ -1,0 +1,36 @@
+name: Agent
+
+on:
+  push:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        perl-version:
+          - '5.38' # We only test on LTS, LTS - 1
+          - '5.40'
+          - '5.'
+
+    container:
+      image: perl:${{matrix.perl-version}}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install cpanm
+        run: cpan -I App::cpanminus
+      - name: Install deps mojo
+        run: cd agent/mojo && cpanm --installdeps . --cpanfile cpanfile
+      - name: Test Mojo
+        run: cd agent/mojo && perl Makefile.PL && make test
+      - name: Install deps Dancer2
+        run: cd agent/dancer2 && cpanm --installdeps . --cpanfile cpanfile
+      - name: Test Dancer2
+        run: cd agent/dancer2 && perl Makefile.PL && make test
+      - name: Install deps Plack
+        run: cd agent/plack && perl Makefile.PL && make test
+      - name: Test Plack
+        run: cd agent/plack && perl Makefile.PL && make test
