@@ -29,7 +29,7 @@
         % for my $query (@{$transaction->queries}) {
             <div class="box my-2">
                 <p>
-                    <strong>Execution Time</strong>: <%= $query->{total_time} %>/ms
+                    <strong>Execution Time</strong>: <%= $query->{total_time} %>ms
                 </p>
                 <div class="p-0 m-0">
                     <pre class="p-0 m-0"><code class="language-sql"><%= $query->{sql} %></code></pre>
