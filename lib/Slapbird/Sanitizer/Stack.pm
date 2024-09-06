@@ -27,6 +27,10 @@ use namespace::clean;
 sub sanitize {
   my ($class, $stack, $total_time) = @_;
 
+  for (@$stack) {
+    $_->{total_time} = sprintf('%.2f', $_->{end_time} - $_->{start_time});
+  }
+
   my @stack_peices = map {
         '<div class="slapbird-stack-row">'
       . '<span class="slapbird-stack-row-name">'
