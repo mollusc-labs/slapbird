@@ -30,7 +30,7 @@
         </div>
     % }
 
-    % if ($transaction->queries) {
+    % if (ref($transaction->queries) eq 'ARRAY' && @{$transaction->queries}) {
         <h5 class="mt-4 title is-5">Queries</h5>
         % for my $query (@{$transaction->queries}) {
             <div class="box my-2">
