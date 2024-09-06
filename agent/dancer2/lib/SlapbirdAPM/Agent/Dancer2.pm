@@ -13,9 +13,9 @@ our $VERSION = '0.003';
 
 =head1 NAME
 
-SlapbirdAPM::Agent::Mojo
+SlapbirdAPM::Agent::Dancer2
 
-The L<SlapbirdAPM|https://www.slapbirdapm.com> user-agent for L<Mojolicious> applications.
+The L<SlapbirdAPM|https://www.slapbirdapm.com> user-agent for L<Dancer2> applications.
 
 =head1 SYNOPSIS
 
