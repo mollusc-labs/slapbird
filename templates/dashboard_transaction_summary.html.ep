@@ -13,16 +13,16 @@
     <div class="column">
       Method
     </div>
-    <div class="column ml-2">
+    <div class="column has-text-left">
       Status
     </div>
     <div class="column">
       Time
     </div>
-    <div class="column">
+    <div class="column is-one-fourth">
       Handler
     </div>
-    <div class="column">
+    <div class="column is-one-fifth">
       Request Identifier
     </div>
     <div class="column is-one-fifth">
@@ -41,10 +41,10 @@
       <div class="column">
         <%= $transaction->total_time %>/ms
       </div>
-      <div class="column">
-        <%= $transaction->handler %>
+      <div class="column is-one-fourth">
+        <%= $transaction->handler // ucfirst($transaction->type) %>
       </div>
-      <div class="column">
+      <div class="column is-one-fifth">
         % if ($transaction->request_id) {
           <%= $transaction->request_id %>
         % } else {

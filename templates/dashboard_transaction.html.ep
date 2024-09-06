@@ -20,8 +20,14 @@
     </div>
     % if ($transaction->os) {
         <div class="mt-4">
-            <strong>Host</strong>: <%= $transaction->os %>
+            <strong>Host OS</strong>: <%= $transaction->os %>
         </div>    
+    % }
+
+    % if ($transaction->request_id) {
+        <div class="mt-4">
+            <strong>Request Identifier</strong>: <%= $transaction->request_id %>
+        </div>
     % }
 
     % if (@{$transaction->queries}) {
