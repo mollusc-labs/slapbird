@@ -111,10 +111,12 @@ sub _call_home {
       $self->_unfold_headers( $dancer2_request->headers );
     $response{error} = $error;
     $response{error} //= undef;
-    $response{os}        = $OS;
-    $response{requestor} = $dancer2_request->header('x-slapbird-name');
-    $response{handler}   = undef;
-    $response{stack}     = $stack;
+    $response{os}          = $OS;
+    $response{requestor}   = $dancer2_request->header('x-slapbird-name');
+    $response{handler}     = undef;
+    $response{stack}       = $stack;
+    $response{num_queries} = scalar @$queries;
+    $response{queries}     = $queries;
 
     my $ua = LWP::UserAgent->new();
     my $slapbird_response;
@@ -214,6 +216,7 @@ sub BUILD {
                 my ($app) = @_;
                 $in_request = 1;
                 $stack      = [];
+                $queries    = [];
                 $request    = $app->request;
             }
         )
