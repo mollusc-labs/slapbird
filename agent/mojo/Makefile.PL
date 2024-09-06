@@ -33,7 +33,8 @@ WriteMakefile(
     'namespace::clean' => '0.27',
     'Time::Piece'      => '1.3401',
     'Time::HiRes'      => '1.9764',
-    'System::Info'     => '0.064'
+    'System::Info'     => '0.064',
+    'DBI'              => '0'
   },
   test => {TESTS => 't/*.t t/*/*.t'}
 );

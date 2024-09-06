@@ -13,6 +13,7 @@ use Carp;
 use IPC::Open2;
 use SlapbirdAPM::Trace;
 use System::Info;
+use DBIx::Tracer;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -28,6 +29,7 @@ const my $UA => Mojo::UserAgent->new();
 my $should_request = 1;
 my $next_timestamp;
 my $stack      = [];
+my $queries    = [];
 my $in_request = 0;
 
 sub _call_home {
@@ -148,7 +150,8 @@ sub register {
             $in_request = 1;
 
             try {
-                $stack = [];
+                $stack   = [];
+                $queries = [];
                 $next->();
             }
             catch {
@@ -181,9 +184,11 @@ sub register {
                     error            => $error,
                     requestor => $c->req->headers->header('x-slapbird-name')
                       // 'UNKNOWN',
-                    handler => $controller_name,
-                    stack   => $stack,
-                    os      => System::Info->new->os
+                    handler     => $controller_name,
+                    stack       => $stack,
+                    os          => System::Info->new->os,
+                    queries     => $queries,
+                    num_queries => scalar @$queries
                 },
                 $key, $app, $quiet
             );
@@ -198,10 +203,14 @@ sub register {
 
     my $name;
     try {
-        $name =
+        my $result =
           Mojo::UserAgent->new->get(
-            $SLAPBIRD_APM_NAME_URI => { 'x-slapbird-apm' => $key } )->result()
-          ->json()->{name};
+            $SLAPBIRD_APM_NAME_URI => { 'x-slapbird-apm' => $key } )->result();
+
+        Carp::croak('API key invalid!') if ( !$result->is_success );
+
+        $name = $result->json()->{name};
+
         _enable_mojo_ua_tracking($name) if $topology;
     }
     catch {
@@ -244,26 +253,19 @@ sub register {
                   Mojolicious Mojolicious::Controller Mojo::UserAgent
                   Mojo::Base Mojo::File Mojo::Exception Mojo::IOLoop
                   Mojo::Pg Mojo::mysql Mojo::SQLite Mojo::JSON
-                  Mojo::Server DBI DBD::Pg DBD::mysql DBIx::Classs
+                  Mojo::Server DBI DBI::db DBI::st DBI::DBD DBD::Pg DBD::mysql DBIx::Classs
                   DBIx::Class::ResultSet DBIx::Class::Result
                 ), @{ $conf->{trace_modules} // [] }
             );
-            my @usable_modules = (qw(main));
 
-            for (@modules) {
-                eval("use $_");
-
-                if ($@) {
-                    next;
+            SlapbirdAPM::Trace->trace_pkgs(@modules);
+            DBIx::Tracer->new(
+                sub {
+                    my %args = @_;
+                    push @$queries,
+                      { sql => $args{sql}, total_time => $args{time} };
                 }
-                else {
-                    push @usable_modules, $_;
-                }
-            }
-
-            SlapbirdAPM::Trace->trace_pkgs(@usable_modules);
-            SlapbirdAPM::Trace->trace_subs( 'CORE::sort', 'CORE::map',
-                'CORE::grep', 'CORE::' );
+            );
         }
     );
 
