@@ -6,11 +6,16 @@ use warnings;
 use Test::Slapbird;
 
 use Carp ();
+use Exporter 'import';
+use Mojo::Pg;
+use Slapbird::Schema;
+
+our @EXPORT = qw(test_dbh test_schema);
 
 my $already_run;
 my ($has_podman, $has_docker);
 
-sub db_init {
+sub _db_init {
   if (!$has_podman || !$has_docker) {
     $has_podman = `sh -c 'command -v podman'`;
     $has_docker = `sh -c 'command -v docker'`;
@@ -78,6 +83,14 @@ END {
 }
 
 
-db_init();
+_db_init();
+
+sub test_dbh {
+  return Mojo::Pg->new('postgres://slapbird:password@localhost/slapbird')->dbh;
+}
+
+sub test_schema {
+  return Slapbird::Schema->connect(sub { test_dbh()->dbh });
+}
 
 1;
