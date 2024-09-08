@@ -27,6 +27,8 @@ use namespace::clean;
 sub sanitize {
   my ($class, $stack, $total_time) = @_;
 
+  return undef unless ref($stack) eq 'ARRAY';
+
   for (@$stack) {
     $_->{total_time} = sprintf('%.2f', $_->{end_time} - $_->{start_time});
   }

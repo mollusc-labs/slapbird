@@ -5,6 +5,7 @@ use lib 'lib';
 
 use Test::More;
 use Time::HiRes qw(time);
+use Try::Tiny;
 use Slapbird::Sanitizer::HTTPTransaction;
 use Slapbird::Sanitizer::Stack;
 
@@ -61,5 +62,27 @@ is $sanitized_transaction->{response_headers}, 'bar: baz',
   'is request_headers correct?';
 is $sanitized_transaction->{queries}->[0]->{total_time}, 2,
   'are queries properly ordered?';
+
+my $error;
+my $val = undef;
+try {
+  $val = Slapbird::Sanitizer::HTTPTransaction->sanitize(undef);
+}
+catch {
+  $error = $_;
+};
+
+is $error, undef, 'no error thrown when http transaction sanitize undef?';
+is $val,   undef, 'is val still undef when http transaction sanitize undef?';
+
+try {
+  $val = Slapbird::Sanitizer::Stack->sanitize(undef);
+}
+catch {
+  $error = $_;
+};
+
+is $error, undef, 'no error thrown when stack sanitize undef?';
+is $val,   undef, 'is val still undef when stack sanitize undef?';
 
 done_testing;

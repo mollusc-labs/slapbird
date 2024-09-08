@@ -33,6 +33,8 @@ use namespace::clean;
 sub sanitize {
   my ($class, $json) = @_;
 
+  return undef unless ref($json) eq 'HASH';
+
   $json->{requestor} //= 'UNKNOWN';
   $json->{total_time}
     = sprintf('%.2f', $json->{end_time} - ($json->{start_time}));
