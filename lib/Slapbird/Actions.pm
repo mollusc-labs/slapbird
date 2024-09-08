@@ -19,7 +19,9 @@
 
 package Slapbird::Actions;
 
-use Moo;
+use strict;
+use warnings;
+
 use Moo::HandleMoose;
 use Mojo::Util qw(monkey_patch);
 use Mojo::File;
@@ -27,20 +29,19 @@ use String::CamelCase qw(decamelize);
 use Try::Tiny;
 use Carp;
 
-register_action('Slapbird::Action::' . $_->basename)
-  for (@{Mojo::File->new('lib/Slapbird/Action')->list});
+register_action('Slapbird::Action::' . $_)
+  for (map {s/\.pm//grxm}
+  map { $_->basename } @{Mojo::File->new('lib/Slapbird/Action')->list});
 
 my %actions;
 
 sub register_action {
   my ($class, $name) = @_;
 
-  $class =~ s/\.pm//g;
-
   if (!$name) {
     my $c = $class;
-    $c =~ s/Slapbird::Action//g;
-    $c =~ s/:://g;
+    $c =~ s/Slapbird::Action//gxm;
+    $c =~ s/:://gxm;
     $name = decamelize($c);
   }
 
@@ -64,6 +65,7 @@ sub helper {
         shift;    # Remove controller
         my %args = (@_);
         my $meta = Moo::HandleMoose::inject_real_metaclass_for($actions{$k});
+
         if (defined $meta->find_attribute_by_name('schema')) {
           $args{schema} //= $c->dbic;
         }

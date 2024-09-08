@@ -444,25 +444,27 @@ sub startup {
     }
   }
 
-  try {
-    my @pricing_plans = $self->resultset('PricingPlan')->all;
-    my %update_lookup = map { lc($_->name) => $_ }
-      grep { !defined($_->stripe_id) } @pricing_plans;
+  if ($ENV{SLAPBIRD_PRODUCTION} || $ENV{SLAPBIRD_TEST_STRIPE}) {
+    try {
+      my @pricing_plans = $self->resultset('PricingPlan')->all;
+      my %update_lookup = map { lc($_->name) => $_ }
+        grep { !defined($_->stripe_id) } @pricing_plans;
 
-    if (%update_lookup) {
-      for my $stripe_plan (@{$self->stripe->plans('list')->data}) {
-        chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
-        if (my $plan = $update_lookup{$cut}) {
-          $plan->update({stripe_id => $stripe_plan->id});
+      if (%update_lookup) {
+        for my $stripe_plan (@{$self->stripe->plans('list')->data}) {
+          chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
+          if (my $plan = $update_lookup{$cut}) {
+            $plan->update({stripe_id => $stripe_plan->id});
+          }
         }
       }
-    }
 
+    }
+    catch {
+      $self->app->log->warn(
+        'Unable to check Stripe/pricing plan associations: ' . $_);
+    };
   }
-  catch {
-    $self->app->log->warn(
-      'Unable to check Stripe/pricing plan associations: ' . $_);
-  };
 
 
   # Static routes

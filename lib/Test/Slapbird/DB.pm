@@ -43,7 +43,6 @@ podman run --replace \
   --name slapbird-postgres-test \
   -e POSTGRES_USER=slapbird \
   -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=slapbird \
   -p 5432:5432 \
   -d \
   postgres:15-alpine
@@ -60,7 +59,6 @@ docker run --replace \
  --name slapbird-postgres-test \
   -e POSTGRES_USER=slapbird \
   -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=slapbird \
   -p 5432:5432 \
   -d \
   postgres:15-alpine
@@ -68,6 +66,32 @@ docker run --replace \
   }
 
 DONE:
+
+  if ($has_podman) {
+    system(q[
+until podman exec \
+  -it slapbird-postgres-test \
+    pg_isready \
+    -U slapbird \
+    -h localhost; do sleep 1; done
+]);
+    system(
+      q[podman exec -it slapbird-postgres-test createdb -U slapbird slapbird]);
+  }
+  elsif ($has_docker) {
+    system(q[
+until docker run \
+  --rm \
+  --link slapbird-postgres-test \
+  postgres:15-alpine pg_isready \
+    -U slapbird \
+    -h localhost; do sleep 1; done
+]);
+    system(
+      q[podman exec -it slapbird-postgres-test createdb -U slapbird slapbird]);
+  }
+
+  system(q[bin/run_migrations up]);
 
   return $already_run = 1;
 }
@@ -86,7 +110,8 @@ END {
 _db_init();
 
 sub test_dbh {
-  return Mojo::Pg->new('postgres://slapbird:password@localhost/slapbird')->dbh;
+  return Mojo::Pg->new('postgres://slapbird:password@localhost/slapbird')
+    ->db->dbh;
 }
 
 sub test_schema {
