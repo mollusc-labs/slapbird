@@ -28,4 +28,4 @@ jobs:
       - name: Build test container
         run: docker build -t slapbird-test --progress=plain . -f test.Dockerfile
       - name: Test application
-        run: docker run --network -e SLAPBIRD_GITHUB_ACTION=1 slapbird-test-net slapbird-test 
+        run: docker run --network slapbird-test-net -e SLAPBIRD_GITHUB_ACTION=1 slapbird-test 
