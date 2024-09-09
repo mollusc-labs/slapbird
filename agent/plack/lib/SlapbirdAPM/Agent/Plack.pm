@@ -3,7 +3,7 @@ package SlapbirdAPM::Agent::Plack;
 use strict;
 use warnings;
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 1;
 
@@ -65,6 +65,8 @@ This example uses a L<Dancer2> application, but you can substitute for any L<Pla
 =head1 SEE ALSO
 
 L<SlapbirdAPM::Agent::Mojo>
+
+L<SlapbirdAPM::Agent::Dancer2>
 
 =head1 AUTHOR
 

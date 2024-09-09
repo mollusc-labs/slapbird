@@ -36,6 +36,7 @@
          "requires" : {
             "Carp" : "0",
             "Const::Fast" : "0",
+            "DBI" : "0",
             "JSON::MaybeXS" : "0",
             "LWP::UserAgent" : "0",
             "Plack" : "0",
@@ -59,6 +60,6 @@
          "url" : "https://github.com/mollusc-labs/Slapbird"
       }
    },
-   "version" : "0.003",
+   "version" : "0.004",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }

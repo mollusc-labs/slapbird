@@ -12,7 +12,7 @@ use JSON::MaybeXS ();
 use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
-use DBIx::Tracer;
+use SlapbirdAPM::DBIx::Tracer;
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
@@ -60,12 +60,11 @@ has _ua => (
     default => sub { return LWP::UserAgent->new( timeout => 5 ) }
 );
 
-my $stack          = [];
 my $queries        = [];
 my $in_request     = 0;
 my $should_request = 0;
 
-DBIx::Tracer->new(
+SlapbirdAPM::DBIx::Tracer->new(
     sub {
         my %args = @_;
         if ($in_request) {
@@ -87,6 +86,7 @@ DBIx::Tracer->new(
 
     sub DESTROY {
         my ($self) = @_;
+        my $stack = delete $self->{stack};
         push @$stack, { %$self, end_time => time * 1_000 };
     }
 
@@ -175,6 +175,8 @@ sub BUILD {
         return;
     }
 
+    my $stack = [];
+
     if ( $self->trace ) {
         SlapbirdAPM::Trace->callback(
             sub {
@@ -190,7 +192,8 @@ sub BUILD {
 
                 my $tracer = Dancer2::Plugin::SlapbirdAPM::Tracer->new(
                     name       => $name,
-                    start_time => time * 1_000
+                    start_time => time * 1_000,
+                    stack      => $stack
                 );
 
                 try {

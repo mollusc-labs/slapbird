@@ -377,8 +377,7 @@
 #
 # The End
 
-package    # HIDE FROM PAUSE
-  DBIx::Tracer;
+package SlapbirdAPM::DBIx::Tracer;
 use strict;
 use warnings;
 use 5.008008;
@@ -581,6 +580,22 @@ sub _logging {
         sql         => $sql,
         bind_params => $bind_params,
     );
+}
+
+sub DESTROY {
+    my $self = shift;
+
+    no warnings qw(redefine prototype);
+    *DBI::st::execute    = $org_execute;
+    *DBI::st::bind_param = $org_bind_param;
+    *DBI::db::do         = $org_db_do;
+    unless ($pp_mode) {
+        *DBI::db::selectall_arrayref = $org_db_selectall_arrayref;
+        *DBI::db::selectrow_arrayref = $org_db_selectrow_arrayref;
+        *DBI::db::selectrow_array    = $org_db_selectrow_array;
+    }
+
+    return;
 }
 
 1;

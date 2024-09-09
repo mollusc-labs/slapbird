@@ -14,6 +14,7 @@ use LWP::UserAgent;
 use Carp ();
 use System::Info;
 use Time::HiRes qw(time);
+use SlapbirdAPM::DBIx::Tracer;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -32,8 +33,9 @@ sub _unfold_headers {
 }
 
 sub _call_home {
-    my ( $self, $request, $response, $env, $start_time, $end_time, $error ) =
-      @_;
+    my ( $self, $request, $response, $env, $start_time, $end_time, $queries,
+        $error )
+      = @_;
 
     my $pid = fork();
 
@@ -54,11 +56,12 @@ sub _call_home {
     $response{request_size}  = $request->content_length;
     $response{request_headers} =
       $self->_unfold_headers( $request->headers->psgi_flatten_without_sort() );
-    $response{error}     = $error;
-    $response{os}        = $OS;
-    $response{requestor} = $request->header('x-slapbird-name');
-    $response{handler}   = undef
-      ; # TODO: (rf) Find a way to find something meaningful to fill this slot with.
+    $response{error}       = $error;
+    $response{os}          = $OS;
+    $response{requestor}   = $request->header('x-slapbird-name');
+    $response{num_queries} = scalar @$queries;
+    $response{queries}     = $queries;
+    $response{handler}     = undef;
 
     my $ua = LWP::UserAgent->new();
     my $slapbird_response;
@@ -113,6 +116,13 @@ sub call {
     my $error;
     my $response;
     my $plack_response;
+    my $queries    = [];
+    my $dbi_tracer = SlapbirdAPM::DBIx::Tracer->new(
+        sub {
+            my %args = @_;
+            push @$queries, { sql => $args{sql}, total_time => $args{time} };
+        }
+    );
 
     try {
         $plack_response = $self->app->($env);
@@ -125,7 +135,7 @@ sub call {
     my $end_time = time * 1_000;
 
     $self->_call_home( $request, $response, $env, $start_time,
-        $end_time, $error );
+        $end_time, $queries, $error );
 
     if ($error) {
         Carp::croak($error);

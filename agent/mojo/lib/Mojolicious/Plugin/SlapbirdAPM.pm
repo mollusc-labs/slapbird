@@ -13,7 +13,7 @@ use Carp;
 use IPC::Open2;
 use SlapbirdAPM::Trace;
 use System::Info;
-use DBIx::Tracer;
+use SlapbirdAPM::DBIx::Tracer;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -28,18 +28,7 @@ const my $UA => Mojo::UserAgent->new();
 
 my $should_request = 1;
 my $next_timestamp;
-my $stack      = [];
-my $queries    = [];
 my $in_request = 0;
-
-DBIx::Tracer->new(
-    sub {
-        my %args = @_;
-        if ($in_request) {
-            push @$queries, { sql => $args{sql}, total_time => $args{time} };
-        }
-    }
-);
 
 sub _call_home {
     my ( $json, $key, $app, $quiet ) = @_;
@@ -116,6 +105,7 @@ sub _enable_mojo_ua_tracking {
 
     sub DESTROY {
         my ($self) = @_;
+        my $stack = delete $self->{stack};
         push @$stack, { %$self, end_time => time * 1_000 };
     }
 
@@ -129,6 +119,7 @@ sub register {
     my $ignored_headers = $conf->{ignored_headers};
     my $no_trace        = $conf->{no_trace};
     my $quiet           = $conf->{quiet};
+    my $stack           = [];
 
     Carp::croak(
 'Please provide your SlapbirdAPM key via the SLAPBIRD_APM_API_KEY env variable, or as part of the plugin declaration'
@@ -158,9 +149,20 @@ sub register {
 
             $in_request = 1;
 
+            $stack = [];
+            my $queries = [];
+
             try {
-                $stack   = [];
-                $queries = [];
+                my $tracer = SlapbirdAPM::DBIx::Tracer->new(
+                    sub {
+                        my %args = @_;
+                        if ($in_request) {
+                            push @$queries,
+                              { sql => $args{sql}, total_time => $args{time} };
+                        }
+                    }
+                );
+
                 $next->();
             }
             catch {
@@ -245,7 +247,8 @@ sub register {
 
                     my $tracer = Mojolicious::Plugin::SlapbirdAPM::Tracer->new(
                         name       => $name,
-                        start_time => time * 1_000
+                        start_time => time * 1_000,
+                        stack      => $stack
                     );
 
                     try {

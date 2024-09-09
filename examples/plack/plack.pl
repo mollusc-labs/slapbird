@@ -10,6 +10,6 @@ my $app = sub {
 };
 
 builder {
-  enable 'SlapbirdAPM', key => '01J5GY4NF3TDDDNFJZJDDMB8CRmy-plack-app';
+  enable 'SlapbirdAPM', key => '<YOUR API KEY>';
   $app;
 };

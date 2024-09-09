@@ -32,7 +32,8 @@ WriteMakefile(
     'JSON::MaybeXS'    => '0',
     'LWP::UserAgent'   => '0',
     'System::Info'     => '0.064',
-    'Const::Fast'      => '0'
+    'Const::Fast'      => '0',
+    'DBI'              => '0'
   },
   test => {TESTS => 't/*.t t/*/*.t'}
 );
