@@ -470,7 +470,7 @@ sub startup {
   # Static routes
   for (qw(index getting-started pricing tos privacy docs)) {
     my $slug = slugify($_);
-    $slug =~ s/\-/_/g;
+    $slug =~ s/\-/_/gxm;
     $router->any($_ eq 'index' ? '/' : "/$_")->to('static#' . $slug)
       ->name($slug);
   }

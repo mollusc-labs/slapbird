@@ -47,7 +47,7 @@
   % } else {
       <h3 class="title is-4">No summaries available.</h3>
     <p>
-      <a class="slapbird-link underline" href="/docs/app-setup">Is your application configured properly?</a>
+      <a class="slapbird-link underline" href="/getting-started">Is your application configured properly?</a>
     </p>
   % }
 % }

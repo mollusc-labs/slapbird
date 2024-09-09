@@ -47,14 +47,26 @@
     % if ($transaction->error) {
         <h5 class="mt-4 title is-5">
             Error
-        </ht>
+        </h5>
         <div class="box my-2">
             <%== $transaction->error %>
         </div>
     % }
+
+    % if ($transaction->request_headers) {
+        <h5 class="mt-4 title is-5">
+            Request Headers
+        </h5>
+        <div>
+            <pre class="p-0 m-0"><code class="language-json">{
+                <%= $transaction->request_headers %>
+}</code></pre>
+        </div>
+    % }
+
     % if ($transaction->stack) {
         <h5 class="mt-4 title is-5">
-            Trace:
+            Trace
         </h5>
         <div class="box my-2">
             % if ($transaction->stack) {
