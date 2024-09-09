@@ -57,10 +57,8 @@
         <h5 class="mt-4 title is-5">
             Request Headers
         </h5>
-        <div>
-            <pre class="p-0 m-0"><code class="language-json">{
-                <%= $transaction->request_headers %>
-}</code></pre>
+        <div class="box my-2">
+            <pre class="p-0 m-0"><code><%= $transaction->request_headers %></code></pre>
         </div>
     % }
 
