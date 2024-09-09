@@ -122,7 +122,7 @@ sub register {
     my $stack           = [];
 
     Carp::croak(
-'Please provide your SlapbirdAPM key via the SLAPBIRD_APM_API_KEY env variable, or as part of the plugin declaration'
+'Please provide your SlapbirdAPM key via the SLAPBIRDAPM_API_KEY env variable, or as part of the plugin declaration'
     ) if !$key;
 
     $app->routes->get(
