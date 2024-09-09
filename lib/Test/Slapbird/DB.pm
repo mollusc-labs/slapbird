@@ -34,7 +34,7 @@ sub _db_init {
     }
 
     if ($ENV{SLAPBIRD_GITHUB_ACTION}) {
-      system(q[SLAPBIRD_ENV='../../.env.github-actions' bin/run_migrations up]);
+      system(q[SLAPBIRD_ENV='/../.env.github-actions' bin/run_migrations up]);
     }
     goto DONE;
   }
