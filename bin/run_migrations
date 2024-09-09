@@ -7,7 +7,7 @@ use Mojo::File qw(curfile);
 use Mojo::Pg;
 use Carp ();
 use Dotenv -load => $ENV{SLAPBIRD_ENV}
-  ? $ENV{SLAPBIRD_ENV}
+  ? curfile->dirname() . '/../' . $ENV{SLAPBIRD_ENV}
   : curfile->dirname() . '/../.env';
 use lib curfile->dirname() . '/../lib';
 
