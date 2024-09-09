@@ -26,6 +26,16 @@ sub _db_init {
   if (!$has_podman && !$has_docker) {
     Carp::carp(
       'Neither podman, nor docker run. Assuming you have your own database...');
+
+    if (!$ENV{SLAPBIRD_GITHUB_ACTION}) {
+      Carp::croak(
+        'Neither podman, nor docker available, and this is not a Github action, cannot test.'
+      );
+    }
+
+    if ($ENV{SLAPBIRD_GITHUB_ACTION}) {
+      system(q[SLAPBIRD_ENV='../../.env.github-actions bin/run_migrations up]);
+    }
     goto DONE;
   }
 
@@ -91,7 +101,7 @@ until docker run \
       q[podman exec -it slapbird-postgres-test createdb -U slapbird slapbird]);
   }
 
-  system(q[bin/run_migrations up]);
+  system(q[bin/run_migrations up]) unless $ENV{SLAPBIRD_GITHUB_ACTION};
 
   return $already_run = 1;
 }
@@ -110,6 +120,11 @@ END {
 _db_init();
 
 sub test_dbh {
+  if ($ENV{SLAPBIRD_GITHUB_ACTION}) {
+    return Mojo::Pg->new(
+      'postgres://slapbird:password@slapbird-postgres-test/slapbird')->db->dbh;
+  }
+
   return Mojo::Pg->new('postgres://slapbird:password@localhost/slapbird')
     ->db->dbh;
 }

@@ -6,7 +6,9 @@ use warnings;
 use Mojo::File qw(curfile);
 use Mojo::Pg;
 use Carp ();
-use Dotenv -load => curfile->dirname() . '/../.env';
+use Dotenv -load => $ENV{SLAPBIRD_ENV}
+  ? $ENV{SLAPBIRD_ENV}
+  : curfile->dirname() . '/../.env';
 use lib curfile->dirname() . '/../lib';
 
 my $verb = $ARGV[0];
