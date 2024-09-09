@@ -377,7 +377,8 @@
 #
 # The End
 
-package SlapbirdAPM::DBIx::Tracer;
+package # HIDE FROM PAUSE
+    SlapbirdAPM::DBIx::Tracer;
 use strict;
 use warnings;
 use 5.008008;
