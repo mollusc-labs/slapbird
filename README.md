@@ -5,7 +5,7 @@
 </p>
 <h1 align="center"><a href="https://www.slapbirdapm.com">SlapBird</a></h1>
 <p align="center">
-  An all <b>Perl</b> APM for Mojolicious, Plack, and soon, Dancer2.
+  An all <b>Perl</b> APM for Mojolicious, Plack, and Dancer2
 </p>
 
 ## Beta notice
