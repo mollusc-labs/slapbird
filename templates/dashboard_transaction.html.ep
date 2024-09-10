@@ -58,7 +58,7 @@
             Request Headers
         </h5>
         <div class="box my-2">
-            <pre class="p-0 m-0"><code><%= $transaction->request_headers %></code></pre>
+            <pre class="p-0 m-0"><code class="language-yaml yaml"><%= $transaction->request_headers %></code></pre>
         </div>
     % }
 
