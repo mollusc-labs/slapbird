@@ -31,8 +31,8 @@
     % }
 
     % if (ref($transaction->queries) eq 'ARRAY' && @{$transaction->queries}) {
-        <h5 class="mt-4 title is-5">Queries</h5>
-        % for my $query (@{$transaction->queries}) {
+        <h5 class="mt-4 mb-2 title is-5">Queries</h5>
+        % for my $query (reverse @{$transaction->queries}) {
             <div class="box my-2">
                 <p>
                     <strong>Execution Time</strong>: <%= $query->{total_time} %>ms

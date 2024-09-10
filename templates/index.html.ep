@@ -1,5 +1,5 @@
 <html>
-    %= include '_header', title => 'Slapbird APM - the Perl web-service APM', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services. Providing insights into application performance, and request times.'
+    %= include '_header', title => 'Slapbird APM - the Perl web-service APM', description => 'Slapbird APM is a Perl 5 web-application APM built for monitoring web services written in Perl. Providing insights into application performance, queries, and request times.'
     <body>
         <main style="min-height: 100vh">
             %= include '_nav'
@@ -31,7 +31,7 @@
             <section class="container">
                 <div class="has-text-centered">
                     <h2 class="is-2 title mb-1">Application Performance Monitoring</h2>
-                    <h2 class="is-2 title">for Mojolicious and Plack apps</h2>
+                    <h2 class="is-2 title">for Perl web-applications</h2>
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-one-third has-text-centered">
@@ -41,6 +41,7 @@
                             <li>Dancer2</li>
                             <li>Plack</li>
                             <li>DBI</li>
+                            <li>Catalyst (Coming Soon)</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">
@@ -49,7 +50,7 @@
                             <li>Application end-points</li>
                             <li>Performance</li>
                             <li>Application errors</li>
-                            <li>Mojo::UserAgent communications</li>
+                            <li>DBI</li>
                             <li>Distributed systems topology</li>
                         </ul>
                     </div>
@@ -61,6 +62,32 @@
                             <li>1 line of code, 1 environment variable</li>
                             <li>Deploy</li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+            <hr>
+            <section class="container">
+                <div class="has-text-centered">
+                    <h2 class="is-2 title mb-1">Get powerful insights into</h2>
+                    <h2 class="is-2 title">your entire request life-cycle</h2>
+                </div>
+                <div class="container columns mt-6 mb-6">
+                    <h3></h3>
+                    <div class="column is-half has-text-right">
+                        <h3 class="is-4 title">Stay data-driven with insights into</h3>
+                        <ul class="is-size-5 has-text-right">
+                            <li>DBI queries</li>
+                            <li>Request call stacks</li>
+                            <li>Headers</li>
+                            <li>Errors</li>
+                        </ul>
+                    </div>
+                    <div class="column is-half has-text-right">
+                        <picture class="image m-auto" style="width: 400px; height: 240px; border-radius: 0.75rem; box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;">
+                            <source srcset="/images/query_insights.png" media="(prefers-color-scheme: light)"/>
+                            <source srcset="/images/query_insights_dark.png"  media="(prefers-color-scheme: dark)"/>
+                            <img src="/images/query_insights.png"/>
+                        </picture>
                     </div>
                 </div>
             </section>
