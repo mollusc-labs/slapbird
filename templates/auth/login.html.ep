@@ -21,12 +21,12 @@
                     </a>
                 </div>
                 <p class="has-text-centered">
-                    Or, <a href="/">go home</a>.
+                    Or, <a href="/" class="slapbird-link">go home</a>.
                 </p>
                 <hr>
                 <p class="has-text-centered">
                     By logging in, or signing up, you agree to Slapbird's 
-                    <a href="/tos">Terms of Service</a>, and <a href="/privacy">Privacy policy</a>.
+                    <a href="/tos" class="slapbird-link">Terms of Service</a>, and <a href="/privacy" class="slapbird-link">Privacy policy</a>.
                 </p>
             </div>   
         </div>
