@@ -3,10 +3,10 @@ package Dancer2::Plugin::SlapbirdAPM;
 use strict;
 use warnings;
 
-use LWP::UserAgent     ();
-use Const::Fast        qw(const);
-use SlapbirdAPM::Trace ();
-use Time::HiRes        qw(time);
+use LWP::UserAgent              ();
+use Const::Fast                 qw(const);
+use SlapbirdAPM::Dancer2::Trace ();
+use Time::HiRes                 qw(time);
 use Try::Tiny;
 use JSON::MaybeXS ();
 use Dancer2::Plugin;
@@ -179,7 +179,7 @@ sub BUILD {
     my $stack = [];
 
     if ( $self->trace ) {
-        SlapbirdAPM::Trace->callback(
+        SlapbirdAPM::Dancer2::Trace->callback(
             sub {
                 my %args = @_;
 
@@ -211,7 +211,7 @@ sub BUILD {
             @{ $self->trace_modules }
         );
 
-        SlapbirdAPM::Trace->trace_pkgs(@modules);
+        SlapbirdAPM::Dancer2::Trace->trace_pkgs(@modules);
     }
 
     my $request;
