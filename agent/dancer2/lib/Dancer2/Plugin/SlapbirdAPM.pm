@@ -12,7 +12,7 @@ use JSON::MaybeXS ();
 use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
-use SlapbirdAPM::DBIx::Tracer;
+use SlapbirdAPM::Dancer2::DBIx::Tracer;
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
@@ -64,7 +64,7 @@ my $queries        = [];
 my $in_request     = 0;
 my $should_request = 0;
 
-SlapbirdAPM::DBIx::Tracer->new(
+SlapbirdAPM::Dancer2::DBIx::Tracer->trace(
     sub {
         my %args = @_;
         if ($in_request) {
@@ -163,7 +163,8 @@ sub _call_home {
           unless $self->quiet;
     }
 
-    exit 0;
+# We need to use POSIX::_exit(0) to not destroy database handles from the parent.
+    POSIX::_exit(0);
 }
 
 sub BUILD {

@@ -14,7 +14,7 @@ use LWP::UserAgent;
 use Carp ();
 use System::Info;
 use Time::HiRes qw(time);
-use SlapbirdAPM::DBIx::Tracer;
+use SlapbirdAPM::Plack::DBIx::Tracer;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -92,7 +92,8 @@ sub _call_home {
               . $slapbird_response->code );
     }
 
-    exit 0;
+# We have to use POSIX::_exit(0) instead of exit(0) to not destroy database handles.
+    POSIX::_exit(0);
 }
 
 sub call {
@@ -117,7 +118,7 @@ sub call {
     my $response;
     my $plack_response;
     my $queries    = [];
-    my $dbi_tracer = SlapbirdAPM::DBIx::Tracer->new(
+    my $dbi_tracer = SlapbirdAPM::Plack::DBIx::Tracer->new(
         sub {
             my %args = @_;
             push @$queries, { sql => $args{sql}, total_time => $args{time} };
