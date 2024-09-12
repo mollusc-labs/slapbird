@@ -3,16 +3,16 @@ package Dancer2::Plugin::SlapbirdAPM;
 use strict;
 use warnings;
 
-use LWP::UserAgent     ();
-use Const::Fast        qw(const);
-use SlapbirdAPM::Trace ();
-use Time::HiRes        qw(time);
+use LWP::UserAgent              ();
+use Const::Fast                 qw(const);
+use SlapbirdAPM::Dancer2::Trace ();
+use Time::HiRes                 qw(time);
 use Try::Tiny;
 use JSON::MaybeXS ();
 use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
-use SlapbirdAPM::DBIx::Tracer;
+use SlapbirdAPM::Dancer2::DBIx::Tracer;
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
@@ -64,7 +64,7 @@ my $queries        = [];
 my $in_request     = 0;
 my $should_request = 0;
 
-SlapbirdAPM::DBIx::Tracer->new(
+SlapbirdAPM::Dancer2::DBIx::Tracer->trace(
     sub {
         my %args = @_;
         if ($in_request) {
@@ -163,7 +163,8 @@ sub _call_home {
           unless $self->quiet;
     }
 
-    exit 0;
+# We need to use POSIX::_exit(0) to not destroy database handles from the parent.
+    POSIX::_exit(0);
 }
 
 sub BUILD {
@@ -178,7 +179,7 @@ sub BUILD {
     my $stack = [];
 
     if ( $self->trace ) {
-        SlapbirdAPM::Trace->callback(
+        SlapbirdAPM::Dancer2::Trace->callback(
             sub {
                 my %args = @_;
 
@@ -210,7 +211,7 @@ sub BUILD {
             @{ $self->trace_modules }
         );
 
-        SlapbirdAPM::Trace->trace_pkgs(@modules);
+        SlapbirdAPM::Dancer2::Trace->trace_pkgs(@modules);
     }
 
     my $request;

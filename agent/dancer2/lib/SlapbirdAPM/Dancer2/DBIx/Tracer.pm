@@ -377,12 +377,9 @@
 #
 # The End
 
-package    # HIDE FROM PAUSE
-  SlapbirdAPM::DBIx::Tracer;
+package SlapbirdAPM::Dancer2::DBIx::Tracer;
 use strict;
 use warnings;
-use 5.008008;
-our $VERSION = '0.03';
 
 use DBI;
 use Time::HiRes qw(time gettimeofday tv_interval);
@@ -408,7 +405,7 @@ my $selectrow_array;
 
 our $OUTPUT;
 
-sub new {
+sub trace {
     my $class = shift;
 
     # argument processing
@@ -457,8 +454,6 @@ sub new {
         *DBI::db::selectrow_arrayref = $selectrow_arrayref;
         *DBI::db::selectrow_array    = $selectrow_array;
     }
-
-    return $self;
 }
 
 # -------------------------------------------------------------------------
@@ -525,7 +520,7 @@ sub _select_array {
 
         my $ret = ref $stmt ? $stmt->{Statement} : $stmt;
 
-        my $begin = time;
+        my $begin = time * 1_000;
         my $res;
         if ($is_selectrow_array) {
             $res =
@@ -558,7 +553,7 @@ sub _db_do {
 
         my $ret = $stmt;
 
-        my $begin = time;
+        my $begin = time * 1_000;
         my $res =
           $wantarray
           ? [ $org->( $dbh, $stmt, $attr, @bind ) ]

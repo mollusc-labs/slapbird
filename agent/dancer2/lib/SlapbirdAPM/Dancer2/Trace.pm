@@ -1,4 +1,4 @@
-package SlapbirdAPM::Trace;
+package SlapbirdAPM::Dancer2::Trace;
 
 use strict;
 use warnings;
