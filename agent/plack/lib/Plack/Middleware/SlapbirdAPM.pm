@@ -15,6 +15,7 @@ use Carp ();
 use System::Info;
 use Time::HiRes qw(time);
 use SlapbirdAPM::Plack::DBIx::Tracer;
+use POSIX;
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;

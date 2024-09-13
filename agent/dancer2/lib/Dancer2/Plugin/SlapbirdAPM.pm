@@ -13,6 +13,7 @@ use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
 use SlapbirdAPM::Dancer2::DBIx::Tracer;
+use POSIX;
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
