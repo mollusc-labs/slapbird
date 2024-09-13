@@ -23,6 +23,7 @@
 
 1. Perl >= `5.36`
 2. `podman`
+3. cpanminus ie `cpan -I App::cpanminus`
 
 ##### Running the app for the first time
 
