@@ -85,4 +85,29 @@ catch {
 is $error, undef, 'no error thrown when stack sanitize undef?';
 is $val,   undef, 'is val still undef when stack sanitize undef?';
 
+# Testing for empty stack
+my $empty_stack_html = Slapbird::Sanitizer::Stack->sanitize([]);
+my $empty_stack_text = '';
+
+is $empty_stack_html, $empty_stack_text, 'is empty stack properly handled?';
+
+# Testing stacks with identical duration
+my @identical_duration_stack = (
+  {
+    start_time => 0,
+    end_time => 100,
+    name => 'a'
+  },
+  {
+    start_time => 50,
+    end_time => 150,
+    name => 'b'
+  }
+);
+
+my $expected_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">a</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>\n<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">b</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>|;
+my $sanitized_html = Slapbird::Sanitizer::Stack->sanitize(\@identical_duration_stack);
+
+is $sanitized_html, $expected_html, 'is stack properly formatted and ordered with identical durations?';
+
 done_testing;
