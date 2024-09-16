@@ -110,4 +110,15 @@ my $sanitized_html = Slapbird::Sanitizer::Stack->sanitize(\@identical_duration_s
 
 is $sanitized_html, $expected_html, 'is stack properly formatted and ordered with identical durations?';
 
+# Test stack with negative duration
+my $neg_duration_stack = {
+  start_time => 100,
+  end_time => 50,
+  name => 'invalid'
+};
+
+my $expected_neg_duration_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">invalid</span>|;
+my $sanitized_neg_duration_html = Slapbird::Sanitizer::Stack->sanitize(\$neg_duration_stack);
+
+is $sanitized_neg_duration_html, $expected_neg_duration_html, 'is stack properly formatted with negative duration?';
 done_testing;
