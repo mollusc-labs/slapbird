@@ -117,8 +117,70 @@ my $neg_duration_stack = {
   name => 'invalid'
 };
 
-my $expected_neg_duration_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">invalid</span>|;
-my $sanitized_neg_duration_html = Slapbird::Sanitizer::Stack->sanitize(\$neg_duration_stack);
+my $expected_neg_duration_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">invalid</span> - <span class="slapbird-stack-row-time">-50.00</span>ms</div>|;
+my $sanitized_neg_duration_html = Slapbird::Sanitizer::Stack->sanitize([$neg_duration_stack]);
 
 is $sanitized_neg_duration_html, $expected_neg_duration_html, 'is stack properly formatted with negative duration?';
+
+# Test missing start_time or end_time
+my @missing_time_stack = (
+  {
+    start_time => 100,
+    name => 'missing_end_time'
+  },
+  {
+    end_time => 100,
+    name => 'missing_start_time'
+  }
+ );
+
+my $expected_missing_time_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">missing_end_time</span> - <span class="slapbird-stack-row-time">-100.00</span>ms</div>
+<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">missing_start_time</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>|;
+my $sanitized_missing_time_html = Slapbird::Sanitizer::Stack->sanitize(\@missing_time_stack);
+
+is $sanitized_missing_time_html, $expected_missing_time_html, 'is stack properly formatted with missing start or end time?';
+
+# Test with special character in name field - &<>"
+my @special_char_stack = (
+  {
+    start_time => 100,
+    end_time => 200,
+    name => '<foo> & "bar"'
+  }
+ );
+
+my $expected_special_char_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">&lt;foo&gt; &amp; &quot;bar&quot;</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>|;
+my $sanitized_special_char_html = Slapbird::Sanitizer::Stack->sanitize(\@special_char_stack);
+
+is $sanitized_special_char_html, $expected_special_char_html, 'is stack properly escaping special chars in name field?';
+
+# Test large number values in start_time and end_time field
+my @large_number_stack = (
+  {
+    start_time => 1_000_000_000_000,
+    end_time => 1_000_000_000_100,
+    name => 'large_duration'
+  }
+ );
+
+my $expected_large_num_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">large_duration</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>|;
+my $sanitized_large_num_html = Slapbird::Sanitizer::Stack->sanitize(\@large_number_stack);
+
+is $sanitized_large_num_html, $expected_large_num_html, 'is stack properly handling very large start_time and end_time values?';
+
+# Test contains undef entries
+my @stack_with_undef = (
+  {
+    start_time => 100,
+    end_time => 200,
+    name => 'valid stack'
+  },
+  undef 
+ );
+
+my $expected_stack_with_undef_html = qq|<div class="slapbird-stack-row"><span class="slapbird-stack-row-name">valid_entry</span> - <span class="slapbird-stack-row-time">100.00</span>ms</div>|;
+my $sanitized_stack_with_undef_html = Slapbird::Sanitizer::Stack->sanitize(\@stack_with_undef);
+
+is $sanitized_stack_with_undef_html, $expected_stack_with_undef_html, 'is stack properly handdled when it contains undef entries?';
+
 done_testing;
