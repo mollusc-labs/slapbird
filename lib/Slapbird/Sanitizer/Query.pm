@@ -17,35 +17,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-package Slapbird::Sanitizer::Stack;
+package Slapbird::Sanitizer::Query;
 
 use strict;
 use warnings;
-use HTML::Escape qw(escape_html);
-use namespace::clean;
+
+use SQL::Beautify;
 
 sub sanitize {
-  my ($class, $stack_orig) = @_;
+  my ($class, $query_orig) = @_;
 
-  return undef unless ref($stack_orig) eq 'ARRAY';
+  return undef unless ref($query_orig) eq 'HASH';
 
-  my $stack = [@$stack_orig];
+  my $query = {%$query_orig};
 
-  for (@$stack) {
-    $_->{total_time} = sprintf('%.2f', $_->{end_time} - $_->{start_time});
-  }
+  my $sb = SQL::Beautify->new();
+  $sb->query($query->{sql});
+  $query->{sql} = $sb->beautify;
 
-  my @stack_peices = map {
-        '<div class="slapbird-stack-row">'
-      . '<span class="slapbird-stack-row-name">'
-      . escape_html($_->{name})
-      . '</span> - <span class="slapbird-stack-row-time">'
-      . escape_html(sprintf('%.2f', $_->{end_time} - $_->{start_time}))
-      . '</span>ms'
-      . '</div>'
-  } sort { $a->{total_time} <=> $b->{total_time} } @$stack;
-
-  return join "\n", @stack_peices;
+  return $query;
 }
 
 1;

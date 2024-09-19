@@ -28,12 +28,15 @@ use DateTime;
 use HTML::Escape qw(escape_html);
 use Scalar::Util qw(looks_like_number);
 use Slapbird::Sanitizer::Stack;
+use Slapbird::Sanitizer::Query;
 use namespace::clean;
 
 sub sanitize {
-  my ($class, $json) = @_;
+  my ($class, $json_orig) = @_;
 
-  return undef unless ref($json) eq 'HASH';
+  return undef unless ref($json_orig) eq 'HASH';
+
+  my $json = {%$json_orig};
 
   $json->{requestor} //= 'UNKNOWN';
   $json->{total_time}
@@ -56,7 +59,8 @@ sub sanitize {
   }
 
   if (ref($json->{queries}) eq 'ARRAY') {
-    $json->{queries} = [reverse @{$json->{queries}}];
+    $json->{queries} = [reverse map { Slapbird::Sanitizer::Query->sanitize($_) }
+        @{$json->{queries}}];
   }
 
   $json->{request_headers} = join("\n",

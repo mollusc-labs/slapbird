@@ -30,3 +30,4 @@ requires 'Net::Stripe::Simple' => '0.005';
 requires 'Crypt::JWT' => '0.035';
 requires 'Business::CCCheck' => '0.10';
 requires 'Cpanel::JSON::XS' => '4.38';
+requires 'SQL::Beautify' => '0.04';
