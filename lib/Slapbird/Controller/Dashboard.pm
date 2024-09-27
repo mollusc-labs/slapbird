@@ -29,7 +29,8 @@ use MIME::Base64;
 use Try::Tiny;
 use URL::Encode qw(url_decode_utf8);
 use DateTime;
-use Crypt::JWT qw(encode_jwt decode_jwt);
+use Crypt::JWT   qw(encode_jwt decode_jwt);
+use Scalar::Util qw(looks_like_number);
 
 sub dashboard {
   my ($c) = @_;
@@ -62,12 +63,19 @@ sub transaction_summary {
   my $page            = $c->param('page') ? $c->param('page') : 1;
   my $endpoint_base64 = $c->param('endpoint');
   my $code            = $c->param('code');
-  my $size            = 10;
+  my $size
+    = $c->param('size')
+    && looks_like_number($c->param('size'))
+    ? $c->param('size') <= 50
+      ? $c->param('size')
+      : 10
+    : 10;
+  my $end_point = decode_base64($endpoint_base64);
 
   my ($pager, $transactions) = $c->actions->get_transaction_summaries(
     to             => $to,
     from           => $from,
-    end_point      => decode_base64($endpoint_base64),
+    end_point      => $end_point,
     code           => $code,
     page           => $page,
     size           => $size,
@@ -79,14 +87,17 @@ sub transaction_summary {
     . $endpoint_base64
     . '?from='
     . $from . '&to='
-    . $to;
+    . $to
+    . '&size='
+    . $size
+    . ($code ? '&code=' . $code : '');
 
   return $c->render(
     template        => 'dashboard_transaction_summary',
     pager           => $pager,
     transactions    => $transactions,
     appendable_href => $appendable_href,
-    end_point       => decode_base64($endpoint_base64),
+    end_point       => $end_point,
     return_href     =>
       encode_base64($appendable_href . '&page=' . $pager->current_page)
   );
