@@ -85,11 +85,11 @@ sub startup {
           my $rs
             = $app->resultset('HTTPTransaction')
             ->search(
-            {start_time => {'<=' => (time * 1_000) - $THIRTY_DAYS_MS}});
+            {start_time => {-between => [0, (time * 1_000) - $THIRTY_DAYS_MS]}}
+            );
 
-          $app->log->info('Deleting '
-              . $rs->count
-              . ' HTTP transactions from <= 30 days ago.');
+          $app->log->info(
+            'Deleting ' . $rs->count . ' HTTP transactions from 30 days ago.');
 
           $rs->delete();
         }
