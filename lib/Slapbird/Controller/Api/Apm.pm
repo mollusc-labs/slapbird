@@ -23,7 +23,11 @@ use Mojo::Base 'Mojolicious::Controller';
 use Slapbird::Sanitizer::HTTPTransaction;
 use Slapbird::Validator::HTTPTransaction;
 use Slapbird::Advice::ErrorAdvice;
+use Const::Fast;
 use Carp;
+
+const my $SECONDS_IN_ONE_DAY     => 86_400;
+const my $SECONDS_IN_THIRTY_DAYS => 2_592_000;
 
 # TODO: (RF) this needs to be refactored to use the new actions api.
 sub call {
@@ -39,7 +43,7 @@ sub call {
   my $count = $c->cache->get($api_key->application_id . '-monthly');
   if (defined $count) {
     if ($count
-      > $api_key->application->user_pricing_plan->pricing_plan->max_requests)
+      >= $api_key->application->user_pricing_plan->pricing_plan->max_requests)
     {
       return $c->render(
         status => 429,
@@ -49,14 +53,15 @@ sub call {
   }
   else {
     # Store for one month
-    $c->cache->set($api_key->application_id . '-monthly', 0);
+    $c->cache->set($api_key->application_id . '-monthly',
+      0, $SECONDS_IN_THIRTY_DAYS);
   }
 
   my $daily_count = $c->cache->get($api_key->application_id);
   if (not defined $daily_count) {
 
     # Store for one day
-    $c->cache->set($api_key->application_id, 0, 86_400);
+    $c->cache->set($api_key->application_id, 0, $SECONDS_IN_ONE_DAY);
   }
 
   my $transaction = $c->req->json();
@@ -83,8 +88,7 @@ sub call {
 # for Mojo but it has some issues. Perhaps we run a Minion instance, or we may also
 # want to use RabbitMQ + another Mojo service for sanitization and rely on "eventually consistent"
 # HTTP transactions.
-
-# Ideally this is just $c->minion->enqueue(sub { ... }); $c->render(json => { happy })
+# Ideally this just becomes $c->minion->enqueue(sub { ... }); $c->render(json => { happy });
   return $c->render(
     json => $c->actions->add_http_transaction(http_transaction => $transaction),
     status => 201
