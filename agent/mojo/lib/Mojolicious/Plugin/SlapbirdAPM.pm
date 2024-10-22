@@ -68,31 +68,6 @@ sub _call_home {
     );
 }
 
-sub _enable_mojo_ua_tracking {
-    my ($name) = @_;
-
-    ## no critic []
-    no strict 'refs';
-
-    my $new = \&Mojo::UserAgent::new;
-
-    *{'Mojo::UserAgent::new'} = sub {
-        my $ua = $new->(@_);
-
-        $ua->on(
-            start => sub {
-                my ( $ua, $tx ) = @_;
-                $tx->req->headers->header( 'x-slapbird-name' => $name )
-                  if $name;
-            }
-        );
-
-        return $ua;
-    };
-
-    return;
-}
-
 {
 
     package Mojolicious::Plugin::SlapbirdAPM::Tracer;
@@ -222,7 +197,7 @@ sub register {
 
         $name = $result->json()->{name};
 
-        _enable_mojo_ua_tracking($name) if $topology;
+        # _enable_mojo_ua_tracking($name) if $topology;
     }
     catch {
         chomp( my $msg = '' . $_ );
