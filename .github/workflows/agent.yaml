@@ -21,6 +21,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install cpanm
         run: cpan -I App::cpanminus
+      - name: Force install Module::Pluggable
+        run: cpanm -n -f Module::Pluggable
       - name: Install deps mojo
         run: cd agent/mojo && cpanm --installdeps . --cpanfile cpanfile
       - name: Test Mojo
