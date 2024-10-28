@@ -1,9 +1,9 @@
 <p align="center">
-	<a href="https://slapbird.co">
+	<a href="https://slapbirdapm.com">
     <img width="130" height="120" src="https://github.com/rawleyfowler/slapbird/assets/75388349/bfbee229-59e9-44ea-9249-8707af4322b0"/>
 	</a>
 </p>
-<h1 align="center"><a href="https://www.slapbirdapm.com">SlapBird</a></h1>
+<h1 align="center"><a href="https://www.slapbirdapm.com">SlapbirdAPM</a></h1>
 <p align="center">
   An all <b>Perl</b> APM for Mojolicious, Plack, and Dancer2
 </p>
