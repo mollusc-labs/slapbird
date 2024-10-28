@@ -68,6 +68,30 @@
             <hr>
             <section class="container">
                 <div class="has-text-centered">
+                    <h2 class="is-2 title mb-1">Perl users love Slapbird</h2>
+                </div>
+                <div class="container columns mt-6 mb-6">
+                    <div class="column is-half mr-3">
+                        <p class="mb-2 is-size-5">
+                            <strong>"</strong>This tool has been helpful. For example, I noticed a lot of 404s for two routes then
+                            I remembered... I changed the routing at some point but never set up redirects for
+                            old route to new route. Made a small change to add the redirects and the errors that
+                            I previously didn't even know about were gone.<strong>"</strong>
+                        </p>
+                        <p>- Daniel Bowling, Creator of <a href="https://posttext.pl" class="slapbird-link">posttext.pl</a></p>
+                    </div>
+                    <div class="column is-half flex ml-3" style="display: flex; flex-direction: column; justify-content: space-between">
+                        <p class="mb-2 is-size-5">
+                            <strong>"</strong>I've been using SlapbirdAPM on my site for a little while now and so far it's been great.
+                            It helped me pin point some slow running queries which needed to be reworked.<strong>"</strong>
+                        </p>
+                        <p class="mt-auto">- Erik E</p>
+                    </div>
+                </div>
+            </section>
+            <hr>
+            <section class="container">
+                <div class="has-text-centered">
                     <h2 class="is-2 title mb-1">Get powerful insights into</h2>
                     <h2 class="is-2 title">your entire request life-cycle</h2>
                 </div>
