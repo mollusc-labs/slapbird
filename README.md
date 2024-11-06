@@ -102,7 +102,7 @@ If you don't set these, your agent will hit production instead. (You'll see 401'
 
 ### Copyright & Legalities
 
-SlapbirdAPM &copy; Mollusc Labs Inc. 2024
+SlapbirdAPM &copy; Mollusc Labs. 2024
 
 SlapbirdAPM web application is provided under the [GNU Affero General Public License version 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
 
