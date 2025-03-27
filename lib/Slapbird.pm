@@ -47,6 +47,8 @@ Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 sub startup {
   my ($self) = @_;
 
+  $ENV{SLAPBIRD_PRODUCTION} = 1 if $self->mode eq 'production';
+
   $self->sessions(
     Slapbird::Mojolicious::Sessions->new((
       $ENV{SLAPBIRD_PRODUCTION} ? (secure => 1) : (secure => 0))));
