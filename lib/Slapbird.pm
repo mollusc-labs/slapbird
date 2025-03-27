@@ -446,6 +446,8 @@ sub startup {
         grep { !defined($_->stripe_id) } @pricing_plans;
 
       if (%update_lookup) {
+
+        # This uses pricing plan names to lookup their values in stripe.
         for my $stripe_plan (@{$self->stripe->plans('list')->data}) {
           chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
           if (my $plan = $update_lookup{$cut}) {
