@@ -330,6 +330,9 @@ sub startup {
   $self->helper(
     secure_key => sub {
       if ($ENV{SLAPBIRD_PRODUCTION}) {
+        if (!exists $ENV{SLAPBIRD_SECURE_KEY}) {
+          Carp::croak('No SLAPBIRD_SECURE_KEY set!');
+        }
         return $ENV{SLAPBIRD_SECURE_KEY};
       }
 
