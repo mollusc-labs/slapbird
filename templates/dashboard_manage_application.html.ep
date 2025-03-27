@@ -35,7 +35,6 @@
     <script src="/js/hideApiKeys.js"></script>
     % if ($can_edit) {
         <form id="createApiKeyForm" class="mb-3" method="POST" action="/dashboard/new-api-key">
-            <%= include '_flash' %>
             <div class="is-flex">
                 <div class="control mr-2">
                     <input onkeydown="setDisabled(this)" id="createApiKeyName" type="text" name="name" class="input" placeholder="API Key Name" maxlength="100" />
@@ -45,6 +44,21 @@
                 </div>
             </div>
         </form>
+        <hr>
+        <h2 class="title is-5 mt-3">Application Settings</h2>
+        <div class="mr-2">
+            <form action="/dashboard/rename-application" method="POST">
+                <div class="is-flex">
+                    <div class="control mr-2">
+                        <label for="renameApplicationName">Application Name</label>
+                        <input id="renameApplicationName" type="text" name="name" class="input" value="<%= $application->name %>">
+                    </div>
+                </div>
+                <button type="submit" id="renameApplication" class="mt-2 slapbird-button slapbird-is-primary is-outlined">
+                    Save
+                </button>
+            </form>
+        </div>
         <hr>
         <h2 class="title is-5 mt-3">Danger Zone</h2>
         <div class="is-flex">

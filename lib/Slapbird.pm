@@ -515,6 +515,8 @@ sub startup {
     ->name('dashboard_delete_application');
   $router->post('/dashboard/new-api-key')->requires(authenticated => 1)
     ->to('dashboard#new_api_key')->name('dashboard_create_api_key');
+  $router->post('/dashboard/rename-application')->requires(authenticated => 1)
+    ->to('dashboard#rename_application')->name('dashboard_rename_application');
   $router->post('/dashboard/delete-api-key/:api_key_id')
     ->requires(authenticated => 1)->to('dashboard#delete_api_key')
     ->name('dashboard_delete_api_key');

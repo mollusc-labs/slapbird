@@ -172,6 +172,25 @@ sub manage_application {
   );
 }
 
+sub rename_application {
+  my ($c) = @_;
+
+  my $user        = $c->user;
+  my $application = $c->application_context;
+  my $name        = $c->param('name');
+
+  my $ok = $c->actions->rename_application(
+    new_name       => $name,
+    application_id => $application->application_id
+  );
+
+  if (!$ok) {
+    $c->flash_danger(q[Couldn't save application! Try again later.]);
+  }
+
+  return $c->redirect_to('/dashboard/manage-application');
+}
+
 sub new_api_key {
   my ($c) = @_;
 
@@ -412,7 +431,7 @@ sub confirm_leave_plan {
     return $c->redirect_to('/dashboard');
   }
 
-  $c->render(
+  return $c->render(
     template          => 'dashboard_confirm_leave_plan',
     user_pricing_plan => $c->user->user_pricing_plan,
     pricing_plan      => $c->user->user_pricing_plan->pricing_plan
