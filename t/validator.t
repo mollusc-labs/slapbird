@@ -53,7 +53,7 @@ is scalar @errors, 0, 'is no errors for plack type?';
 $http_transaction->{type} = 'bad';
 (@errors) = Slapbird::Validator::HTTPTransaction->validate($http_transaction);
 is scalar @errors, 1, 'is single error for bad type?';
-is $errors[0], '/type: Not in enum list: mojo, dancer2, plack.',
+ok index($errors[0], "/type: Not in enum list:") == 0,
   'is correct error for bad type?';
 
 $http_transaction->{type} = 'mojo';

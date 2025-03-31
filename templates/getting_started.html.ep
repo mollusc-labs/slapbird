@@ -1,7 +1,7 @@
 <html>
     %= include '_header', title => 'Slapbird APM - Getting Started', description => 'Slapbird APM is a Perl 5 web-application APM built for Mojolicious and Plack web services. Providing insights into application performance, and request times.'
     <body>
-        <main class="container" style="min-height: 100vh">
+        <main class="container mb-6" style="min-height: 100vh">
             %= include '_nav'
             <h1 class="is-2 title mt-6">Getting Started</h1>
             <div>
@@ -10,36 +10,61 @@
                     Before you see analytics you will have to restart your application.
                 </p>
             </div>
-            <h2 class="is-4 title mt-3">Mojolicious</h2>
-            <ol class="ml-6">
-                <li>Login to SlapbirdAPM via Github</li>
-                <li>Create your application</li>
-                <li>Copy your API key</li>
-                <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>
-                <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM';</code></li>
+            <ul>
                 <li>
-                    Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application
-                    <ul>
-                        <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
-                    </ul>
+                    <h2 class="is-3 title mt-6">Perl</h2>
                 </li>
-            </ol>
-            <h2 class="is-4 title mt-3 mb-1">Dancer2</h2>
-            <ol class="ml-6">
-                <li>Copy your API key</li>
-                <li>Install the SlapbirdAPM Dancer2 plugin ie. <code>cpan -I SlapbirdAPM::Agent::Dancer2</code></li>
-                <li>Add the plugin to your Dancer2 application ie <code>use Dancer2::Plugin::SlapbirdAPM</code></li>
-                <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
-                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via config <code>key => $API_KEY</code> in your <code>config.yml</code></li>
-            </ol>
-            <h2 class="is-4 title mt-3 mb-1">Plack</h2>
-            <ol class="ml-6">
-                <li>Copy your API key</li>
-                <li>Install the SlapbirdAPM Plack middleware ie. <code>cpan -I SlapbirdAPM::Agent::Plack</code></li>
-                <li>Add the middleware to your application, typically this is done using <code>Plack::Builder</code></li>
-                <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
-                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>key => $API_KEY</code> in your <code>Plack::Builder</code> declaration</li>
-            </ol>
+                <li>
+                    <h3 class="is-4 title mt-3 mb-1">Mojolicious</h3>
+                    <ol class="ml-6">
+                        <li>Login to SlapbirdAPM via Github</li>
+                        <li>Create your application</li>
+                        <li>Copy your API key</li>
+                        <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>
+                        <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM';</code></li>
+                        <li>
+                            Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application
+                            <ul>
+                                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
+                            </ul>
+                        </li>
+                    </ol>
+                </li>
+                <li>
+                    <h2 class="is-4 title mt-3 mb-1">Dancer2</h2>
+                    <ol class="ml-6">
+                        <li>Copy your API key</li>
+                        <li>Install the SlapbirdAPM Dancer2 plugin ie. <code>cpan -I SlapbirdAPM::Agent::Dancer2</code></li>
+                        <li>Add the plugin to your Dancer2 application ie <code>use Dancer2::Plugin::SlapbirdAPM</code></li>
+                        <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+                        <li><strong>Optionally</strong>: You can also pass your API key to the plugin via config <code>key => $API_KEY</code> in your <code>config.yml</code></li>
+                    </ol>
+                </li>
+                <li>
+                    <h2 class="is-4 title mt-3 mb-1">Plack</h2>
+                    <ol class="ml-6">
+                        <li>Copy your API key</li>
+                        <li>Install the SlapbirdAPM Plack middleware ie. <code>cpan -I SlapbirdAPM::Agent::Plack</code></li>
+                        <li>Add the middleware to your application, typically this is done using <code>Plack::Builder</code></li>
+                        <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+                        <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>key => $API_KEY</code> in your <code>Plack::Builder</code> declaration</li>
+                    </ol>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <h2 class="is-3 title mt-6">Raku</h2>
+                </li>
+                <li>
+                    <h2 class="is-4 title mt-3 mb-1">Humming-Bird</h2>
+                    <ol class="ml-6">
+                        <li>Copy your API key</li>
+                        <li>Install the latest version of Humming-Bird</li>
+                        <li>Add the middleware to your application: <code>plugin 'SlapbirdAPM';</code></li>
+                        <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+                    </ol>
+                </li>
+            </ul>
         </main>
         %= include '_footer'
     </body>

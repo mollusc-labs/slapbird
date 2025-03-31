@@ -7,11 +7,11 @@
                 <div class="hero-body">
                     <div class="container columns is-vcentered">
                         <div class="column is-half">
-                            <h1 class="title mb-2">The Perl observability, and performance monitoring platform</h1>
+                            <h1 class="title mb-2">The Free, and Open-Source observability platform</h1>
                             <ul class="subtitle">
                                 <li>Endpoint performance insights</li>
                                 <li>Service dependency visualization</li>
-                                <li>DBI query performance</li>
+                                <li>Query insights</li>
                                 <li>and more!</li>
                             </ul>
                             <a href="/login" class="slapbird-button slapbird-is-secondary">Start for free</a>
@@ -31,17 +31,16 @@
             <section class="container">
                 <div class="has-text-centered">
                     <h2 class="is-2 title mb-1">Application Monitoring</h2>
-                    <h2 class="is-2 title">for Perl web-applications</h2>
+                    <h2 class="is-2 title">for web based applications</h2>
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Supports</h3>
                         <ul>
-                            <li>Mojolicious</li>
-                            <li>Dancer2</li>
-                            <li>Plack</li>
-                            <li>DBI</li>
-                            <li>Catalyst (Coming Soon)</li>
+                            <li>Perl</li>
+                            <li>Raku</li>
+                            <li>Ruby</li>
+                            <li>Any language (using our API)</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">
@@ -50,15 +49,14 @@
                             <li>Application end-points</li>
                             <li>Performance</li>
                             <li>Application errors</li>
-                            <li>DBI</li>
+                            <li>Database Queries</li>
                             <li>Distributed systems topology</li>
-                            <li>Web API</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Easy set up</h3>
                         <ul>
-                            <li>Install the Slapbird user-agent from the CPAN</li>
+                            <li>Install a Slapbird user-agent for your workload</li>
                             <li>Create your app on <a href="/" class="slapbird-link">slapbirdapm.com</a></li>
                             <li>1 line of code, 1 environment variable</li>
                             <li>Deploy</li>
@@ -69,7 +67,7 @@
             <hr>
             <section class="container">
                 <div class="has-text-centered">
-                    <h2 class="is-2 title mb-1">Perl users love Slapbird</h2>
+                    <h2 class="is-2 title mb-1">Our users love Slapbird</h2>
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-half mr-3">
@@ -101,7 +99,7 @@
                     <div class="column is-half has-text-right">
                         <h3 class="is-4 title">Stay data-driven with insights into</h3>
                         <ul class="is-size-5 has-text-right">
-                            <li>DBI queries</li>
+                            <li>Database queries</li>
                             <li>Request call stacks</li>
                             <li>Outages</li>
                             <li>Errors</li>

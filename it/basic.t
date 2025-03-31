@@ -10,7 +10,6 @@ BEGIN {
   use_ok 'Slapbird';
 }
 
-
 test_app()->get_ok('/')->status_is(200);
 test_app()->get_ok('/pricing')->status_is(200);
 
