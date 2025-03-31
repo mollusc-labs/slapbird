@@ -9,3 +9,4 @@ Makefile.old
 blib/
 *.db
 MYMETA.*
+pgdata/
