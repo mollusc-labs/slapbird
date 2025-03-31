@@ -5,7 +5,7 @@
 </p>
 <h1 align="center"><a href="https://www.slapbirdapm.com">SlapbirdAPM</a></h1>
 <p align="center">
-  An all <b>Perl</b> APM for Mojolicious, Plack, and Dancer2
+  A free, and open-source, application observability platform.
 </p>
 
 ### Getting started
@@ -13,9 +13,17 @@
 1. Login to [SlapbirdAPM](https://www.slapbirdapm.com)
 2. Sign-in with an OAuth2 provider
 3. Create an application, and copy your API key
-4. Install `SlapbirdAPM::Agent::Mojo` via CPAN
-5. Add the following line to your application `plugin('SlapbirdAPM', key => "$YOUR_API_KEY")`
-6. Optionally, use `plugin('SlapbirdAPM')` and the `SLAPBIRDAPM_API_KEY` env var, instead
+4. Install the agent software for your application
+6. Set the `SLAPBIRDAPM_API_KEY` environment variable to your API key
+
+### Finding clients
+
+SlapbirdAPM is a *multi-language* observability platform. We officially support
+`perl`, `raku`, and (soon) `ruby`. But un-official clients can be used, or, you can write your own.
+
+#### Writing your own client
+
+Check out our [Mojo Client](https://github.com/mollusc-labs/slapbird/tree/main/agent/mojo) as an example.
 
 ### Hacking on the Slapbird application
 
@@ -70,7 +78,7 @@ All PR's should be submitted as a single commit.
 
 ### Hacking on Slapbird agents
 
-All agents are available in the `agent/` directory.
+All official are available in the `agent/` directory.
 
 ##### Testing an agent
 
@@ -102,8 +110,8 @@ If you don't set these, your agent will hit production instead. (You'll see 401'
 
 ### Copyright & Legalities
 
-SlapbirdAPM &copy; Mollusc Labs. 2024
+SlapbirdAPM &copy; Mollusc Labs. 2025
 
 SlapbirdAPM web application is provided under the [GNU Affero General Public License version 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
 
-SlapbirdAPM agents are provided under the [MIT license](https://opensource.org/license/mit).
+Official slapbirdAPM agents are provided under the [MIT license](https://opensource.org/license/mit).

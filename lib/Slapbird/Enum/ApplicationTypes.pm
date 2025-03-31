@@ -23,7 +23,7 @@ use strict;
 use warnings;
 use Const::Fast;
 
-const my @VALUES => qw(mojo dancer2 plack);
+const my @VALUES => qw(mojo dancer2 plack ruby raku);
 
 sub all {
   return wantarray ? @VALUES : [@VALUES];

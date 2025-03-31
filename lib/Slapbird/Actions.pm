@@ -57,6 +57,7 @@ sub helper {
 
 # All actions in Slapbird::Action::* are turned into snake case methods of the Slapbird::Action class.
   for my $k (keys %actions) {
+    ## no strict [BuiltinFunctions::ProhibitStringyEval]
     eval "use $actions{$k}";
     Carp::cluck($@) if ($@);
     monkey_patch(
