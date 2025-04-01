@@ -44,7 +44,7 @@ sub sanitize {
   $json->{start_time} = sprintf('%.2f', $json->{start_time});
   $json->{end_time}   = sprintf('%.2f', $json->{end_time});
 
-  if ($json->{stack}) {
+  if (ref($json->{stack}) eq 'ARRAY') {
     $json->{stack} = Slapbird::Sanitizer::Stack->sanitize($json->{stack},
       $json->{total_time});
   }
@@ -58,7 +58,7 @@ sub sanitize {
         split("\n", $json->{error}));
   }
 
-  if ($json->{queries} && ref($json->{queries}) eq 'ARRAY') {
+  if (ref($json->{queries}) eq 'ARRAY') {
     $json->{queries} = [reverse map { Slapbird::Sanitizer::Query->sanitize($_) }
         @{$json->{queries}}];
   }

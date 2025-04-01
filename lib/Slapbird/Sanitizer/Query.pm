@@ -23,6 +23,9 @@ use strict;
 use warnings;
 
 use SQL::Beautify;
+use Const::Fast;
+
+const my $sb = SQL::Beautify->new();
 
 sub sanitize {
   my ($class, $query_orig) = @_;
@@ -31,7 +34,6 @@ sub sanitize {
 
   my $query = {%$query_orig};
 
-  my $sb = SQL::Beautify->new();
   $sb->query($query->{sql});
   $query->{sql} = $sb->beautify;
 

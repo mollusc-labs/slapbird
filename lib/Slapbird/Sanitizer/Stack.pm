@@ -27,7 +27,7 @@ use namespace::clean;
 sub sanitize {
   my ($class, $stack_orig) = @_;
 
-  return undef unless ref($stack_orig) eq 'ARRAY';
+  return '' unless ref($stack_orig) eq 'ARRAY';
 
   my $stack = [@$stack_orig];
 
