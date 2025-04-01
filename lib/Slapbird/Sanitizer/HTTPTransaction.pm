@@ -58,7 +58,7 @@ sub sanitize {
         split("\n", $json->{error}));
   }
 
-  if (ref($json->{queries}) eq 'ARRAY') {
+  if ($json->{queries} && ref($json->{queries}) eq 'ARRAY') {
     $json->{queries} = [reverse map { Slapbird::Sanitizer::Query->sanitize($_) }
         @{$json->{queries}}];
   }
