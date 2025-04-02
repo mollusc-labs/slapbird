@@ -25,7 +25,7 @@ use warnings;
 use SQL::Beautify;
 use Const::Fast;
 
-const my $sb = SQL::Beautify->new();
+const my $sb => SQL::Beautify->new();
 
 sub sanitize {
   my ($class, $query_orig) = @_;
