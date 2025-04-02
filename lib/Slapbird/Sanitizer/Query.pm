@@ -30,7 +30,7 @@ const my $sb => SQL::Beautify->new();
 sub sanitize {
   my ($class, $query_orig) = @_;
 
-  return undef unless ref($query_orig) eq 'HASH';
+  return '' unless ref($query_orig) eq 'HASH';
 
   my $query = {%$query_orig};
 

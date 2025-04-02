@@ -8,6 +8,7 @@ use Time::HiRes qw(time);
 use Try::Tiny;
 use Slapbird::Sanitizer::HTTPTransaction;
 use Slapbird::Sanitizer::Stack;
+use Slapbird::Sanitizer::Query;
 
 my @stack = (
   {
@@ -73,7 +74,7 @@ catch {
 };
 
 is $error, undef, 'no error thrown when http transaction sanitize undef?';
-is $val,   undef, 'is val still undef when http transaction sanitize undef?';
+is $val,   undef, 'is undef when http transaction sanitize undef?';
 
 try {
   $val = Slapbird::Sanitizer::Stack->sanitize(undef);
@@ -83,6 +84,16 @@ catch {
 };
 
 is $error, undef, 'no error thrown when stack sanitize undef?';
-is $val,   undef, 'is val still undef when stack sanitize undef?';
+is $val,   '', 'is val empty when stack sanitize undef?';
+
+try {
+  $val = Slapbird::Sanitizer::Query->sanitize(undef);
+}
+catch {
+  $error = $_;
+};
+
+is $error, undef, 'no error thrown when query sanitize undef?';
+is $val,   '', 'is val empty when query sanitize undef?';
 
 done_testing;
