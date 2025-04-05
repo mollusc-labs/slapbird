@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html>
-    %= include '_header', title => 'Slapbird APM - the Perl web-service APM', description => 'Slapbird APM is a Perl 5 web-application APM built for monitoring web services written in Perl. Providing insights into application performance, queries, and request times.'
+    %= include '_header', title => 'Slapbird APM - the Open-Source observability platform', description => 'Slapbird APM is a Open-Source web-application observability platform for monitoring web applications. Providing insights into application performance, queries, and request times.'
     <body>
         <main style="min-height: 100vh">
             %= include '_nav'
@@ -35,12 +36,12 @@
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-one-third has-text-centered">
-                        <h3 class="is-4 title">Supports</h3>
+                        <h3 class="is-4 title">Official Support</h3>
                         <ul>
-                            <li>Perl</li>
-                            <li>Raku</li>
-                            <li>Ruby</li>
-                            <li>Any language (using our API)</li>
+                            <li>Perl (Mojo, Dancer, Plack)</li>
+                            <li>Raku (Humming-Bird)</li>
+                            <li>Ruby (Rack)</li>
+                            <li>Want a client? Open an issue on <a href="https://github.com/mollusc-labs/slapbird/issues/new" class="slapbird-link">Github</a>!</li>
                         </ul>
                     </div>
                     <div class="column is-one-third has-text-centered">
@@ -56,7 +57,7 @@
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Easy set up</h3>
                         <ul>
-                            <li>Install a Slapbird user-agent for your workload</li>
+                            <li>Install a Slapbird user-agent for your language/framework</li>
                             <li>Create your app on <a href="/" class="slapbird-link">slapbirdapm.com</a></li>
                             <li>1 line of code, 1 environment variable</li>
                             <li>Deploy</li>
@@ -77,14 +78,14 @@
                             old route to new route. Made a small change to add the redirects and the errors that
                             I previously didn't even know about were gone.<strong>"</strong>
                         </p>
-                        <p>- Daniel Bowling, Creator of <a href="https://posttext.pl" class="slapbird-link">posttext.pl</a></p>
+                        <p>- <a class="slapbird-link" href="https://github.com/swaggboi">Daniel Bowling</a></p>
                     </div>
                     <div class="column is-half flex ml-3" style="display: flex; flex-direction: column; justify-content: space-between">
                         <p class="mb-2 is-size-5">
                             <strong>"</strong>I've been using SlapbirdAPM on my site for a little while now and so far it's been great.
                             It helped me pin point some slow running queries which needed to be reworked.<strong>"</strong>
                         </p>
-                        <p class="mt-auto">- Erik E</p>
+                        <p class="mt-auto">- <a class="slapbird-link" href="https://github.com/shamrice">Erik E</a></p>
                     </div>
                 </div>
             </section>
