@@ -359,6 +359,43 @@ sub startup {
     }
   );
 
+  # Set up addons
+  for my $addon ($self->resultset('Addons')->all) {
+    my $module = 'Slapbird::Addon::' . $addon->module;
+    $module->register($self, $router);
+  }
+
+  $router->add_condition(
+    ('addon_authenticated') => sub {
+      my ($r, $c, $captures, $addon) = @_;
+
+      return 1 if not($addon);
+
+      my $api_key
+        = $c->resultset('ApiKey')
+        ->find(
+        {application_api_key => $c->req->headers->header('x-slapbird-apm')});
+
+      if (not $api_key) {
+        $c->render(status => 401, text => 'unauthorized');
+        return undef;
+      }
+
+      my @addons = $api_key->user->user_pricing_plan->addons;
+
+      my $ret = 0;
+      for (@addons) {
+        if ($_->module eq $addon) {
+          $ret = 1;
+          last;
+        }
+      }
+
+      return $ret;
+    }
+  );
+
+
   # Simple condition to see if someone is logged in.
   $router->add_condition(
     authenticated => sub {
