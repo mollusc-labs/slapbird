@@ -17,34 +17,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-package Slapbird::Schema::Result::Addon;
+package Slapbird::Controller::Htmx::Addon;
 
-use base 'DBIx::Class::Core';
+use Mojo::Base 'Mojolicious::Controller';
+
 use strict;
 use warnings;
 
-__PACKAGE__->table('addons');
-__PACKAGE__->load_components(qw(InflateColumn::DateTime TimeStamp));
+sub htmx_addon_pricing {
+  my ($c) = @_;
 
-__PACKAGE__->add_columns(qw(
-  name
-  module
-  description
-  price
-  price_pretty
-  is_free
-  active
-));
+  my @addons = $c->resultset('Addon')->search({active => 1})->all;
+  @addons = sort { $a->price <=> $b->price } @addons;
 
-__PACKAGE__->add_columns(
-  addon_id   => {is_auto_increment => 1},
-  created_at => {data_type         => 'datetime', set_on_create => 1}
-);
-
-__PACKAGE__->set_primary_key('addon_id');
-__PACKAGE__->has_many(
-  user_pricing_plans => 'Slapbird::Schema::Result::UserPricingPlanAddon',
-  'addon_id'
-);
+  return $c->render(template => 'htmx/_addons', addons => \@addons,);
+}
 
 1;

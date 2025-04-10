@@ -7,7 +7,9 @@ CREATE TABLE addons (
     price BIGINT NOT NULL,
     price_pretty TEXT NOT NULL,
     is_free BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW()
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT pkey_addons PRIMARY KEY (addon_id)
 );
 CREATE TABLE user_pricing_plan_addons (
     user_pricing_plan_addon_id UUID NOT NULL DEFAULT gen_random_uuid(),

@@ -41,5 +41,38 @@
                 </div>
             % }
         </div>
+        <hr>
+        <h2 class="title is-2 mb-2 mt-4">Addons</h2>
+        <div class="is-flex">
+            % for my $addon (@$addons) {
+                <div class="box is-flex is-flex-direction-column mx-2 mt-6" style="width: 249; height: 400px">
+                    <header class="card-header has-text-centered">
+                        <h3 class="title is-4 mb-2 mt-2">
+                            <%= $addon->name %>
+                        </h3>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+                            <h4 class="is-5">
+                                $<%= $addon->price_pretty %> USD/month
+                            </h4>
+                            <%== $addon->description %>
+                        </div>
+                    </div>
+                    <div class="mt-auto" style="background-color: transparent; justify-self: end">
+                        <form method="POST" action="/dashboard/manage-plan/stripe/upgrade" class="has-text-centered">
+                            % if (grep { $_->addon_id eq $addon->addon_id } $user_pricing_plan->addons) {
+                                <p class="has-text-grey">You already have this addon</p>
+                            % } else {
+                                <input name="price_id" type="hidden" value="<%= $addon->stripe_id %>" />
+                                <button class="slapbird-button slapbird-is-secondary">
+                                    Add to plan
+                                </button>
+                            % }
+                        </form>
+                    </div>
+                </div>
+            % }
+        </div>
     % } 
 </div>

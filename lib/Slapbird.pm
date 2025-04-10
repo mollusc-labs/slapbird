@@ -213,7 +213,8 @@ sub startup {
       my ($c, $uuid) = @_;
       return 0 if !$uuid;
       return ($uuid
-          =~ /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
+          =~ /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/xmi
+      );
     }
   );
   $self->helper(
@@ -360,8 +361,9 @@ sub startup {
   );
 
   # Set up addons
-  for my $addon ($self->resultset('Addons')->all) {
+  for my $addon ($self->resultset('Addon')->all) {
     my $module = 'Slapbird::Addon::' . $addon->module;
+    eval "use $module";
     $module->register($self, $router);
   }
 
@@ -482,6 +484,10 @@ sub startup {
   }
 
   if ($ENV{SLAPBIRD_PRODUCTION} || $ENV{SLAPBIRD_TEST_STRIPE}) {
+
+    my @stripe_plans = @{$self->stripe->plans('list')->data};
+
+# If pricing plans don't have a stripe_id get the associated stripe plan from stripe
     try {
       my @pricing_plans = $self->resultset('PricingPlan')->all;
       my %update_lookup = map { lc($_->name) => $_ }
@@ -490,7 +496,8 @@ sub startup {
       if (%update_lookup) {
 
         # This uses pricing plan names to lookup their values in stripe.
-        for my $stripe_plan (@{$self->stripe->plans('list')->data}) {
+        for my $stripe_plan (@stripe_plans) {
+          next unless $stripe_plan->name =~ /^Slapbird\s-\s.*/xmi;
           chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
           if (my $plan = $update_lookup{$cut}) {
             $plan->update({stripe_id => $stripe_plan->id});
@@ -503,6 +510,26 @@ sub startup {
       $self->app->log->warn(
         'Unable to check Stripe/pricing plan associations: ' . $_);
     };
+
+# If addons don't have a stripe_id get the associated stripe plan from stripe
+    try {
+      my @addons = $self->resultset('Addon')->all;
+      my %update_lookup
+        = map { lc($_->name) => $_ } grep { !defined($_->stripe_id) } @addons;
+
+      if (%update_lookup) {
+        for my $stripe_plan (@stripe_plans) {
+          next unless $stripe_plan->name =~ /^Addon\s-\s.*/xmi;
+          chomp(my $cut = lc((split(' - '))[1]));
+          if (my $addon = $update_lookup{$cut}) {
+            $addon->update({stripe_id => $stripe_plan->id});
+          }
+        }
+      }
+    }
+    catch {
+      $self->app->log->warn('Unable to check Stripe/addon associations: ' . $_);
+    }
   }
 
 
@@ -593,6 +620,8 @@ sub startup {
   # HTMX routes
   $router->get('/htmx/pricing')->requires(authenticated => 0)
     ->to(controller => 'htmx-pricing', action => 'htmx_pricing');
+  $router->get('/htmx/addon')->requires(authenticated => 0)
+    ->to(controller => 'htmx-addon', action => 'htmx_addon_pricing');
   $router->get('/htmx/dashboard-nav-context')->requires(authenticated => 1)
     ->to(
     controller => 'htmx-dashboard',

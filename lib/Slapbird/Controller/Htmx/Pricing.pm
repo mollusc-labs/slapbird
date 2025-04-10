@@ -30,7 +30,7 @@ sub htmx_pricing {
   my @prices = $c->resultset('PricingPlan')->search({active => 1})->all;
   @prices = sort { $a->price <=> $b->price } @prices;
 
-  return $c->render(template => 'htmx/_pricing', prices => \@prices);
+  return $c->render(template => 'htmx/_pricing', prices => \@prices,);
 }
 
 1;

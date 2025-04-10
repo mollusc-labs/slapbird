@@ -11,12 +11,20 @@
             </div>
             <content class="container is-flex is-flex-wrap-wrap is-justify-content-center" hx-get="/htmx/pricing" hx-trigger="load">
             </content>
+            <div class="has-text-centered mt-6">
+                <h2 class="title is-2">Plan Addons</h2>
+                <p class="subtitle">
+                    Add useful features to your plan
+                </p>    
+            </div>
+            <content class="mt-2 container is-flex is-flex-wrap-wrap is-justify-content-center" hx-get="/htmx/addon" hx-trigger="load">
+            </content>
             <div class="has-text-centered mt-3">
                 <p>
                     Looking for a custom plan? Contact our sales team at <a class="slapbird-link" href="mailto:sales@slapbirdapm.com">sales@slapbirdapm.com</a>!
                 </p>
             </div>
-            <div class="has-text-centered mt-3">
+            <div class="has-text-centered mt-3 mb-6">
                 <p class="has-text-grey">
                     All plans subject to maximum archival time of 30 days for HTTP transactions, unless stated otherwise.
                 </p>
@@ -24,4 +32,4 @@
         </main>
         %= include '_footer'
     </body>
-<html>
+</html>
