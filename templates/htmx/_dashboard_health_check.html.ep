@@ -1,0 +1,7 @@
+% if ($failed_percentage < 1) {
+    <span class="tag is-success">Healthy</span> less than 1% failed checks in the last 24 hours.
+% } elsif ($failed_percentage > 1 && $failed_percentage < 100) {
+    <span class="tag is-warning">Unhealthy</span> greater than 1% failed requests in the last 24 hours.
+% } else {
+    <span class="tag is-danger">Down</span> <%= $failed_percentage %> failed requests in the last 24 hours.
+% }

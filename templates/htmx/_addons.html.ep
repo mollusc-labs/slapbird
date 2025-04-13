@@ -1,5 +1,5 @@
 % for my $addon (@$addons) {
-<div class="box is-flex is-flex-direction-column mx-2 mt-6" style="width: 249; height: 400px">
+<div class="box is-flex is-flex-direction-column mx-2 mt-6" style="width: 249">
   <header class="card-header has-text-centered">
     <h3 class="title is-4 mb-2 mt-2">
       <%= $addon->name %>
@@ -10,6 +10,9 @@
       <h4 class="is-5">
         $<%= $addon->price_pretty %> USD/month
       </h4>
+      <p class="subtitle">
+          <%= $addon->description %>
+      </p>
     </div>
   </div>
 </div>

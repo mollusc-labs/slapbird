@@ -4,8 +4,8 @@
     % if (application_context) {
         <div class="is-flex is-justify-content-space-between">
             <div class="is-flex">
-                <h1 class="title is-2"><%= application_context->name %></h1>
-                <span class="is-size-6 mt-3 ml-2">- <%= $requests_today %> requests today</span>
+                <h1 class="title is-2 mb-2"><%= application_context->name %></h1>
+                <span class="is-size-6 mt-3 ml-2">- <%= $requests_today || 0 %> requests today</span>
             </div>
             <div>
                 <button
@@ -20,6 +20,12 @@
                 </button>
             </div>
         </div>
+        % if (user->user_pricing_plan->has_addon('HealthCheck')) {
+            <div class="mb-2 mt-2 has-text-grey"
+                 hx-trigger="load"
+                 hx-get="/htmx/health-checks">
+            </div>
+        % }
         <div
             style="min-height: 25rem; padding: 0"
             class="m-2"

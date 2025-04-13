@@ -18,7 +18,7 @@
             % if (!user->is_associated) {
                 <a href="/dashboard/manage-plan" class="navbar-item">
                     Manage Plan
-                </a>    
+                </a>
             % } else {
                 <a href="/dashboard/manage-plan" class="navbar-item">
                     View Plan

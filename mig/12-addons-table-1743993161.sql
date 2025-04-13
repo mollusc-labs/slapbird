@@ -9,6 +9,7 @@ CREATE TABLE addons (
     is_free BOOLEAN NOT NULL DEFAULT FALSE,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW(),
+    stripe_id TEXT,
     CONSTRAINT pkey_addons PRIMARY KEY (addon_id)
 );
 CREATE TABLE user_pricing_plan_addons (
@@ -16,6 +17,7 @@ CREATE TABLE user_pricing_plan_addons (
     addon_id UUID NOT NULL,
     user_pricing_plan_id UUID NOT NULL,
     joined_at TIMESTAMP DEFAULT NOW(),
+    config JSON NOT NULL DEFAULT '{}',
     stripe_id TEXT,
     CONSTRAINT pkey_user_pricing_addon PRIMARY KEY (user_pricing_plan_addon_id),
     CONSTRAINT fk_user_pricing_plan_addon_addon_id

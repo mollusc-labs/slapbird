@@ -1,0 +1,83 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Health Check Config', description => 'Slapbird APM dashboard, Health Check Addon Configuration';
+
+<div class="box mt-6 mb-6">
+    <h2 class="title is-4 mb-2">Health Check Configuration</h2>
+    <p class="has-text-grey mb-3">
+        If your application is hosted internally on a VPC, you'll need to allow ingress traffic
+        from the SlapbirdAPM health-check service: 155.138.151.178
+    </p>
+    % if ($can_edit) {
+        <form method="POST">
+            <div class="field">
+                <label class="label">
+                    Health Check URI
+                </label>
+                <div class="control columns">
+                    <input class="input column is-narrow ml-2 mt-2 mb-2" type="text" name="endpoint" placeholder="https://myapp.com/healthcheck" value="<%= $config->{endpoint} %>" />
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        Certificate Alerts
+                        % if ($config->{cert_alerts}) {
+                            <%= check_box('cert_alerts', checked => undef, value => 1) %>
+                        % } else {
+                            <%= check_box('cert_alerts', value => 1) %>
+                        % }
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        Receive Emails
+                        % if ($config->{receive_emails}) {
+                            <%= check_box('receive_emails', checked => undef, value => 1) %>
+                        % } else {
+                            <%= check_box('receive_emails', value => 1) %>
+                        % }
+                    </label>
+                </div>
+            </div>
+            
+            <button class="slapbird-button slapbird-is-secondary">
+                Save
+            </button>
+        </form>
+    % } else {
+        <form method="POST">
+            <div class="field">
+                <label class="label">
+                    End-point
+                </label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="https://myapp.com/healthcheck" value="<%= $config->{endpoint} %>" disabled />
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox has-text-weight-semibold">
+                        <strong>Certificate Alerts</strong>
+                        <input type="checkbox" name="cert_alerts" value="<%= $config->{cert_alerts} %>" disabled />
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox has-text-weight-semibold">
+                        Receive Emails
+                        <input type="checkbox" name="receive_emails" value="<%= $config->{receive_emails} %>" disabled />
+                    </label>
+                </div>
+            </div>
+            <p class="has-text-grey">
+                Only the owner of your plan can edit Health Checks.
+            </p>
+        </form>
+    % }
+</div>

@@ -69,82 +69,85 @@ sub startup {
         {github => {key => $ENV{GITHUB_APP_ID}, secret => $ENV{GITHUB_SECRET}}}
     }
   );
-  $self->plugin(
-
-    # Every hour
-    'Cron' => (
-      thirty_day_clear => {
-        base    => 'utc',
-        crontab => '0 * * * *',
-        code    => sub {
-          const my $THIRTY_DAYS_MS => 2_592_000_000;
-
-          my (undef, $app) = @_;
-
-          $app->log->info(
-            'Doing hourly check to clear +30 day http_transactions');
-
-          my $rs
-            = $app->resultset('HTTPTransaction')
-            ->search(
-            {start_time => {-between => [0, (time * 1_000) - $THIRTY_DAYS_MS]}}
-            );
-
-          $app->log->info(
-            'Deleting ' . $rs->count . ' HTTP transactions from 30 days ago.');
-
-          $rs->delete();
-        }
-      },
-      set_plans_on_hold => {
-        base    => 'utc',
-        crontab => '0 * * * *',
-        code    => sub {
-          my (undef, $app) = @_;
-
-          use Slapbird::Client::Stripe;
-          my $stripe_client = Slapbird::Client::Stripe->new();
-
-          $app->log->info('Doing hourly subscription check');
-
-          try {
-            my @user_pricing_plans = $app->resultset('UserPricingPlan')
-              ->search({stripe_id => +{-not => undef}})->all;
-
-            for my $user_pricing_plan (@user_pricing_plans) {
-              next if $user_pricing_plan->on_hold;
-
-              my $subscription_response = $stripe_client->list_subscriptions({
-                customer => $user_pricing_plan->user->stripe_id,
-                status   => 'ended'
-              })->result;
-
-              if (!$subscription_response->is_success) {
-                Carp::croak('Got a bad response from Stripe '
-                    . $subscription_response->body);
-              }
-
-              my @stripe_subscriptions
-                = @{$subscription_response->json->{data}};
-              my %stripe_subscription_lookup
-                = map { $_->{id} => $_ } @stripe_subscriptions;
-
-              my $stripe_subscription
-                = $stripe_subscription_lookup{$user_pricing_plan->stripe_id};
-
-              next unless $stripe_subscription;
-
-              $user_pricing_plan->update({on_hold => 1});
-            }
-          }
-          catch {
-            $app->log->error("Error when checking plans to set on hold: $_");
-            return;
-          };
-        }
-      }
-    )
+  $self->helper(
+    cronjobs => sub {
+      state $cronjobs = [];
+      return $cronjobs;
+    }
   );
+
+  push @{$self->cronjobs}, {
+    thirty_day_clear => {
+      base    => 'utc',
+      crontab => '0 * * * *',
+      code    => sub {
+        const my $THIRTY_DAYS_MS => 2_592_000_000;
+
+        my (undef, $app) = @_;
+
+        $app->log->info(
+          'Doing hourly check to clear +30 day http_transactions');
+
+        my $rs
+          = $app->resultset('HTTPTransaction')
+          ->search(
+          {start_time => {-between => [0, (time * 1_000) - $THIRTY_DAYS_MS]}});
+
+        $app->log->info(
+          'Deleting ' . $rs->count . ' HTTP transactions from 30 days ago.');
+
+        $rs->delete();
+      }
+    }
+    },
+    {
+    set_plans_on_hold => {
+      base    => 'utc',
+      crontab => '0 * * * *',
+      code    => sub {
+        my (undef, $app) = @_;
+
+        use Slapbird::Client::Stripe;
+        my $stripe_client = Slapbird::Client::Stripe->new();
+
+        $app->log->info('Doing hourly subscription check');
+
+        try {
+          my @user_pricing_plans = $app->resultset('UserPricingPlan')
+            ->search({stripe_id => +{-not => undef}, on_hold => 0})->all;
+
+          for my $user_pricing_plan (@user_pricing_plans) {
+            next if $user_pricing_plan->on_hold;
+
+            my $subscription_response = $stripe_client->list_subscriptions({
+              customer => $user_pricing_plan->user->stripe_id,
+              status   => 'ended'
+            })->result;
+
+            if (!$subscription_response->is_success) {
+              Carp::croak('Got a bad response from Stripe '
+                  . $subscription_response->body);
+            }
+
+            my @stripe_subscriptions = @{$subscription_response->json->{data}};
+            my %stripe_subscription_lookup
+              = map { $_->{id} => $_ } @stripe_subscriptions;
+
+            my $stripe_subscription
+              = $stripe_subscription_lookup{$user_pricing_plan->stripe_id};
+
+            next unless $stripe_subscription;
+
+            $user_pricing_plan->update({on_hold => 1});
+          }
+        }
+        catch {
+          $app->log->error("Error when checking plans to set on hold: $_");
+          return;
+        };
+      }
+    }
+    };
 
   $self->helper(
     dbh => sub {
@@ -163,7 +166,14 @@ sub startup {
       return shift->dbic->resultset(@_);
     }
   );
-  $self->helper(logged_in => sub { return exists shift->session->{user_id} });
+  $self->helper(
+    logged_in => sub {
+      my $c = shift;
+      return
+        exists $c->session->{user_id}
+        && $c->resultset('User')->find({user_id => $c->session->{user_id}});
+    }
+  );
   $self->helper(
     logout => sub {
       my ($c) = @_;
@@ -205,7 +215,8 @@ sub startup {
   $self->helper(
     debug => sub {
       shift;    # Remove controller from every debug log.
-      Data::Printer::p(@_) unless $ENV{SLAPBIRD_PRODUCTION};
+      return if ($ENV{SLAPBIRD_PRODUCTION});
+      Data::Printer::p($_) for @_;
     }
   );
   $self->helper(
@@ -363,9 +374,13 @@ sub startup {
   # Set up addons
   for my $addon ($self->resultset('Addon')->all) {
     my $module = 'Slapbird::Addon::' . $addon->module;
-    eval "use $module";
-    $module->register($self, $router);
+    {
+      eval "use $module";
+      $module->register($self, $router);
+    }
   }
+
+  $self->plugin('Cron' => (map {%$_} @{$self->cronjobs}));
 
   $router->add_condition(
     ('addon_authenticated') => sub {
@@ -507,11 +522,11 @@ sub startup {
 
     }
     catch {
-      $self->app->log->warn(
+      $self->app->log->error(
         'Unable to check Stripe/pricing plan associations: ' . $_);
     };
 
-# If addons don't have a stripe_id get the associated stripe plan from stripe
+   # If addons don't have a stripe_id get the associated stripe plan from stripe
     try {
       my @addons = $self->resultset('Addon')->all;
       my %update_lookup
@@ -520,7 +535,7 @@ sub startup {
       if (%update_lookup) {
         for my $stripe_plan (@stripe_plans) {
           next unless $stripe_plan->name =~ /^Addon\s-\s.*/xmi;
-          chomp(my $cut = lc((split(' - '))[1]));
+          chomp(my $cut = lc((split(' - ', $stripe_plan->name))[1]));
           if (my $addon = $update_lookup{$cut}) {
             $addon->update({stripe_id => $stripe_plan->id});
           }
@@ -528,10 +543,10 @@ sub startup {
       }
     }
     catch {
-      $self->app->log->warn('Unable to check Stripe/addon associations: ' . $_);
+      $self->app->log->error(
+        'Unable to check Stripe/addon associations: ' . $_);
     }
   }
-
 
   # Static routes
   for (qw(index getting-started pricing tos privacy docs)) {
@@ -602,6 +617,20 @@ sub startup {
     ->name('dashboard_remove_user');
   $router->get('/dashboard/manage-plan/upgrade')->requires(authenticated => 1)
     ->to('static#upgrade')->name('dashboard_manage_plan_upgrade');
+  $router->get(
+    '/dashboard/manage-plan/confirm-remove-addon/:user_pricing_plan_addon_id')
+    ->requires(authenticated => 1)->to('dashboard#confirm_remove_addon')
+    ->name('dashboard_confirm_remove_addon');
+  $router->post(
+    '/dashboard/manage-plan/confirm-remove-addon/:user_pricing_plan_addon_id')
+    ->requires(authenticated => 1)->to('dashboard#remove_addon')
+    ->name('dashboard_remove_addon');
+  $router->get('/dashboard/addons/config/:user_pricing_plan_addon_id')
+    ->requires(authenticated => 1)->to('dashboard#addon_config')
+    ->name('addon_config');
+  $router->post('/dashboard/addons/config/:user_pricing_plan_addon_id')
+    ->requires(authenticated => 1)->to('dashboard#submit_addon_config')
+    ->name('save_addon_config');
 
   # Stripe
   $router->post('/dashboard/manage-plan/stripe/upgrade')
@@ -629,6 +658,10 @@ sub startup {
     );
   $router->get('/htmx/dashboard-feed')->requires(authenticated => 1)
     ->to(controller => 'htmx-dashboard', action => 'htmx_dashboard_feed');
+  $router->get('/htmx/health-checks')->requires(authenticated => 1)->to(
+    controller => 'htmx-dashboard',
+    action     => 'htmx_dashboard_health_check'
+  );
 
   # API routes (JSON)
   $router->get('/api/dashboard/graph')->requires(authenticated => 1)

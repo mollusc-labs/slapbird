@@ -8,7 +8,7 @@
                 <div class="hero-body">
                     <div class="container columns is-vcentered">
                         <div class="column is-half">
-                            <h1 class="title mb-2">The Free, and Open-Source observability platform</h1>
+                            <h1 class="title mb-2">The Free, and Open-Source Perl application observability platform</h1>
                             <ul class="subtitle">
                                 <li>Endpoint performance insights</li>
                                 <li>Service dependency visualization</li>
@@ -32,15 +32,14 @@
             <section class="container">
                 <div class="has-text-centered">
                     <h2 class="is-2 title mb-1">Application Monitoring</h2>
-                    <h2 class="is-2 title">for web based applications</h2>
+                    <h2 class="is-2 title">for Perl web applications</h2>
                 </div>
                 <div class="container columns mt-6 mb-6">
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Official Support</h3>
                         <ul>
-                            <li>Perl (Mojo, Dancer, Plack)</li>
+                            <li>Perl (Mojolicious, Dancer, Plack)</li>
                             <li>Raku (Humming-Bird)</li>
-                            <li>Ruby (Rack)</li>
                             <li>Want a client? Open an issue on <a href="https://github.com/mollusc-labs/slapbird/issues/new" class="slapbird-link">Github</a>!</li>
                         </ul>
                     </div>
@@ -57,7 +56,7 @@
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Easy set up</h3>
                         <ul>
-                            <li>Install a Slapbird user-agent for your language/framework</li>
+                            <li>Install the Slapbird user-agent for your application</li>
                             <li>Create your app on <a href="/" class="slapbird-link">slapbirdapm.com</a></li>
                             <li>1 line of code, 1 environment variable</li>
                             <li>Deploy</li>

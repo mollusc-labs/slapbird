@@ -1,0 +1,14 @@
+% layout '_dashboard_layout', title => 'Slapbird APM - Addons', description => 'Slapbird APM dashboard, addons';
+
+<div class="box mt-6 mb-6">
+    <h2 class="title is-3">Your Addons</h2>
+    % if (scalar @$addons) {
+        
+    % } else {
+        <content>
+            <p>
+                You don't have any addons. <a class="slapbird-link" href="/dashboard/get-addons">Click here to get some</a>.
+            </p>
+        </content>
+    % }
+</div>

@@ -34,6 +34,7 @@ __PACKAGE__->add_columns(qw(
   price_pretty
   is_free
   active
+  stripe_id
 ));
 
 __PACKAGE__->add_columns(

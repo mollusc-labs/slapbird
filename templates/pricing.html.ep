@@ -3,7 +3,7 @@
     <body>
         <main style="min-height: 100vh">
             %= include '_nav'
-            <div class="has-text-centered mt-6">
+            <div class="has-text-centered mt-6 mb-3">
                 <h1 class="title is-1">Slapbird APM pricing plans</h1>
                 <p class="subtitle">
                     Use Slapbird for free, then upgrade to a plan that meets your needs.
@@ -12,21 +12,21 @@
             <content class="container is-flex is-flex-wrap-wrap is-justify-content-center" hx-get="/htmx/pricing" hx-trigger="load">
             </content>
             <div class="has-text-centered mt-6">
-                <h2 class="title is-2">Plan Addons</h2>
+                <h2 class="title is-2">Addons</h2>
                 <p class="subtitle">
                     Add useful features to your plan
                 </p>    
             </div>
             <content class="mt-2 container is-flex is-flex-wrap-wrap is-justify-content-center" hx-get="/htmx/addon" hx-trigger="load">
             </content>
-            <div class="has-text-centered mt-3">
+            <div class="has-text-centered mt-6 mb-2">
                 <p>
-                    Looking for a custom plan? Contact our sales team at <a class="slapbird-link" href="mailto:sales@slapbirdapm.com">sales@slapbirdapm.com</a>!
+                    Looking for a custom plan, or have questions? Contact our sales team at <a class="slapbird-link" href="mailto:sales@slapbirdapm.com">sales@slapbirdapm.com</a>!
                 </p>
             </div>
             <div class="has-text-centered mt-3 mb-6">
                 <p class="has-text-grey">
-                    All plans subject to maximum archival time of 30 days for HTTP transactions, unless stated otherwise.
+                    All plans subject to maximum archival time of 30 days for HTTP transactions, unless stated otherwise. Taxes included.
                 </p>
             </div>
         </main>

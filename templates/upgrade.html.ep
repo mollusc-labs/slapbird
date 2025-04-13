@@ -45,7 +45,7 @@
         <h2 class="title is-2 mb-2 mt-4">Addons</h2>
         <div class="is-flex">
             % for my $addon (@$addons) {
-                <div class="box is-flex is-flex-direction-column mx-2 mt-6" style="width: 249; height: 400px">
+                <div class="box is-flex is-flex-direction-column mx-2 mt-3" style="max-width: 249px;">
                     <header class="card-header has-text-centered">
                         <h3 class="title is-4 mb-2 mt-2">
                             <%= $addon->name %>
@@ -59,9 +59,10 @@
                             <%== $addon->description %>
                         </div>
                     </div>
-                    <div class="mt-auto" style="background-color: transparent; justify-self: end">
+                    <div class="mt-2" style="background-color: transparent; justify-self: end">
                         <form method="POST" action="/dashboard/manage-plan/stripe/upgrade" class="has-text-centered">
-                            % if (grep { $_->addon_id eq $addon->addon_id } $user_pricing_plan->addons) {
+                            % my @addons = map { $_->addon } $user_pricing_plan->user_pricing_plan_addons;
+                            % if (grep { $_->addon_id eq $addon->addon_id } @addons) {
                                 <p class="has-text-grey">You already have this addon</p>
                             % } else {
                                 <input name="price_id" type="hidden" value="<%= $addon->stripe_id %>" />

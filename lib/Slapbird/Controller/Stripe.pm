@@ -70,8 +70,22 @@ sub checkout_session {
   if ($error) {
     $c->flash_danger(
       'Something went wrong connecting to Stripe, please try again later.');
-    $c->redirect_to('/dashboard/manage-plan');
+    return $c->redirect_to('/dashboard/manage-plan');
   }
+
+  my $addon = $c->resultset('Addon')->find({stripe_id => $price_id});
+  my $pricing_plan
+    = $c->resultset('PricingPlan')->find({stripe_id => $price_id});
+
+  if (!$addon && !$pricing_plan) {
+    $c->log->error("NO ADDON OR PRICING PLAN WITH STRIPE_ID $price_id");
+    $c->flash_danger(
+      'Something went wrong checking you out, please try again later.');
+    return $c->redirect_to('/dashboard/manage-plan/upgrade');
+  }
+
+  my $subscribable_id = $addon ? $addon->id : $pricing_plan->id;
+  my $context         = $addon ? 'addon'    : 'pricing_plan';
 
   my $session_result = $stripe_client->create_checkout_session(
     $price_id,
@@ -97,9 +111,9 @@ sub checkout_session {
 
   $c->debug($session_json);
 
-  $c->session(plan_to_subscribe_to =>
-      $c->resultset('PricingPlan')->find({stripe_id => $price_id})
-      ->pricing_plan_id);
+  $c->session(subscribable_id => $subscribable_id);
+  $c->session(price_id        => $price_id);
+  $c->session(stripe_context  => $context);
 
   return $c->redirect_to($session_json->{url});
 }
@@ -112,28 +126,65 @@ sub checkout_session_success {
     $c->redirect_to('/dashboard/manage-plan');
   }
 
-  my $pricing_plan_id = $c->session('plan_to_subscribe_to');
+  my $context         = $c->session('stripe_context');
+  my $subscribable_id = $c->session('subscribable_id');
+  my $price_id        = $c->session('price_id');
 
-  if (!$pricing_plan_id) {
-    $c->flash_danger('Something went wrong subscribing to that plan');
+  if (!$subscribable_id || !$context) {
+    $c->flash_danger("Something went wrong subscribing to that $context");
     $c->log->error('Checkout session success called without proper values???');
-    $c->redirect_to('/dashboard/manage-plan');
-  }
-
-  if (my $id_to_cancel = $c->user->user_pricing_plan->stripe_id) {
-    $c->stripe->subscriptions(
-      cancel => {id => $id_to_cancel, customer => $c->user->stripe_id});
+    return $c->redirect_to('/dashboard/manage-plan');
   }
 
   my $subscriptions
     = $c->stripe->subscriptions(list => $c->user->stripe_id)->data;
 
-  $c->user->user_pricing_plan->update(
-    {pricing_plan_id => $pricing_plan_id, stripe_id => $subscriptions->[0]->id}
-  );
+  my $subscription_id;
 
-  $c->flash_success('Thank you for upgrading your SlapbirdAPM plan!');
-  $c->redirect_to('/dashboard/manage-plan');
+  for my $sub (@$subscriptions) {
+    for (@{$sub->items->data}) {
+      if ($_->plan->id eq $price_id) {
+        $subscription_id = $sub->id;
+        last;
+      }
+    }
+
+    last if ($subscription_id);
+  }
+
+  if (!$subscription_id) {
+    $c->flash_danger("Something went wrong subscribing to that $context");
+    $c->log->error('Checkout session success called without proper values???');
+    $c->log->error(
+      qq[Price ID: $price_id, Context: $context, Subscribable: $subscribable_id]
+    );
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+  if ($context eq 'pricing_plan') {
+    if (my $id_to_cancel = $c->user->user_pricing_plan->stripe_id) {
+      $c->stripe->subscriptions(
+        cancel => {id => $id_to_cancel, customer => $c->user->stripe_id});
+    }
+
+    $c->user->user_pricing_plan->update({
+      pricing_plan_id => $subscribable_id, stripe_id => $subscription_id
+    });
+  }
+
+  if ($context eq 'addon') {
+    $c->resultset('UserPricingPlanAddon')->create(
+      {
+        addon_id             => $subscribable_id,
+        user_pricing_plan_id =>
+          $c->user->user_pricing_plan->user_pricing_plan_id,
+        stripe_id => $subscription_id
+      }
+    );
+  }
+
+  $c->flash_success(qq[Thank you for upgrading your SlapbirdAPM plan!]);
+  return $c->redirect_to('/dashboard/manage-plan');
 }
 
 1;

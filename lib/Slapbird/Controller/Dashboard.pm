@@ -563,4 +563,133 @@ ERROR:
   return $c->redirect_to('/dashboard/manage-plan');
 }
 
+
+sub confirm_remove_addon {
+  my ($c) = @_;
+  if ($c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+  my $user_pricing_plan_addon_id = $c->param('user_pricing_plan_addon_id');
+  my $user_pricing_plan_addon    = $c->resultset('UserPricingPlanAddon')
+    ->find({user_pricing_plan_addon_id => $user_pricing_plan_addon_id});
+
+  my $user_pricing_plan = $user_pricing_plan_addon->user_pricing_plan;
+  if (!$user_pricing_plan_addon
+    || $user_pricing_plan->user_pricing_plan_id ne
+    $c->user->user_pricing_plan->user_pricing_plan_id)
+  {
+    return $c->redirect_to('/dashboard');
+  }
+
+  return $c->render(
+    template                   => 'dashboard_confirm_remove_addon',
+    addon                      => $user_pricing_plan_addon->addon,
+    user_pricing_plan_addon_id => $user_pricing_plan_addon_id
+  );
+}
+
+sub remove_addon {
+  my ($c) = @_;
+
+  if ($c->user->is_associated) {
+    return $c->redirect_to('/dashboard');
+  }
+
+  my $user_pricing_plan_addon_id = $c->param('user_pricing_plan_addon_id');
+  my $user_pricing_plan_addon    = $c->resultset('UserPricingPlanAddon')
+    ->find({user_pricing_plan_addon_id => $user_pricing_plan_addon_id});
+
+  my $user_pricing_plan = $user_pricing_plan_addon->user_pricing_plan;
+  if (!$user_pricing_plan_addon
+    || $user_pricing_plan->user_pricing_plan_id ne
+    $c->user->user_pricing_plan->user_pricing_plan_id)
+  {
+    return $c->redirect_to('/dashboard');
+  }
+
+  try {
+    $c->stripe->subscriptions(
+      cancel => {
+        id       => $user_pricing_plan_addon->stripe_id,
+        customer => $c->user->stripe_id
+      }
+    );
+  }
+  catch {
+    $c->app->log->error("Couldn't remove stripe subscription! $_");
+  };
+
+  $c->resultset('UserPricingPlanAddon')
+    ->find({user_pricing_plan_addon_id => $user_pricing_plan_addon_id})->delete;
+
+  $c->flash_success('Addon removed.');
+  return $c->redirect_to('/dashboard/manage-plan');
+}
+
+sub addon_config {
+  my ($c) = @_;
+
+  my $user_pricing_plan_addon_id = $c->param('user_pricing_plan_addon_id');
+  my $user_pricing_plan_addon    = $c->resultset('UserPricingPlanAddon')
+    ->find({user_pricing_plan_addon_id => $user_pricing_plan_addon_id});
+
+  if (!$user_pricing_plan_addon) {
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+  my $addon    = $user_pricing_plan_addon->addon;
+  my $template = 'addons/config_' . lc($addon->module);
+  my $config   = $user_pricing_plan_addon->config
+    ->{$c->application_context->application_id} // {};
+
+  $c->debug($config);
+
+  return $c->render(
+    template => $template,
+    addon    => $addon,
+    config   => $config,
+    can_edit => $c->user->user_id eq $c->user->user_pricing_plan->user_id
+  );
+}
+
+sub submit_addon_config {
+  my ($c) = @_;
+
+  my $user_pricing_plan_addon_id = $c->param('user_pricing_plan_addon_id');
+  my $user_pricing_plan_addon    = $c->resultset('UserPricingPlanAddon')
+    ->find({user_pricing_plan_addon_id => $user_pricing_plan_addon_id});
+
+  if (!$user_pricing_plan_addon) {
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+  if ($c->user->user_id ne $user_pricing_plan_addon->user_pricing_plan->user_id)
+  {
+    return $c->redirect_to('/dashboard/manage-plan');
+  }
+
+  my $params = $c->req->params->to_hash;
+
+  $c->debug('params', $params);
+
+  my $addon = $user_pricing_plan_addon->addon;
+  my ($ok, $error) = $c->actions->save_addon_config(
+    application_id             => $c->application_context->application_id,
+    params                     => $params,
+    module                     => $addon->module,
+    user_pricing_plan_addon_id =>
+      $user_pricing_plan_addon->user_pricing_plan_addon_id,
+  );
+
+  if ($error) {
+    $c->debug($error);
+    $c->app->log->error($error);
+    $c->flash_danger(
+      "Failed to save, check that the URL you specified is accessible.");
+  }
+
+  return $c->redirect_to(
+    '/dashboard/addons/config/' . $user_pricing_plan_addon_id);
+}
+
 1;

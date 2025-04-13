@@ -24,6 +24,27 @@ use warnings;
 
 use Mojo::Base 'Mojolicious::Controller';
 use Time::HiRes qw(time);
+use Mojo::JSON  qw(decode_json);
+
+sub htmx_dashboard_health_check {
+  my ($c) = @_;
+
+  if (!$c->user->user_pricing_plan->has_addon('HealthCheck')) {
+    return $c->render(text => '', status => 401);
+  }
+
+  my $application = $c->application_context;
+  my $f = $c->cache->get($application->application_id . '-healthcheck-failed')
+    // 0;
+  my $t = $c->cache->get($application->application_id . '-healthcheck-total')
+    // 0;
+
+  my $failed_percentage = $t != 0 ? ($f / $t) : 0;
+  return $c->render(
+    template          => 'htmx/_dashboard_health_check',
+    failed_percentage => $failed_percentage
+  );
+}
 
 sub htmx_dashboard_nav_context {
   my ($c) = @_;

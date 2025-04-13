@@ -19,6 +19,8 @@
 
 package Slapbird::Schema::Result::UserPricingPlanAddon;
 
+use Mojo::JSON qw(decode_json encode_json);
+
 use base 'DBIx::Class::Core';
 use strict;
 use warnings;
@@ -30,18 +32,34 @@ __PACKAGE__->add_columns(qw(
   addon_id
   user_pricing_plan_id
   stripe_id
+  config
 ));
 
 __PACKAGE__->add_columns(
   user_pricing_plan_addon_id => {is_auto_increment => 1},
-  joined_at                  => {data_type => 'datetime', set_on_create => 1}
+  joined_at                  => {data_type => 'datetime', set_on_create => 1},
 );
+
+__PACKAGE__->inflate_column(
+  'config',
+  {
+    inflate => sub {
+      my ($value) = @_;
+      return decode_json($value);
+    },
+    deflate => sub {
+      my ($value) = @_;
+      return encode_json($value);
+    }
+  }
+);
+
 __PACKAGE__->set_primary_key('user_pricing_plan_addon_id');
 
 __PACKAGE__->belongs_to(
   user_pricing_plan => 'Slapbird::Schema::Result::UserPricingPlan',
   'user_pricing_plan_id'
 );
-__PACKAGE__->has_one(addon => 'Slapbird::Schema::Result::Addon', 'addon_id');
+__PACKAGE__->belongs_to(addon => 'Slapbird::Schema::Result::Addon', 'addon_id');
 
 1;

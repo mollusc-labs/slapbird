@@ -57,11 +57,7 @@ __PACKAGE__->has_many(
   'user_pricing_plan_id'
 );
 __PACKAGE__->has_many(
-  addons => 'Slapbird::Schema::Result::UserPricingPlanAddon',
-  'user_pricing_plan_addons'
-);
-__PACKAGE__->has_one(
-  card => 'Slapbird::Schema::Result::Card',
+  user_pricing_plan_addons => 'Slapbird::Schema::Result::UserPricingPlanAddon',
   'user_pricing_plan_id'
 );
 __PACKAGE__->belongs_to(
@@ -70,12 +66,16 @@ __PACKAGE__->belongs_to(
 );
 __PACKAGE__->belongs_to(user => 'Slapbird::Schema::Result::User', 'user_id');
 
-sub addons {
-  my ($self) = @_;
+sub has_addon {
+  my ($self, $addon_name) = @_;
 
-  my @addons = map { $_->addon } $self->user_pricing_plan_addons->all;
+  for ($self->user_pricing_plan_addons) {
+    if ($_->addon->module eq $addon_name) {
+      return 1;
+    }
+  }
 
-  return wantarray ? @addons : \@addons;
+  return 0;
 }
 
 sub users {
