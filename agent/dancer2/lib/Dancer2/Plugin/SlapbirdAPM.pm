@@ -13,7 +13,7 @@ use Dancer2::Plugin;
 use LWP::UserAgent;
 use System::Info;
 use SlapbirdAPM::Dancer2::DBIx::Tracer;
-use POSIX;
+use POSIX ();
 use feature 'say';
 
 our $VERSION = $SlapbirdAPM::Agent::Dancer2::VERSION;
@@ -165,7 +165,7 @@ sub _call_home {
     }
 
 # We need to use POSIX::_exit(0) to not destroy database handles from the parent.
-    POSIX::_exit(0);
+    return POSIX::_exit(0);
 }
 
 sub BUILD {

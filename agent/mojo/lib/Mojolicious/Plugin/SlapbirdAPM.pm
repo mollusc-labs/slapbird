@@ -14,6 +14,7 @@ use IPC::Open2;
 use SlapbirdAPM::Trace;
 use System::Info;
 use SlapbirdAPM::DBIx::Tracer;
+use POSIX ();
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -32,40 +33,32 @@ my $in_request = 0;
 
 sub _call_home {
     my ( $json, $key, $app, $quiet ) = @_;
-    return $UA->post_p(
-        $SLAPBIRD_APM_URI,
-        { 'x-slapbird-apm' => $key },
-        json => $json
-    )->then(
-        sub {
-            my ($res) = @_;
-            my $result = $res->result;
-            if ( !$result->is_success ) {
-                if ( $result->code eq 429 ) {
-                    $should_request = 0;
-                    my $t = time;
-                    $next_timestamp = $t + ( 86400 - $t );
-                    $app->log->warn(
-"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
-                    ) unless $quiet;
-                    return;
-                }
+    try {
+        my $result = $UA->post(
+            $SLAPBIRD_APM_URI,
+            { 'x-slapbird-apm' => $key },
+            json => $json
+        )->result;
+        if ( !$result->is_success ) {
+            if ( $result->code eq 429 ) {
+                $should_request = 0;
+                my $t = time;
+                $next_timestamp = $t + ( 86400 - $t );
                 $app->log->warn(
-'Unable to communicate with Slapbird, this request has not been tracked: '
-                      . $json->{request_id}
-                      . ' got status code '
-                      . $result->code );
+"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
+                ) unless $quiet;
+                return;
             }
         }
-    )->catch(
-        sub {
-            $app->log->warn(
+    }
+    catch {
+        $app->log->warn(
 'Unable to communicate with Slapbird, this request has not been tracked: '
-                  . $json->{request_id}
-                  . ' got error '
-                  . shift );
-        }
-    );
+              . $json->{request_id}
+              . ' got error '
+              . shift );
+
+    }
 }
 
 {
@@ -146,6 +139,9 @@ sub register {
 
             my $end_time = time * 1_000;
 
+            my $pid = fork();
+            return 1 if $pid;
+
             my $response_headers = $c->res->headers->to_hash;
             my $request_headers  = $c->req->headers->to_hash;
 
@@ -154,7 +150,7 @@ sub register {
                 delete $request_headers->{$_};
             }
 
-            my $res = _call_home(
+            _call_home(
                 {
                     type             => 'mojo',
                     method           => $c->req->method,
@@ -183,7 +179,7 @@ sub register {
 
             die $error if $error;
 
-            return 1;
+            return POSIX::_exit(0);
         }
     );
 

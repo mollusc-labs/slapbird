@@ -8,7 +8,7 @@ use DBI;
 
 my $dbh = DBI->connect('dbi:SQLite:dbname=file.db','','');
 
-plugin 'SlapbirdAPM', key => '<YOUR API KEY>';
+plugin 'SlapbirdAPM';
 
 get '/' => sub {
   my ($c) = @_;

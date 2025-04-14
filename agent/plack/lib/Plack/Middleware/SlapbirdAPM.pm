@@ -15,7 +15,7 @@ use Carp ();
 use System::Info;
 use Time::HiRes qw(time);
 use SlapbirdAPM::Plack::DBIx::Tracer;
-use POSIX;
+use POSIX ();
 use namespace::clean;
 
 $Carp::Internal{__PACKAGE__} = 1;
@@ -95,7 +95,7 @@ sub _call_home {
     }
 
 # We have to use POSIX::_exit(0) instead of exit(0) to not destroy database handles.
-    POSIX::_exit(0);
+    return POSIX::_exit(0);
 }
 
 sub call {
