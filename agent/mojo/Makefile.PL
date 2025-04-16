@@ -25,6 +25,7 @@ WriteMakefile(
     },
   },
   PREREQ_PM => {
+    'POSIX'            => '0',
     'Carp'             => '0',
     'Try::Tiny'        => '0.31',
     'Const::Fast'      => '0.014',

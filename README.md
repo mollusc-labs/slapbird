@@ -5,7 +5,7 @@
 </p>
 <h1 align="center"><a href="https://www.slapbirdapm.com">SlapbirdAPM</a></h1>
 <p align="center">
-  A free, and open-source, application observability platform.
+  A free, and open-source, application observability platform for Perl web applications.
 </p>
 
 ### Getting started

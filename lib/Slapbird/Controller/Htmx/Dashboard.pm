@@ -78,14 +78,11 @@ sub htmx_dashboard_feed {
 
     my $query = q{
         SELECT
-          a.application_id,
           handler,
           method,
           end_point,
           AVG(total_time) as avg_time,
           ht.response_code,
-          AVG(response_size) as avg_response_size,
-          AVG(request_size) as avg_request_size,
           COUNT(*) as count
         FROM applications a
         INNER JOIN (

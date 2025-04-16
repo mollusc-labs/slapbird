@@ -4,3 +4,4 @@ requires 'LWP::UserAgent' => '6.77';
 requires 'LWP::Protocol::https' => '6.14';
 requires 'JSON::MaybeXS' => '1.004008';
 requires 'DBI' => '0';
+requires 'POSIX' => '0';

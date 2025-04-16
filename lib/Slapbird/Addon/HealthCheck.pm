@@ -50,6 +50,8 @@ sub register {
         my %master_conf = map { %{$_->config} } @user_pricing_plan_addons;
 
         for my $application_id (keys %master_conf) {
+          $c->app->log->info(
+            "Running health check for application: $application_id");
           my $app_conf = $master_conf{$application_id};
 
           next unless $app_conf->{receive_emails};
