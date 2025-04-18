@@ -67,18 +67,4 @@ __PACKAGE__->inflate_column(
   }
 );
 
-sub to_graph_dto {
-  my $self = shift;
-  return +{
-    application_id => $self->application_id,
-    type           => $self->type,
-    response_code  => $self->response_code,
-    handler        => $self->handler,
-    was_error      => defined $self->error,
-    total_time     => $self->total_time + 0,
-    start_time     => $self->start_time + 0,
-    end_time       => $self->end_time + 0
-  };
-}
-
 1;

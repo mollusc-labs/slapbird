@@ -5,6 +5,7 @@ use warnings;
 
 use Mojolicious::Lite -signatures;
 use DBI;
+use Carp ();
 
 my $dbh = DBI->connect('dbi:SQLite:dbname=file.db','','');
 
@@ -16,6 +17,10 @@ get '/' => sub {
   $sth->execute();
   my $time = $sth->fetch->[0];
   return $c->render(text => 'Hello World! It is ' . $time . q[ o'clock]);
+};
+
+get '/error' => sub {
+    Carp::croak('ERROR!!');
 };
 
 app->start;

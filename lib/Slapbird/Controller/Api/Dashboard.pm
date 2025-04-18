@@ -23,20 +23,37 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use strict;
 use warnings;
+
 use Slapbird::Advice::ErrorAdvice;
+use Const::Fast;
+
+const my $graph_query => q{
+SELECT
+  application_id,
+  type,
+  response_code,
+  handler,
+  (CASE WHEN error IS NULL OR error = '' THEN 0 ELSE 1 END) as was_error,
+  total_time,
+  start_time,
+  end_time
+FROM http_transactions
+WHERE application_id = ?
+};
 
 sub json_graph {
   my ($c) = @_;
 
   my ($from_time, $to_time) = $c->get_from_to_time();
 
-  my @transactions = $c->resultset('HTTPTransaction')->search(
-    {
-      application_id => $c->application_context->application_id,
-      start_time     => {-between => [$from_time, $to_time]}
-    },
-    {order_by => {-asc => 'start_time'}}
-  )->all;
+  my @transactions = $c->dbic->storage->dbh_do(sub {
+    my ($storage, $dbh) = @_;
+    return $dbh->selectall_array(
+      $graph_query,
+      {Slice => {}},
+      $c->application_context->application_id
+    );
+  });
 
   if (scalar(@transactions) == 0) {
     return $c->render(
@@ -44,8 +61,6 @@ sub json_graph {
       json   => {message => 'No transactions for this time period'}
     );
   }
-
-  @transactions = map { $_->to_graph_dto() } @transactions;
 
   return $c->render(json => \@transactions);
 }

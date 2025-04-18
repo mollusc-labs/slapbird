@@ -25,6 +25,25 @@ use warnings;
 use Mojo::Base 'Mojolicious::Controller';
 use Time::HiRes qw(time);
 use Mojo::JSON  qw(decode_json);
+use Const::Fast;
+
+const my $dashboard_feed_query => q{
+        SELECT
+          handler,
+          method,
+          end_point,
+          AVG(total_time) as avg_time,
+          ht.response_code,
+          COUNT(*) as count
+        FROM applications a
+        INNER JOIN (
+          SELECT * FROM http_transactions
+          WHERE (start_time BETWEEN ? AND ?) AND application_id = ?
+        ) ht ON ht.application_id = a.application_id
+        GROUP BY a.application_id, ht.method, ht.end_point, ht.response_code, ht.handler
+        HAVING a.application_id = ?
+        ORDER BY response_code DESC, avg_time DESC
+};
 
 sub htmx_dashboard_health_check {
   my ($c) = @_;
@@ -76,25 +95,7 @@ sub htmx_dashboard_feed {
   my $summaries = $c->dbic->storage->dbh_do(sub {
     my ($storage, $dbh) = @_;
 
-    my $query = q{
-        SELECT
-          handler,
-          method,
-          end_point,
-          AVG(total_time) as avg_time,
-          ht.response_code,
-          COUNT(*) as count
-        FROM applications a
-        INNER JOIN (
-          SELECT * FROM http_transactions
-          WHERE (start_time BETWEEN ? AND ?) AND application_id = ?
-        ) ht ON ht.application_id = a.application_id
-        GROUP BY a.application_id, ht.method, ht.end_point, ht.response_code, ht.handler
-        HAVING a.application_id = ?
-        ORDER BY response_code DESC, avg_time DESC
-    };
-
-    return $dbh->selectall_arrayref($query, {Slice => {}},
+    return $dbh->selectall_arrayref($dashboard_feed_query, {Slice => {}},
       $from_time, $to_time, $application_id, $application_id);
   });
 
