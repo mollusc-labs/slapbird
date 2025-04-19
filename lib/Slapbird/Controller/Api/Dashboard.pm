@@ -38,7 +38,7 @@ SELECT
   start_time,
   end_time
 FROM http_transactions
-WHERE application_id = ?
+WHERE application_id = ? AND (start_time BETWEEN ? AND ?)
 };
 
 sub json_graph {
@@ -51,7 +51,8 @@ sub json_graph {
     return $dbh->selectall_array(
       $graph_query,
       {Slice => {}},
-      $c->application_context->application_id
+      $c->application_context->application_id,
+      $from_time, $to_time
     );
   });
 
