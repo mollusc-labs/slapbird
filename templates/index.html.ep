@@ -38,8 +38,11 @@
                     <div class="column is-one-third has-text-centered">
                         <h3 class="is-4 title">Official Support</h3>
                         <ul>
-                            <li>Perl (Mojolicious, Dancer, Plack)</li>
-                            <li>Raku (Humming-Bird)</li>
+                            <li>Mojolicious</li>
+                            <li>Dancer</li>
+                            <li>Plack</li>
+                            <li>CGI</li>
+                            <li>Raku</li>
                             <li>Want a client? Open an issue on <a href="https://github.com/mollusc-labs/slapbird/issues/new" class="slapbird-link">Github</a>!</li>
                         </ul>
                     </div>
