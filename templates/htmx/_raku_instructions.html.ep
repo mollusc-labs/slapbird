@@ -1,0 +1,6 @@
+<ol class="ml-6">
+    <li>Copy your API key</li>
+    <li>Install the latest version of Humming-Bird</li>
+    <li>Add the middleware to your application: <code>plugin 'SlapbirdAPM';</code></li>
+    <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
+</ol>

@@ -1,4 +1,3 @@
-<!-- TODO: (RF) We're going to need a instruction table to hold the various "quick-start" instructions. -->
 <ol class="ml-6">
     <li>Copy your API key</li>
     <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>

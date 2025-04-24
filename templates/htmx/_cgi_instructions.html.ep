@@ -1,0 +1,10 @@
+<ol class="ml-6">
+    <li>Login to SlapbirdAPM via Github</li>
+    <li>Create your application</li>
+    <li>Copy your API key</li>
+    <li>Install the SlapbirdAPM CGI agent ie. <code>cpan -I SlapbirdAPM::Agent::CGI</code></li>
+    <li>Use the agent in your CGI script <code>use SlapbirdAPM::Agent::CGI;</code></li>
+    <li>
+        Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application, in Apache2.4: <code>SetEnv SLAPBIRDAPM_API_KEY ...</code>
+    </li>
+</ol>
