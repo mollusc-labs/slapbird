@@ -69,6 +69,7 @@ sub call {
   my @errors = Slapbird::Validator::HTTPTransaction->validate($transaction);
 
   $c->debug(@errors);
+  $c->debug($transaction);
 
   if (@errors) {
     return $c->render(

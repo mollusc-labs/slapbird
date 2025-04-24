@@ -70,6 +70,8 @@ sub sanitize {
     map { $_ . ': ' . $json->{response_headers}->{$_} }
       keys(%{$json->{response_headers}}));
 
+  $json->{response_code} = +$json->{response_code};
+
   return $json;
 }
 

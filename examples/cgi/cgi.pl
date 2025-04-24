@@ -3,9 +3,6 @@
 use strict;
 use warnings;
 
-use lib '/home/rawley/perl5/lib/perl5',
-  '/home/rawley/Projects/slapbird/agent/cgi/lib';
-
 use DBI;
 use SlapbirdAPM::Agent::CGI;
 use CGI;
@@ -20,7 +17,7 @@ my $response = 'Hello World! It is ' . $time . " o'clock";
 my $cgi = CGI->new();
 
 print $cgi->header();
-print <<'END'
+print <<"END"
 <!DOCTYPE html>
 <html>
   <body>

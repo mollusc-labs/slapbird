@@ -22,25 +22,34 @@ $Carp::Internal{__PACKAGE__} = 1;
 our $VERSION = '0.01';
 
 my %request_headers;
-my $cgi = CGI->new();
-my $res = IO::String->new;
-my $handler;
-my $start_time;
-my @error;
-my @queries;
-pipe( my $reader, my $writer );
-my $orig_stdout = *STDOUT{IO};
-my $key;
+our $cgi = CGI->new();
+our $res = IO::String->new;
+our $handler;
+our $start_time;
+our @error;
+our $queries = [];
+our $key;
+pipe( our $reader, our $writer );
+
+SlapbirdAPM::CGI::DBIx::Tracer->new(
+    sub {
+        my %args = @_;
+        push @$queries, { sql => $args{sql}, total_time => $args{time} };
+    }
+);
 
 sub import {
+    $key = $ENV{SLAPBIRDAPM_API_KEY};
+
+    if ( !$key ) {
+        warn(
+"Your SlapbirdAPM key is not set, set the SLAPBIRDAPM_API_KEY environment variable to use SlapbirdAPM."
+        );
+        return;
+    }
+
     $start_time = time * 1_000;
     ($handler) = caller;
-    SlapbirdAPM::CGI::DBIx::Tracer->new(
-        sub {
-            my %args = @_;
-            push @queries, { sql => $args{sql}, total_time => $args{time} };
-        }
-    );
     %request_headers = map { $_ => $cgi->http($_) } $cgi->http();
     local *tee = IO::Tee->new( $writer, *STDOUT{IO} );
 
@@ -50,18 +59,16 @@ sub import {
         @error = @_;
     };
 
-    $key = $ENV{SLAPBIRDAPM_API_KEY};
-
-    if ( !$key ) {
-        Carp::carp(
-"Your SlapbirdAPM key is not set, set the SLAPBIRDAPM_API_KEY environment variable."
-        );
-    }
-
     return;
 }
 
 END {
+    if ( !$key ) {
+        close($writer);
+        close($reader);
+        return;
+    }
+
     my $end_time = time * 1_000;
 
     close($writer);
@@ -70,8 +77,6 @@ END {
         <$reader>;
     };
     close($reader);
-
-    *{STDOUT} = $orig_stdout;
 
     if ( $raw_response !~ /^HTTP\/\d+\s\d+\s[A-Za-z].*/mxi ) {
         if ( !@error ) {
@@ -96,18 +101,19 @@ END {
         end_point  => $cgi->url( -path_info => 1, -query => 1, -absolute => 1 ),
         start_time => $start_time,
         end_time   => $end_time,
-        response_code => $res->code,
+        response_code => +$res->code,
         response_size => $res->header('content-length')
           // length( $res->content ) // 0,
         response_headers => +{ $res->headers->flatten() },
         request_headers  => \%request_headers,
+        request_size     => $request_headers{HTTP_CONTENT_LENGTH} // 0,
         error            => join( "\n", @error ),
         requestor        => $request_headers{HTTP_X_SLAPBIRD_NAME} // 'UNKNOWN',
-        handler          => $handler,
-        stack => undef,    # We don't trace stacks in CGI, because the overhead
+        handler          => $handler eq 'main' ? 'CGI' : $handler,
+        stack       => [],  # We don't trace stacks in CGI, because the overhead
         os          => System::Info->new->os,
-        queries     => \@queries,
-        num_queries => scalar @queries
+        queries     => $queries,
+        num_queries => scalar @$queries
     };
 
     my $ua = LWP::UserAgent->new();
@@ -120,10 +126,11 @@ END {
     my $sb_request = HTTP::Request->new( POST => $uri );
     $sb_request->content_type('application/json');
     $sb_request->content( encode_json($slapbird_hash) );
+    $sb_request->header( 'x-slapbird-apm' => $key );
     my $result = $ua->request($sb_request);
 
     if ( !$result->is_success ) {
-        Carp::carp( "Unable to communicate with Slapbird, got status code: "
+        warn( "Unable to communicate with Slapbird, got status code: "
               . $result->code );
     }
 

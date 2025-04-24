@@ -44,7 +44,8 @@ sub validate {
       end_point     => {type => 'string'},
       start_time    => {type => 'number'},
       end_time      => {type => 'number'},
-      response_code => {type => 'integer'},
+      response_code =>
+        {type => ['integer', 'string'], minimum => 100, maximum => 599},
       response_size => {type => ['integer', 'null']},
       request_size  => {type => ['integer', 'null']},
       handler       => {type => ['string',  'null']},
