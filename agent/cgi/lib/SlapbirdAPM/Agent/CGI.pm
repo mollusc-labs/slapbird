@@ -20,7 +20,7 @@ use Proc::Daemon;
 
 $Carp::Internal{__PACKAGE__} = 1;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my %request_headers;
 our $cgi = CGI->new();
@@ -166,7 +166,7 @@ Install this ie C<cpanm SlapbirdAPM::Agent::CGI>, C<cpan -I SlapbirdAPM::Agent::
 
 =item *
 
-Add C<use Dancer2::Plugin::CGI> near the top of your L<CGI> script
+Add C<use SlapbirdAPM::Agent::CGI> near the top of your L<CGI> script
 
 =item *
 
