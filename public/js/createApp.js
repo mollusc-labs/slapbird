@@ -1,30 +1,5 @@
 import { createApp } from 'https://unpkg.com/petite-vue?module';
 
-const SLAPBIRD_INSTRUCTIONS = {
-    mojo: `<ol class="ml-6">
-    <li>Copy your API key</li>
-    <li>Install the SlapbirdAPM Mojolicious plugin ie. <code>cpan -I SlapbirdAPM::Agent::Mojo</code></li>
-    <li>Add the plugin to your application with one line of code <code>plugin 'SlapbirdAPM'</code></li>
-    <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
-    <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>plugin 'SlapbirdAPM', key => $API_KEY</code></li>
-</ol>`,
-    plack: `<ol class="ml-6">
-    <li>Copy your API key</li>
-    <li>Install the SlapbirdAPM Plack middleware ie. <code>cpan -I SlapbirdAPM::Agent::Plack</code></li>
-    <li>Add the middleware to your application, typically this is done using <code>Plack::Builder</code></li>
-    <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
-    <li><strong>Optionally</strong>: You can also pass your API key to the plugin via <code>key => $API_KEY</code> in your <code>Plack::Builder</code> declaration</li>
-</ol>`,
-    dancer2: `<ol class="ml-6">
-                <li>Copy your API key</li>
-                <li>Install the SlapbirdAPM Dancer2 plugin ie. <code>cpan -I SlapbirdAPM::Agent::Dancer2</code></li>
-                <li>Add the plugin to your Dancer2 application ie <code>use Dancer2::Plugin::SlapbirdAPM</code></li>
-                <li>Add the <code>SLAPBIRDAPM_API_KEY</code> environment variable to your application</li>
-                <li><strong>Optionally</strong>: You can also pass your API key to the plugin via config <code>key => $API_KEY</code> in your <code>config.yml</code></li>
-</ol>
-`
-};
-
 createApp({
     applicationType: 'mojo',
     applicationName: '',
@@ -32,17 +7,17 @@ createApp({
     submitting: false,
     createdApiKey: null,
     createdAppId: null,
-    instructions: null,
     disabled: false,
     errors: [],
     copied: false,
+    instructions: null,
     copyToClipboard() {
         navigator.clipboard.writeText(this.createdApiKey.trim());
         this.copied = true;
     },
     submitForm() {
         this.submitting = true;
-        axios.post('/dashboard/new-app', {
+        axios.post('/api/dashboard/new-app', {
             name: this.applicationName,
             type: this.applicationType,
             description: this.applicationDesc
@@ -51,9 +26,15 @@ createApp({
                 this.disabled = true;
                 this.createdApiKey = response.data['api_key'];
                 this.createdAppId = response.data['application_id'];
+                this.instructions = response.data['instructions'];
                 this.errors = [];
-                this.instructions = SLAPBIRD_INSTRUCTIONS[this.applicationType];
+
+                // Setup the application context
                 document.setCookie('application-context', this.createdAppId);
+                const option = document.createElement('option');
+                option.selected = true;
+                option.innerText = this.applicationName;
+                option.value = this.createdAppId;
             })
             .catch(error => {
                 if (!error.response) {

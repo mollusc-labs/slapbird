@@ -48,7 +48,7 @@
             </div>
         </form>
         <div 
-            class="box mx-2"
+            class="box mx-2 mt-4"
             hx-get="/htmx/dashboard-feed?from=<%= param('from') %>&to=<%= param('to') %>"
             id="dashboardFeed"
             hx-trigger="load">

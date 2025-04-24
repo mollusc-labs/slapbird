@@ -16,6 +16,7 @@ use HTTP::Request;
 use HTTP::Response;
 use System::Info;
 use JSON;
+use Proc::Daemon;
 
 $Carp::Internal{__PACKAGE__} = 1;
 
@@ -53,7 +54,8 @@ sub import {
     %request_headers = map { $_ => $cgi->http($_) } $cgi->http();
     local *tee = IO::Tee->new( $writer, *STDOUT{IO} );
 
-    *{STDOUT} = *tee;
+    *{OLD_STDOUT} = *STDOUT{IO};
+    *{STDOUT}     = *tee;
 
     $SIG{__DIE__} = sub {
         @error = @_;
@@ -89,7 +91,8 @@ END {
     }
 
     local $SIG{CHLD} = 'IGNORE';
-    if ( my $pid = fork() ) {
+
+    if ( fork() ) {
         return;
     }
 
@@ -138,3 +141,89 @@ END {
 }
 
 1;
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+SlapbirdAPM::Agent::CGI
+
+The L<SlapbirdAPM|https://www.slapbirdapm.com> user-agent for L<CGI> applications.
+
+=head1 SYNOPSIS
+
+=over 2
+
+=item *
+
+Create an application on L<SlapbirdAPM|https://www.slapbirdapm.com>
+
+=item *
+
+Install this ie C<cpanm SlapbirdAPM::Agent::CGI>, C<cpan -I SlapbirdAPM::Agent::CGI>
+
+=item *
+
+Add C<use Dancer2::Plugin::CGI> near the top of your L<CGI> script
+
+=item *
+
+Add your API key to your environment, in Apache that looks like: C<SetEnv SLAPBIRDAPM_API_KEY ...>
+
+=item *
+
+Restart your web-server
+
+=back
+
+=head1 EXAMPLE
+
+    #!/usr/bin/env perl
+    
+    use strict;
+    use warnings;
+    
+    use DBI;
+    use SlapbirdAPM::Agent::CGI;
+    use CGI;
+    
+    my $dbh = DBI->connect('dbi:SQLite:dbname=file.db', '', '');
+    
+    my $sth = $dbh->prepare(q[select time('now');]);
+    $sth->execute();
+    my $time     = $sth->fetch->[0];
+    my $response = 'Hello World! It is ' . $time . " o'clock";
+    
+    my $cgi = CGI->new();
+    
+    print $cgi->header();
+    print <<"END"
+    <!DOCTYPE html>
+    <html>
+      <body>
+        <p>$response</p>
+      </body>
+    </html>
+    END
+
+=head1 SEE ALSO
+
+L<SlapbirdAPM::Agent::Plack>
+
+L<SlapbirdAPM::Agent::Mojo>
+
+L<SlapbirdAPM::Agent::Dancer2>
+
+=head1 AUTHOR
+
+Mollusc Software Solutions (formerly Mollusc Labs), C<https://github.com/mollusc-labs>
+
+=head1 LICENSE
+
+SlapbirdAPM::Agent::CGI like all SlapbirdAPM user-agents is licensed under the MIT license.
+
+SlapbirdAPM (the website) however, is licensed under the GNU AGPL version 3.0.
+
+=cut

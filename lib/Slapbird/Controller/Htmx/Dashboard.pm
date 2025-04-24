@@ -26,6 +26,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Time::HiRes qw(time);
 use Mojo::JSON  qw(decode_json);
 use Const::Fast;
+use Slapbird::Enum::ApplicationTypes;
 
 const my $dashboard_feed_query => q{
         SELECT

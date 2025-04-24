@@ -16,6 +16,7 @@ my $response = 'Hello World! It is ' . $time . " o'clock";
 
 my $cgi = CGI->new();
 
+print $cgi->header('HTTP/1.1 200 OK');
 print $cgi->header();
 print <<"END"
 <!DOCTYPE html>

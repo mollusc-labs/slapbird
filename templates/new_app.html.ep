@@ -87,7 +87,7 @@
                 <span v-if="copied" class="ml-3 has-text-grey">Copied!</span>
             </div>
             <h3 class="is-5 title">Quick start</h3>
-            <div v-if="instructions" v-html="instructions">
+            <div v-html="instructions">
             </div>
             <a href="/dashboard" class="mt-6 slapbird-button slapbird-is-secondary">
                 Goto Dashboard

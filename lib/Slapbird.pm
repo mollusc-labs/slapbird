@@ -584,8 +584,6 @@ sub startup {
   $router->get('/dashboard/manage-application')
     ->requires([authenticated => 1, has_application_context => 1])
     ->to('dashboard#manage_application')->name('dahsboard_manage_application');
-  $router->post('/dashboard/new-app')->requires(authenticated => 1)
-    ->to('dashboard#create_new_app')->name('dashboard_create_new_app');
   $router->get('/dashboard/confirm-delete-application')
     ->requires(authenticated => 1)->to('dashboard#confirm_delete_app')
     ->name('dashboard_confirm_delete_application');
@@ -666,6 +664,9 @@ sub startup {
   # API routes (JSON)
   $router->get('/api/dashboard/graph')->requires(authenticated => 1)
     ->to(controller => 'api-dashboard', action => 'json_graph');
+  $router->post('/api/dashboard/new-app')->requires(authenticated => 1)
+    ->to(controller => 'api-dashboard', action => 'create_new_app')
+    ->name('dashboard_create_new_app');
 
   return $self;
 }
