@@ -18,8 +18,8 @@
 
 ### Finding clients
 
-SlapbirdAPM is a *multi-language* observability platform. We officially support
-`perl`, `raku`, and (soon) `ruby`. But un-official clients can be used, or, you can write your own.
+SlapbirdAPM is a Perl oriented observability platform. We officially support
+`perl` & `raku`. But un-official clients can be used, or, you can write your own.
 
 #### Writing your own client
 
@@ -110,7 +110,7 @@ If you don't set these, your agent will hit production instead. (You'll see 401'
 
 ### Copyright & Legalities
 
-SlapbirdAPM &copy; Mollusc Labs. 2025
+SlapbirdAPM &copy; Mollusc Software Solutions Inc. 2024, 2025
 
 SlapbirdAPM web application is provided under the [GNU Affero General Public License version 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html).
 
