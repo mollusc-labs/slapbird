@@ -109,60 +109,64 @@ sub _call_home {
     my $pid = fork();
     return if $pid;
 
-    my %response;
-    $response{type}          = 'dancer2';
-    $response{method}        = $dancer2_request->method;
-    $response{end_point}     = $dancer2_request->path;
-    $response{start_time}    = $start_time;
-    $response{end_time}      = $end_time;
-    $response{response_code} = $dancer2_response->status;
-    $response{response_headers} =
-      $self->_unfold_headers( $dancer2_response->headers );
-    $response{response_size} = $dancer2_response->header('Content-Length');
-    $response{request_id}    = undef;
-    $response{request_size}  = $dancer2_request->header('Content-Length');
-    $response{request_headers} =
-      $self->_unfold_headers( $dancer2_request->headers );
-    $response{error} = $error;
-    $response{error} //= undef;
-    $response{os}          = $OS;
-    $response{requestor}   = $dancer2_request->header('x-slapbird-name');
-    $response{handler}     = undef;
-    $response{stack}       = $stack;
-    $response{num_queries} = scalar @$queries;
-    $response{queries}     = $queries;
-
-    my $ua = LWP::UserAgent->new();
-    my $slapbird_response;
-
     try {
-        $slapbird_response = $ua->post(
+        if ( ref($dancer2_response) eq 'Dancer2::Core::Response::Delayed' ) {
+            $dancer2_response->to_psgi;
+            $dancer2_response = $dancer2_response->response;
+        }
+
+        my %response;
+        $response{type}          = 'dancer2';
+        $response{method}        = $dancer2_request->method;
+        $response{end_point}     = $dancer2_request->path;
+        $response{start_time}    = $start_time;
+        $response{end_time}      = $end_time;
+        $response{response_code} = $dancer2_response->status;
+        $response{response_headers} =
+          $self->_unfold_headers( $dancer2_response->headers );
+        $response{response_size} = $dancer2_response->header('Content-Length');
+        $response{request_id}    = undef;
+        $response{request_size}  = $dancer2_request->header('Content-Length');
+        $response{request_headers} =
+          $self->_unfold_headers( $dancer2_request->headers );
+        $response{error} = $error;
+        $response{error} //= undef;
+        $response{os}          = $OS;
+        $response{requestor}   = $dancer2_request->header('x-slapbird-name');
+        $response{handler}     = undef;
+        $response{stack}       = $stack;
+        $response{num_queries} = scalar @$queries;
+        $response{queries}     = $queries;
+
+        my $ua                = LWP::UserAgent->new();
+        my $slapbird_response = $ua->post(
             $SLAPBIRD_APM_URI,
             'Content-Type'   => 'application/json',
             'x-slapbird-apm' => $self->key,
             Content          => JSON::MaybeXS::encode_json( \%response )
         );
+
+        if ( !$slapbird_response->is_success ) {
+            if ( $slapbird_response->code eq 429 ) {
+                say STDERR
+"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
+                  unless $self->quiet;
+                POSIX::_exit(0);
+            }
+            say STDERR
+'Unable to communicate with Slapbird, this request has not been tracked got status code '
+              . $slapbird_response->code
+              unless $self->quiet;
+        }
+
     }
     catch {
         say STDERR
 'Unable to communicate with Slapbird, this request has not been tracked got error: '
           . $_
           unless $self->quiet;
-        exit 0;
+        POSIX::_exit(0);
     };
-
-    if ( !$slapbird_response->is_success ) {
-        if ( $slapbird_response->code eq 429 ) {
-            say STDERR
-"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
-              unless $self->quiet;
-            exit 0;
-        }
-        say STDERR
-'Unable to communicate with Slapbird, this request has not been tracked got status code '
-          . $slapbird_response->code
-          unless $self->quiet;
-    }
 
 # We need to use POSIX::_exit(0) to not destroy database handles from the parent.
     return POSIX::_exit(0);

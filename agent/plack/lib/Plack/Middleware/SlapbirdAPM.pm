@@ -30,7 +30,9 @@ const my $OS => System::Info->new->os;
 sub _unfold_headers {
     my ( $self, $headers ) = @_;
     my %headers = (@$headers);
-    delete $headers{$_} for ( $self->ignored_headers );
+    if ( $self->ignored_headers && ref( $self->ignored_headers ) eq 'ARRAY' ) {
+        delete $headers{$_} for ( @{ $self->ignored_headers } );
+    }
     return \%headers;
 }
 
@@ -43,56 +45,60 @@ sub _call_home {
 
     return if $pid;
 
-    my %response;
-
-    $response{type}          = 'plack';
-    $response{method}        = $request->method;
-    $response{end_point}     = $request->uri->path;
-    $response{start_time}    = $start_time;
-    $response{end_time}      = $end_time;
-    $response{response_code} = $response->status;
-    $response{response_headers} =
-      $self->_unfold_headers( $response->headers->psgi_flatten_without_sort() );
-    $response{response_size} = $response->content_length;
-    $response{request_id}    = undef;
-    $response{request_size}  = $request->content_length;
-    $response{request_headers} =
-      $self->_unfold_headers( $request->headers->psgi_flatten_without_sort() );
-    $response{error}       = $error;
-    $response{os}          = $OS;
-    $response{requestor}   = $request->header('x-slapbird-name');
-    $response{num_queries} = scalar @$queries;
-    $response{queries}     = $queries;
-    $response{handler}     = undef;
-
-    my $ua = LWP::UserAgent->new();
-    my $slapbird_response;
-
     try {
+
+        my %response;
+
+        $response{type}          = 'plack';
+        $response{method}        = $request->method;
+        $response{end_point}     = $request->uri->path;
+        $response{start_time}    = $start_time;
+        $response{end_time}      = $end_time;
+        $response{response_code} = $response->status;
+        $response{response_headers} =
+          $self->_unfold_headers(
+            $response->headers->psgi_flatten_without_sort() );
+        $response{response_size} = $response->content_length;
+        $response{request_id}    = undef;
+        $response{request_size}  = $request->content_length;
+        $response{request_headers} =
+          $self->_unfold_headers(
+            $request->headers->psgi_flatten_without_sort() );
+        $response{error}       = $error;
+        $response{os}          = $OS;
+        $response{requestor}   = $request->header('x-slapbird-name');
+        $response{num_queries} = scalar @$queries;
+        $response{queries}     = $queries;
+        $response{handler}     = undef;
+
+        my $ua = LWP::UserAgent->new();
+        my $slapbird_response;
+
         $slapbird_response = $ua->post(
             $SLAPBIRD_APM_URI,
             'Content-Type'   => 'application/json',
             'x-slapbird-apm' => $self->key,
             Content          => encode_json( \%response )
         );
+
+        if ( !$slapbird_response->is_success ) {
+            if ( $slapbird_response->code eq 429 ) {
+                Carp::carp(
+"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
+                ) unless $self->quiet;
+            }
+            Carp::carp(
+'Unable to communicate with Slapbird, this request has not been tracked got status code '
+                  . $slapbird_response->code );
+        }
+
     }
     catch {
         Carp::carp(
 'Unable to communicate with Slapbird, this request has not been tracked got error: '
               . $_ );
-        exit 0;
+        POSIX::_exit(0);
     };
-
-    if ( !$slapbird_response->is_success ) {
-        if ( $slapbird_response->code eq 429 ) {
-            Carp::carp(
-"You've hit your maximum number of requests for today. Please visit slapbirdapm.com to upgrade your plan."
-            ) unless $self->quiet;
-        }
-        Carp::carp(
-'Unable to communicate with Slapbird, this request has not been tracked got status code '
-              . $slapbird_response->code );
-    }
 
 # We have to use POSIX::_exit(0) instead of exit(0) to not destroy database handles.
     return POSIX::_exit(0);
@@ -127,24 +133,41 @@ sub call {
         }
     );
 
+    my $end_time = time * 1_000;
+
     try {
-        $plack_response = $self->app->($env);
-        $response       = Plack::Response->new(@$plack_response);
+        $plack_response = $self->app->($env)
     }
     catch {
         $error = $_;
     };
 
-    my $end_time = time * 1_000;
+    try {
+        if ( ref($plack_response) && ref($plack_response) eq 'ARRAY' ) {
+            $response = Plack::Response->new(@$plack_response);
+            $self->_call_home( $request, $response,
+                $env, $start_time, $end_time, $queries, $error );
+            return $response->finalize;
+        }
+        else {
+            return $self->response_cb(
+                $plack_response,
+                sub {
+                    my $res = shift;
+                    $response = Plack::Response->new(@$res);
+                    $self->_call_home( $request, $response,
+                        $env, $start_time, $end_time, $queries, $error );
+                }
+            );
+        }
 
-    $self->_call_home( $request, $response, $env, $start_time,
-        $end_time, $queries, $error );
-
-    if ($error) {
-        Carp::croak($error);
+        if ($error) {
+            Carp::croak($error);
+        }
     }
-
-    return $response->finalize;
+    catch {
+        Carp::croak($_);
+    };
 }
 
 1;
