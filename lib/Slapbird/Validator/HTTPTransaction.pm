@@ -46,8 +46,8 @@ sub validate {
       end_time      => {type => 'number'},
       response_code =>
         {type => ['integer', 'string'], minimum => 100, maximum => 599},
-      response_size => {type => ['integer', 'null']},
-      request_size  => {type => ['integer', 'null']},
+      response_size => {type => ['integer', 'string', 'null']},
+      request_size  => {type => ['integer', 'string', 'null']},
       handler       => {type => ['string',  'null']},
       error         => {type => ['string',  'null']},
       requestor     => {type => ['string',  'null']},
