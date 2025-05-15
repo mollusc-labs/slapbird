@@ -8,7 +8,6 @@ use CGI;
 use LWP::UserAgent;
 use POSIX ();
 use SlapbirdAPM::CGI::DBIx::Tracer;
-use IO::String;
 use IO::Tee;
 use IO::Pipe;
 use Time::HiRes;
@@ -23,7 +22,6 @@ our $VERSION = '0.04';
 
 my %request_headers;
 our $cgi = CGI->new();
-our $res = IO::String->new;
 our $handler;
 our $start_time;
 our @error;
