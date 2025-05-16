@@ -20,7 +20,7 @@
     </div>
     % if ($transaction->total_time) {
         <div class="mt-4">
-            <strong>Total Time</strong>: <%= $transaction->total_time %>
+            <strong>Total Time</strong>: <%= $transaction->total_time %>/ms
         </div>
     % }
 
