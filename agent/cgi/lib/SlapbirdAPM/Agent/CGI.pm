@@ -18,7 +18,7 @@ use JSON;
 
 $Carp::Internal{__PACKAGE__} = 1;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 my %request_headers;
 our $cgi = CGI->new();
