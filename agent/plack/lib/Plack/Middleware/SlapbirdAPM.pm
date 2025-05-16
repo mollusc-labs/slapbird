@@ -133,14 +133,14 @@ sub call {
         }
     );
 
-    my $end_time = time * 1_000;
-
     try {
         $plack_response = $self->app->($env)
     }
     catch {
         $error = $_;
     };
+
+    my $end_time = time * 1_000;
 
     try {
         if ( ref($plack_response) && ref($plack_response) eq 'ARRAY' ) {
