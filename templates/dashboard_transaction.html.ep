@@ -18,6 +18,12 @@
             </span>
         </div>
     </div>
+    % if ($transaction->total_time) {
+        <div class="mt-4">
+            <strong>Total Time</strong>: <%= $transaction->total_time %>
+        </div>
+    % }
+
     % if ($transaction->os) {
         <div class="mt-4">
             <strong>Host OS</strong>: <%= $transaction->os %>
